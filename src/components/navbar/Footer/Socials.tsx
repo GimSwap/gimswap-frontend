@@ -5,7 +5,7 @@ export default function Socials() {
   return (
     <section className="flex gap-3">
       {SOCIALS.map(({ Icon, link }) => (
-        <Link href={link} target="_blank" className="p-[10px]">
+        <Link href={link} target="_blank" className="p-[10px]" key={link}>
           <Icon />
         </Link>
       ))}

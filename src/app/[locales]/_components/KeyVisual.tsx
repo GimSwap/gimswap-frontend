@@ -3,7 +3,7 @@
 import { useIntersectionObserver } from "@/src/lib/hook/useIntersectionObserver";
 import Button from "@/src/components/Button";
 import { useTopbarStore } from "@/src/lib/stores/topbarStore/TopbarStoreProvider";
-import KeyVisualImage from "@/src/assets/image/KeyVisual.webp";
+import keyVisualImage from "@/src/assets/image/keyVisual.webp";
 import Image from "next/image";
 
 export default function KeyVisual() {
@@ -20,7 +20,7 @@ export default function KeyVisual() {
     >
       <section className="lg:w-[50vw]">
         <Image
-          src={KeyVisualImage}
+          src={keyVisualImage}
           alt="key-visual"
           className="w-[345px] h-[auto] rotate-[20deg] lg:w-[auto] lg:h-[90%] lg:max-w-[38vw] lg:ml-[91px] max-w-[750px] -translate-y-6 lg:translate-y-0 lg:translate-x-20"
         />

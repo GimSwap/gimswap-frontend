@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  box-sizing: border-box;
+  /* min-height: 100dvh; */
+  height: 100%;
+  position: relative;
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  h1 {
+    @apply text-h1 font-pretendard tracking-h1 text-black-12;
+  }
+
+  h2 {
+    @apply text-h2 font-pretendard tracking-h2 text-black-12;
+  }
+
+  h3 {
+    @apply text-h3 font-pretendard tracking-h3 text-black-12;
+  }
+
+  h4 {
+    @apply text-h4 font-pretendard tracking-h4 text-black-12;
+  }
+
+  h5 {
+    @apply text-h5 font-pretendard tracking-h5 text-black-12;
+  }
+}
+
+@layer components {
+  .p1 {
+    @apply text-p1 font-pretendard tracking-p1 text-black-12;
+  }
+
+  .c1 {
+    @apply text-c1 font-pretendard tracking-c1 text-black-12;
+  }
+
+  .c0 {
+    @apply text-c0 font-pretendard tracking-c0 text-black-12;
+  }
+}
+
+button {
+  margin: 0;
+  padding: 0;
+}
+
+input {
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* 파이어폭스 기본 초기화 */
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bg-glass {
+  background-image: url("../../assets/image/glass.webp");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: center;
+  background-position-y: bottom;
+}
+
+@media (min-width: 1024px) {
+  .bg-glass {
+    background-image: url("../../assets/image/glass.webp"),
+      url("../../assets/image/glass-flipped.webp");
+    background-size: 600px auto, 600px auto;
+    background-position: calc(50% - 300px) bottom, calc(50% + 300px) bottom;
+    background-repeat: no-repeat;
+  }
+}

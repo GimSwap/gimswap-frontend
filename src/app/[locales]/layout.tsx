@@ -6,6 +6,7 @@ import Footer from "../../components/navbar/Footer/Footer";
 import { TopbarStoreProvider } from "@/src/lib/stores/topbarStore/TopbarStoreProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "GIM SWAP",
@@ -44,8 +45,14 @@ export default async function RootLayout({
   params: { locale: string };
 }) {
   const messages = await getMessages();
+  const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+  const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+  if (!GA_ID) throw new Error("There's no GA id");
+  if (!GTM_ID) throw new Error("There's no GTM id");
   return (
     <html lang={locale} className={pretendard.variable}>
+      <GoogleAnalytics gaId={GA_ID} />
+      <GoogleTagManager gtmId={GTM_ID} />
       <body>
         <NextIntlClientProvider messages={messages}>
           <TopbarStoreProvider>

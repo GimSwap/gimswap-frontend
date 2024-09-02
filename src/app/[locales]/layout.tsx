@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     images: "/GimSwapOG.png",
     title: "GIMSWAP",
     description: "Real Tokens from Real Assets",
+    siteName: "GIMSWAP",
   },
 };
 

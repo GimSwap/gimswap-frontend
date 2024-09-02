@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
   },
   openGraph: {
-    images: "/GimSwapOG.png",
+    images: "/images/GimSwapOG.png",
     title: "GIMSWAP",
     description: "Real Tokens from Real Assets",
     siteName: "GIMSWAP",

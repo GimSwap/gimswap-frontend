@@ -27,9 +27,9 @@ export const useIntersectionObserver: UseIntersectionObserverType = (
 
   useEffect(() => {
     if (!target) return;
-
     const observer: IntersectionObserver = new IntersectionObserver(
       ([entry]) => {
+        console.log(entry.boundingClientRect);
         if (entry.isIntersecting) {
           if (onEnter) {
             onEnter();
@@ -53,7 +53,7 @@ export const useIntersectionObserver: UseIntersectionObserverType = (
     return () => {
       observer.unobserve(target);
     };
-  }, [root, rootMargin, target, threshold, onEnter, onLeave]);
+  }, [root, rootMargin, target, threshold]);
 
   return { setTarget, target };
 };

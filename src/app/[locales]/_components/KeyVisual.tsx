@@ -3,16 +3,18 @@
 import { useIntersectionObserver } from "@/src/lib/hook/useIntersectionObserver";
 import Button from "@/src/components/Button";
 import { useTopbarStore } from "@/src/lib/stores/topbarStore/TopbarStoreProvider";
-import keyVisualImage from "@/src/assets/image/keyVisual.webp";
+import KeyVisualImage from "@/src/assets/image/keyVisual.webp";
 import Image from "next/image";
 
 export default function KeyVisual() {
   const { setTarget } = useIntersectionObserver({
-    rootMargin: "-72px 0px 0px 0px", // topbar의 높이에 대해 마진 설정
+    rootMargin: "0px 0px 0px 0px",
+    threshold: 0.8,
     onEnter: () => setInvert(false),
     onLeave: () => setInvert(true),
   });
   const { setInvert } = useTopbarStore((state) => state);
+
   return (
     <section
       className="w-full bg-[linear-gradient(#000_69%,#33294D_100%)] flex items-center flex-col relative pt-24 overflow-hidden lg:flex-row lg:gap-28 h-fit lg:h-[640px]"
@@ -20,7 +22,7 @@ export default function KeyVisual() {
     >
       <section className="lg:w-[50vw]">
         <Image
-          src={keyVisualImage}
+          src={KeyVisualImage}
           alt="key-visual"
           className="w-[345px] h-[auto] rotate-[20deg] lg:w-[auto] lg:h-[90%] lg:max-w-[38vw] lg:ml-[91px] max-w-[750px] -translate-y-6 lg:translate-y-0 lg:translate-x-20"
         />
@@ -36,7 +38,6 @@ export default function KeyVisual() {
         <Button
           title="Join Our Telegram"
           className="bg-purple-500 text-black-1"
-          link
           href="https://t.me/gimswap"
           target="_blank"
         />

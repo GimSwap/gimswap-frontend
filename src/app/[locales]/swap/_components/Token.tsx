@@ -1,10 +1,11 @@
 import { OPEN_VOUCHER, TOT } from "@/src/lib/constants/token";
 import { getBalance } from "@/src/lib/hook/useGetBalance";
+import { useEffect } from "react";
 
 interface TokenProps {
   type: "pay" | "receive";
-  amount: number;
-  setAmount?: React.Dispatch<React.SetStateAction<number>>;
+  amount: BigInt;
+  setAmount?: React.Dispatch<React.SetStateAction<BigInt>>;
   token: typeof OPEN_VOUCHER | typeof TOT;
   isWritable: boolean;
   setIsEnoughBalance?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,20 +24,21 @@ export default function Token({
     const value = Number(e.target.value.replace(/,/g, ""));
     if (isNaN(value)) return;
 
-    if (balance) {
-      setIsEnoughBalance?.(Number(balance) >= value);
-    }
-    setAmount(value * token.unit);
+    setAmount(BigInt(value) * BigInt(token.unit));
   };
-
   const { balance } = getBalance({
     contractAddress: token.contractAddress,
     decimal: token.decimal,
   });
 
   const handleMaxButton = () => {
-    setAmount && setAmount(Number(balance) * token.unit);
+    balance && setAmount && setAmount(BigInt(balance) * BigInt(token.unit));
   };
+
+  useEffect(() => {
+    if (type === "pay" && setIsEnoughBalance)
+      setIsEnoughBalance(Number(balance) >= Number(amount) / token.unit);
+  }, [amount, setIsEnoughBalance]);
 
   return (
     <section
@@ -72,7 +74,7 @@ export default function Token({
         {isWritable ? (
           <input
             type="tel"
-            value={(amount / token.unit).toLocaleString("ko-kr") || ""}
+            value={(Number(amount) / token.unit).toLocaleString("ko-kr") || ""}
             className="font-bold text-h2 w-full"
             onChange={handleInput}
           />

@@ -13,7 +13,7 @@ interface SwapProgressPopupProps {
     pay: TokenType;
     receive: TokenType;
   };
-  amount: number;
+  amount: BigInt;
   receipt: ContractTransactionReceipt;
   closePrevPopup: () => void;
 }
@@ -44,7 +44,7 @@ export default function SwapSuccessPopup({
           <div className="flex gap-2 items-center">
             <tokens.pay.icon />
             <h5 className="text-black-8 font-medium">{`${(
-              amount / tokens.pay.unit
+              Number(amount) / tokens.pay.unit
             ).toLocaleString("ko-kr", { maximumFractionDigits: 14 })} ${
               tokens.pay.name
             }`}</h5>
@@ -53,7 +53,7 @@ export default function SwapSuccessPopup({
           <div className="flex gap-2 items-center">
             <tokens.receive.icon />
             <h5 className="text-black-8 font-medium">{`${(
-              amount / tokens.receive.unit
+              Number(amount) / tokens.receive.unit
             ).toLocaleString("ko-kr", { maximumFractionDigits: 14 })} ${
               tokens.receive.name
             }`}</h5>

@@ -9,7 +9,7 @@ import swapAbi from "@/src/lib/utils/abis/swapAbi.json";
 import { TokenType } from "../types/TokenType";
 import { makeSwapArgument } from "../utils/makeSwapArgument";
 
-export const useSwap = (token: TokenType, amount: number) => {
+export const useSwap = (token: TokenType, amount: BigInt) => {
   const { walletProvider } = useWeb3ModalProvider();
   const { address } = useWeb3ModalAccount();
 
@@ -39,7 +39,9 @@ export const useSwap = (token: TokenType, amount: number) => {
       );
 
       const to = CONTRACT_ADDRESS.GimSwap;
-      const value = (amount / token.unit) * Math.pow(10, token.decimal);
+      const value =
+        BigInt(Number(amount) / token.unit) *
+        BigInt(Math.pow(10, token.decimal));
       const callee = CONTRACT_ADDRESS.GimSwap;
 
       const tx = await swapContract[token.method](

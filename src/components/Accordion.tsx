@@ -4,12 +4,13 @@ import { useState } from "react";
 import ChevronUpIcon from "@/public/svg/chevron/up.svg";
 
 interface AccordionProps {
-  title?: string;
-  children?: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+  opened?: boolean;
 }
 
-export default function Accordion({ title, children }: AccordionProps) {
-  const [open, setOpen] = useState<boolean>(false);
+export default function Accordion({ title, children, opened }: AccordionProps) {
+  const [open, setOpen] = useState<boolean>(!!opened);
   return (
     <section
       className="pt-1 transition-all duration-200 ease-in-out overflow-hidden"

@@ -11,7 +11,7 @@ interface TopbarActionType {
 export type TopbarStoreType = TopbarStateType & TopbarActionType;
 
 export const defaultInitState: TopbarStateType = {
-  invert: true,
+  invert: false,
 };
 
 export function createTopbarStore(

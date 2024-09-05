@@ -17,6 +17,12 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  openGraph: {
+    images: "/images/GimSwapOG.png",
+    title: "GIMSWAP",
+    description: "Real Tokens from Real Assets",
+    siteName: "GIMSWAP",
+  },
 };
 
 const pretendard = localFont({

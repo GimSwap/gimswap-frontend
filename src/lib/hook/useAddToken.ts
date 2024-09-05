@@ -8,7 +8,6 @@ interface useAddTokenProps {
   image: any;
 }
 
-// useAddTokenProps를 기본으로 사용할 수도 있습니다.
 export const useAddToken = () => {
   const { walletProvider } = useWeb3ModalProvider();
 

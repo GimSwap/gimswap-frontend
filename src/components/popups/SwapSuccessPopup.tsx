@@ -13,7 +13,7 @@ interface SwapProgressPopupProps {
     pay: TokenType;
     receive: TokenType;
   };
-  amount: BigInt;
+  amount: string;
   receipt: ContractTransactionReceipt;
   closePrevPopup: () => void;
 }

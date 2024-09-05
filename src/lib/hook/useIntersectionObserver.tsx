@@ -29,7 +29,6 @@ export const useIntersectionObserver: UseIntersectionObserverType = (
     if (!target) return;
     const observer: IntersectionObserver = new IntersectionObserver(
       ([entry]) => {
-        console.log(entry.boundingClientRect);
         if (entry.isIntersecting) {
           if (onEnter) {
             onEnter();
@@ -39,7 +38,6 @@ export const useIntersectionObserver: UseIntersectionObserverType = (
             onLeave();
           }
         }
-        // entry.
       },
       {
         root,

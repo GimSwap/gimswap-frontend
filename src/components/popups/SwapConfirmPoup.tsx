@@ -12,7 +12,7 @@ import SwapErrorPopup from "./SwapErrorPopup";
 interface SwapConfirmPopupProps {
   open: boolean;
   onClose: () => void;
-  amount: BigInt;
+  amount: string;
   fee: number | null;
   tokens: {
     receive: TokenType;
@@ -69,18 +69,18 @@ export default function SwapConfirmPopup({
           <section className="mb-3">
             <p className="c1 mb-2">You pay</p>
             <h3 className="font-bold">
-              {(Number(amount) / tokens.pay.unit).toLocaleString()}{" "}
+              {BigInt(Number(amount) / tokens.pay.unit).toLocaleString()}{" "}
               {tokens.pay.name}
             </h3>
             <p className="c1 stroke-black-8">
-              {`₩ ${amount.toLocaleString("ko-kr", {
+              {`₩ ${BigInt(amount).toLocaleString("ko-kr", {
                 maximumFractionDigits: 14,
               })}`}
             </p>
             <hr className="text-black-5 my-3" />
             <p className="c1 mb-2">You receive</p>
             <h3 className="font-bold">
-              {`${(Number(amount) / tokens.receive.unit).toLocaleString(
+              {`${BigInt(Number(amount) / tokens.receive.unit).toLocaleString(
                 "ko-kr",
                 {
                   maximumFractionDigits: 14,
@@ -88,7 +88,7 @@ export default function SwapConfirmPopup({
               )} ${tokens.receive.name}`}
             </h3>
             <p className="c1 text-black-8">
-              {`₩ ${amount.toLocaleString("ko-kr", {
+              {`₩ ${BigInt(amount).toLocaleString("ko-kr", {
                 maximumFractionDigits: 14,
               })}`}
             </p>
@@ -97,9 +97,9 @@ export default function SwapConfirmPopup({
             <div className="flex flex-row justify-between py-1">
               <p className="c1 font-medium">Rate</p>
               <p className="c1 font-medium">
-                {`1 ${tokens.pay.name} = ${
-                  10 ** EXCHANGE_RATE_DECIMAL_OV_TO_TOT
-                }.toLocaleString("ko-kr")} ${tokens.receive.name}`}
+                {`1 ${tokens.pay.name} = ${BigInt(
+                  10 ** EXCHANGE_RATE_DECIMAL_OV_TO_TOT,
+                ).toLocaleString("ko-kr")} ${tokens.receive.name}`}
               </p>
             </div>
             <div className="flex flex-row justify-between py-1">

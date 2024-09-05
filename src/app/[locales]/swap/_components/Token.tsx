@@ -1,11 +1,12 @@
 import { OPEN_VOUCHER, TOT } from "@/src/lib/constants/token";
 import { getBalance } from "@/src/lib/hook/useGetBalance";
-import { useEffect } from "react";
+import { insertComma } from "@/src/lib/utils/insertComma";
+import { safeCalc } from "@/src/lib/utils/safeCalc";
 
 interface TokenProps {
   type: "pay" | "receive";
-  amount: BigInt;
-  setAmount?: React.Dispatch<React.SetStateAction<BigInt>>;
+  amount: string;
+  setAmount?: React.Dispatch<React.SetStateAction<string>>;
   token: typeof OPEN_VOUCHER | typeof TOT;
   isWritable: boolean;
   setIsEnoughBalance?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -21,25 +22,23 @@ export default function Token({
 }: TokenProps) {
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!setAmount) return;
-    const value = Number(e.target.value.replace(/,/g, ""));
-    if (isNaN(value)) return;
+    const value = e.target.value;
+    if (value.length > 18) return;
+    if (balance) setIsEnoughBalance?.(Number(balance) >= Number(value));
 
-    setAmount(BigInt(value) * BigInt(token.unit));
+    setAmount(safeCalc.multiply(value, token.unit).toFixed());
   };
+
   const { balance } = getBalance({
     contractAddress: token.contractAddress,
     decimal: token.decimal,
   });
 
   const handleMaxButton = () => {
-    balance && setAmount && setAmount(BigInt(balance) * BigInt(token.unit));
+    balance &&
+      setAmount &&
+      setAmount(safeCalc.multiply(balance, token.unit).toFixed());
   };
-
-  useEffect(() => {
-    if (type === "pay" && setIsEnoughBalance)
-      setIsEnoughBalance(Number(balance) >= Number(amount) / token.unit);
-  }, [amount, setIsEnoughBalance]);
-
   return (
     <section
       className={`rounded-lg bg-black-3 p-4 ${
@@ -73,19 +72,22 @@ export default function Token({
       <div className="mb-[2px]">
         {isWritable ? (
           <input
-            type="tel"
-            value={(Number(amount) / token.unit).toLocaleString("ko-kr") || ""}
-            className="font-bold text-h2 w-full"
+            type="number"
+            value={
+              amount !== "0"
+                ? safeCalc.divide(amount, token.unit).toFixed()
+                : ""
+            }
+            placeholder="0"
+            className="font-bold text-h2 w-full placeholder-black-12"
             onChange={handleInput}
           />
         ) : (
-          <h2 className="font-bold text-black-6 overflow-hidden">
-            {amount.toLocaleString("ko-kr")}
-          </h2>
+          <h2 className="font-bold text-black-6 overflow-hidden">{amount}</h2>
         )}
       </div>
       <p className={`c1 ${!isWritable && "text-black-6"}`}>
-        ₩ {amount.toLocaleString("ko-kr")}
+        ₩ {insertComma(amount)}
       </p>
     </section>
   );

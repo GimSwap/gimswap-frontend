@@ -9,7 +9,7 @@ interface SwapLoadingPopupProps {
     pay: TokenType;
     receive: TokenType;
   };
-  amount: BigInt;
+  amount: string;
 }
 
 export default function SwapLoadingPopup({

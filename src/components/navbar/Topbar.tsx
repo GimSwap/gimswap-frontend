@@ -63,7 +63,7 @@ export default function Topbar() {
               {title}
             </Link>
           ))}
-          <WalletConnectButton />
+          <WalletConnectButton size="small" />
         </section>
       </nav>
       <div className="lg:hidden">

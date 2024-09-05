@@ -12,7 +12,7 @@ import Button from "@/src/components/Button";
 import { useGetFee } from "@/src/lib/hook/useGetFee";
 
 export default function SwapInput() {
-  const [amount, setAmount] = useState<BigInt>(BigInt(0));
+  const [amount, setAmount] = useState<string>("0");
   const [selectedTokens, setSelectedTokens] = useState<{
     pay: TokenType;
     receive: TokenType;
@@ -22,7 +22,6 @@ export default function SwapInput() {
   const { fee } = useGetFee(selectedTokens.pay.contractAddress);
 
   const { openPopup } = usePopupStore((state) => state);
-
   const buttonTitle = () => {
     if (!amount) return "Enter an amount";
     if (!isEnoughBalance) return "Insufficient Balance";
@@ -47,7 +46,7 @@ export default function SwapInput() {
               pay: prev.receive,
               receive: prev.pay,
             }));
-            setAmount(BigInt(0));
+            setAmount("0");
           }}
         >
           <ArrowDownIcon />

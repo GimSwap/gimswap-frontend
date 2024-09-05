@@ -51,7 +51,7 @@ export default function LeftSidebar({ show, setShow }: LeftSidebarProps) {
           })}
         </section>
         <section className="absolute bottom-8 px-6 flex flex-col w-full justify-center">
-          <WalletConnectButton />
+          <WalletConnectButton size="large" />
           <hr className="text-black-4 my-6" />
           <section className="flex flex-row justify-center">
             <Socials />

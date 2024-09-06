@@ -9,9 +9,9 @@ export const MENUS = [
     url: "/swap",
     externalLink: false,
   },
-  {
-    title: "docs",
-    url: "/docs",
-    externalLink: true,
-  },
+  // {
+  //   title: "docs",
+  //   url: "/docs",
+  //   externalLink: true,
+  // },
 ];

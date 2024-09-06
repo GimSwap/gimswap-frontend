@@ -3,7 +3,7 @@ import { AbiMethodType } from "../types/TokenType";
 export const makeSwapArgument = (
   type: AbiMethodType,
   to: string,
-  value: BigInt,
+  value: number,
   callee: string,
 ) => {
   switch (type) {

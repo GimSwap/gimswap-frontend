@@ -5,12 +5,14 @@ import { useGetFee } from "@/src/lib/hook/useGetFee";
 
 interface TransactionDetailsProps {
   contractAddress: string;
+  amount: number;
 }
 
 export default function TransactionDetails({
   contractAddress,
+  amount,
 }: TransactionDetailsProps) {
-  const { fee } = useGetFee(contractAddress);
+  const { fee } = useGetFee(contractAddress, amount);
   return (
     <section className="flex flex-col gap-2 ">
       <p className="c1 font-medium text-black-8">Transaction Details</p>

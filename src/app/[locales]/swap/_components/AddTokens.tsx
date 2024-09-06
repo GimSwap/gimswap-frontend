@@ -7,6 +7,7 @@ import { OPEN_VOUCHER, TOT } from "@/src/lib/constants/token";
 
 export default function AddTokens() {
   const { addToken } = useAddToken();
+
   const handleAddToken = () => {
     addToken({
       address: OPEN_VOUCHER.contractAddress,
@@ -19,9 +20,10 @@ export default function AddTokens() {
       symbol: TOT.symbol,
     });
   };
+
   return (
     <section
-      className="p-4 mt-4 w-full shadow-customShadow bg-black-1 rounded-2xl flex justify-between"
+      className="p-4 mt-4 w-full shadow-customShadow bg-black-1 rounded-2xl flex justify-between max-w-[480px]"
       onClick={handleAddToken}
     >
       <div className="flex items-center gap-2">

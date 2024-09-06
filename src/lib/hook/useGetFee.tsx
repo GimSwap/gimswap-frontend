@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { CONTRACT_ADDRESS } from "../constants/contractAddress";
 import getFeeAbi from "@/src/lib/utils/abis/getFeeAbi.json";
 
-export const useGetFee = (contractAddress: string, amount: number) => {
+export const useGetFee = (contractAddress: string) => {
   const { walletProvider } = useWeb3ModalProvider();
   const [fee, setFee] = useState<number | null>(null);
 
@@ -24,7 +24,7 @@ export const useGetFee = (contractAddress: string, amount: number) => {
       const feeNumerator = await contract.feeNumerator();
       setFee(Number(feeNumerator));
     })();
-  }, [walletProvider, contractAddress, amount]);
+  }, [walletProvider, contractAddress]);
 
   return { fee };
 };

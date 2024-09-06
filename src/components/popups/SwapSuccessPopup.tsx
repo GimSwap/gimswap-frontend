@@ -5,6 +5,8 @@ import { Link } from "@/src/navigation";
 import { ContractTransactionReceipt } from "ethers";
 import { useWeb3ModalAccount } from "@web3modal/ethers/react";
 import { CHAIN_ID_TO_BLOCK_EXPLORER } from "@/src/lib/constants/blockExplorer";
+import { safeCalc } from "@/src/lib/utils/safeCalc";
+import { insertComma } from "@/src/lib/utils/insertComma";
 
 interface SwapProgressPopupProps {
   open: boolean;
@@ -13,7 +15,7 @@ interface SwapProgressPopupProps {
     pay: TokenType;
     receive: TokenType;
   };
-  amount: number;
+  amount: string;
   receipt: ContractTransactionReceipt;
   closePrevPopup: () => void;
 }
@@ -43,20 +45,18 @@ export default function SwapSuccessPopup({
         <section className="rounded-lg bg-black-3 flex flex-col justify-center items-center p-4 gap-[6px] w-full">
           <div className="flex gap-2 items-center">
             <tokens.pay.icon />
-            <h5 className="text-black-8 font-medium">{`${(
-              amount / tokens.pay.unit
-            ).toLocaleString("ko-kr", { maximumFractionDigits: 14 })} ${
-              tokens.pay.name
-            }`}</h5>
+            <h5 className="text-black-8 font-medium">{`${insertComma(
+              safeCalc.divide(amount, tokens.pay.unit).toFixed(),
+            )}
+            ${tokens.pay.name}`}</h5>
           </div>
           <ArrowDownIcon />
           <div className="flex gap-2 items-center">
             <tokens.receive.icon />
-            <h5 className="text-black-8 font-medium">{`${(
-              amount / tokens.receive.unit
-            ).toLocaleString("ko-kr", { maximumFractionDigits: 14 })} ${
-              tokens.receive.name
-            }`}</h5>
+            <h5 className="text-black-8 font-medium">{`${insertComma(
+              safeCalc.divide(amount, tokens.receive.unit).toFixed(),
+            )}
+            ${tokens.receive.name}`}</h5>
           </div>
         </section>
         <Link

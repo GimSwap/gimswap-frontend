@@ -1,6 +1,8 @@
 import { TokenType } from "@/src/lib/types/TokenType";
 import PopupTemplate from "../PopupTemplate";
 import ArrowDownIcon from "@/public/svg/arrow/arrow-narrow-down.svg";
+import { safeCalc } from "@/src/lib/utils/safeCalc";
+import { insertComma } from "@/src/lib/utils/insertComma";
 
 interface SwapLoadingPopupProps {
   open: boolean;
@@ -9,7 +11,7 @@ interface SwapLoadingPopupProps {
     pay: TokenType;
     receive: TokenType;
   };
-  amount: number;
+  amount: string;
 }
 
 export default function SwapLoadingPopup({
@@ -25,20 +27,16 @@ export default function SwapLoadingPopup({
         <section className="rounded-lg bg-black-3 flex flex-col justify-center items-center p-4 gap-[6px]">
           <div className="flex gap-2 items-center">
             <tokens.pay.icon />
-            <h5 className="text-black-8 font-medium">{`${(
-              amount / tokens.pay.unit
-            ).toLocaleString("ko-kr", { maximumFractionDigits: 14 })} ${
-              tokens.pay.name
-            }`}</h5>
+            <h5 className="text-black-8 font-medium">{`${insertComma(
+              safeCalc.divide(amount, tokens.pay.unit).toFixed(),
+            )} ${tokens.pay.name}`}</h5>
           </div>
           <ArrowDownIcon />
           <div className="flex gap-2 items-center">
             <tokens.receive.icon />
-            <h5 className="text-black-8 font-medium">{`${(
-              amount / tokens.receive.unit
-            ).toLocaleString("ko-kr", { maximumFractionDigits: 14 })} ${
-              tokens.receive.name
-            }`}</h5>
+            <h5 className="text-black-8 font-medium">{`${insertComma(
+              safeCalc.divide(amount, tokens.receive.unit).toFixed(),
+            )} ${tokens.receive.name}`}</h5>
           </div>
         </section>
         <h5 className="font-medium text-black-6 pt-4 pb-5 text-center">

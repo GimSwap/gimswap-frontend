@@ -12,7 +12,7 @@ import SwapErrorPopup from "./SwapErrorPopup";
 interface SwapConfirmPopupProps {
   open: boolean;
   onClose: () => void;
-  amount: string;
+  amount: number;
   fee: number | null;
   tokens: {
     receive: TokenType;
@@ -69,26 +69,22 @@ export default function SwapConfirmPopup({
           <section className="mb-3">
             <p className="c1 mb-2">You pay</p>
             <h3 className="font-bold">
-              {BigInt(Number(amount) / tokens.pay.unit).toLocaleString()}{" "}
-              {tokens.pay.name}
+              {amount / tokens.pay.unit} {tokens.pay.name}
             </h3>
             <p className="c1 stroke-black-8">
-              {`₩ ${BigInt(amount).toLocaleString("ko-kr", {
+              {`₩ ${amount.toLocaleString("ko-kr", {
                 maximumFractionDigits: 14,
               })}`}
             </p>
             <hr className="text-black-5 my-3" />
             <p className="c1 mb-2">You receive</p>
             <h3 className="font-bold">
-              {`${BigInt(Number(amount) / tokens.receive.unit).toLocaleString(
-                "ko-kr",
-                {
-                  maximumFractionDigits: 14,
-                },
-              )} ${tokens.receive.name}`}
+              {`${(amount / tokens.receive.unit).toLocaleString("ko-kr", {
+                maximumFractionDigits: 14,
+              })} ${tokens.receive.name}`}
             </h3>
             <p className="c1 text-black-8">
-              {`₩ ${BigInt(amount).toLocaleString("ko-kr", {
+              {`₩ ${amount.toLocaleString("ko-kr", {
                 maximumFractionDigits: 14,
               })}`}
             </p>
@@ -97,8 +93,8 @@ export default function SwapConfirmPopup({
             <div className="flex flex-row justify-between py-1">
               <p className="c1 font-medium">Rate</p>
               <p className="c1 font-medium">
-                {`1 ${tokens.pay.name} = ${BigInt(
-                  10 ** EXCHANGE_RATE_DECIMAL_OV_TO_TOT,
+                {`1 ${tokens.pay.name} = ${(
+                  10 ** EXCHANGE_RATE_DECIMAL_OV_TO_TOT
                 ).toLocaleString("ko-kr")} ${tokens.receive.name}`}
               </p>
             </div>

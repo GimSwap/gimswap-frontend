@@ -1,0 +1,5 @@
+export const CONTRACT_ADDRESS = {
+  OpenVoucher: process.env.NEXT_PUBLIC_OPEN_VOUCHER_CONTRACT_ADDRESS!,
+  ToT: process.env.NEXT_PUBLIC_TOT_CONTRACT_ADDRESS!,
+  GimSwap: process.env.NEXT_PUBLIC_GIM_SWAP_CONTRACT_ADDRESS!,
+};

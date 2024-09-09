@@ -91,6 +91,7 @@ input:focus {
 input[type="number"] {
   -moz-appearance: textfield; /* 파이어폭스 기본 초기화 */
 }
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -112,5 +113,37 @@ input[type="number"]::-webkit-inner-spin-button {
     background-size: 600px auto, 600px auto;
     background-position: calc(50% - 300px) bottom, calc(50% + 300px) bottom;
     background-repeat: no-repeat;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 100%, 0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .slideIn {
+    animation: slideIn 0.3s forwards ease-out;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+
+  .slideOut {
+    animation: slideOut 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
   }
 }

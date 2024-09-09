@@ -27,7 +27,6 @@ export const useIntersectionObserver: UseIntersectionObserverType = (
 
   useEffect(() => {
     if (!target) return;
-
     const observer: IntersectionObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -39,7 +38,6 @@ export const useIntersectionObserver: UseIntersectionObserverType = (
             onLeave();
           }
         }
-        // entry.
       },
       {
         root,
@@ -53,7 +51,7 @@ export const useIntersectionObserver: UseIntersectionObserverType = (
     return () => {
       observer.unobserve(target);
     };
-  }, [root, rootMargin, target, threshold, onEnter, onLeave]);
+  }, [root, rootMargin, target, threshold]);
 
   return { setTarget, target };
 };

@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Token from "./Token";
-import { OPEN_VOUCHER, TOT } from "@/src/lib/constants/token";
-import ArrowDownIcon from "@/public/svg/arrow/arrow-down.svg";
-import TransactionDetails from "./TransactionDetails";
-import { TokenType } from "@/src/lib/types/TokenType";
-import { useGetFee } from "@/src/lib/hook/useGetFee";
-import { SwapButton } from "./SwapButton";
+import { useState } from 'react';
+import Token from './Token';
+import { OPEN_VOUCHER, TOT } from '@/src/lib/constants/token';
+import ArrowDownIcon from '@/public/svg/arrow/arrow-down.svg';
+import TransactionDetails from './TransactionDetails';
+import { TokenType } from '@/src/lib/types/TokenType';
+import { useGetFee } from '@/src/lib/hook/useGetFee';
+import { SwapButton } from './SwapButton';
 
 export default function SwapInput() {
-  const [amount, setAmount] = useState<string>("0");
+  const [amount, setAmount] = useState<string>('0');
   const [selectedTokens, setSelectedTokens] = useState<{
     pay: TokenType;
     receive: TokenType;
   }>({ pay: OPEN_VOUCHER, receive: TOT });
   const [isEnoughBalance, setIsEnoughBalance] = useState<boolean>(true);
 
-  const { fee } = useGetFee(selectedTokens.pay.contractAddress);
+  const { fee } = useGetFee(selectedTokens.pay.contractAddress, amount);
 
   return (
     <section className="shadow-customShadow p-6 w-full max-w-[480px] rounded-2xl bg-black-1 z-10">
@@ -37,7 +37,7 @@ export default function SwapInput() {
               pay: prev.receive,
               receive: prev.pay,
             }));
-            setAmount("0");
+            setAmount('0');
           }}
         >
           <ArrowDownIcon />
@@ -50,9 +50,7 @@ export default function SwapInput() {
           isWritable={selectedTokens.receive === OPEN_VOUCHER}
         />
       </section>
-      <TransactionDetails
-        contractAddress={selectedTokens.pay.contractAddress}
-      />
+      <TransactionDetails fee={fee} />
       <SwapButton
         amount={amount}
         fee={fee}

@@ -7,6 +7,7 @@ import {
   useWeb3ModalAccount,
   useSwitchNetwork,
 } from '@web3modal/ethers/react';
+import { KLAYTN } from '@/src/lib/constants/token';
 
 interface SwapButtonProps {
   tokens: { pay: TokenType; receive: TokenType };
@@ -16,25 +17,26 @@ interface SwapButtonProps {
 }
 
 export const SwapButton = ({
- tokens,
- amount,
- fee,
- isEnoughBalance,
+  tokens,
+  amount,
+  fee,
+  isEnoughBalance,
 }: SwapButtonProps) => {
   const { openPopup } = usePopupStore((state) => state);
   const { isConnected } = useWeb3ModalAccount();
   const { open } = useWeb3Modal();
   const { chainId } = useWeb3ModalAccount();
   const { switchNetwork } = useSwitchNetwork();
+  const isAvailableNetwork = chainId === Number(KLAYTN.chainId);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (!isConnected) {
       open();
       return;
     }
 
-    if (chainId !== Number(process.env.NEXT_PUBLIC_KLAYTN_CHAIN_ID)) {
-      switchNetwork(Number(process.env.NEXT_PUBLIC_KLAYTN_CHAIN_ID));
+    if (!isAvailableNetwork) {
+      await switchNetwork(Number(KLAYTN.chainId));
       return;
     }
 
@@ -47,18 +49,22 @@ export const SwapButton = ({
 
   const buttonTitle = () => {
     if (!isConnected) return 'Connect Wallet';
-    if (chainId !== Number(process.env.NEXT_PUBLIC_KLAYTN_CHAIN_ID))
-      return 'Switch the Network';
+    if (chainId !== Number(KLAYTN.chainId)) return 'Switch the Network';
     if (!amount) return 'Enter an amount';
     if (!isEnoughBalance) return 'Insufficient Balance';
     else return 'Swap';
+  };
+
+  const buttonState = () => {
+    if (!isAvailableNetwork || !isConnected) return false;
+    if (!isEnoughBalance || !amount || amount === '0') return true;
   };
 
   return (
     <Button
       onClick={handleButtonClick}
       title={buttonTitle()}
-      disabled={amount === '0' || !isEnoughBalance || !amount}
+      disabled={buttonState()}
       className="bg-purple-500 text-black-1 mt-6"
     />
   );

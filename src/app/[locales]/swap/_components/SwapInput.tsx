@@ -6,10 +6,8 @@ import { OPEN_VOUCHER, TOT } from "@/src/lib/constants/token";
 import ArrowDownIcon from "@/public/svg/arrow/arrow-down.svg";
 import TransactionDetails from "./TransactionDetails";
 import { TokenType } from "@/src/lib/types/TokenType";
-import { usePopupStore } from "@/src/lib/stores/popupStore/PopupStoreProvider";
-import SwapConfirmPopup from "@/src/components/popups/SwapConfirmPoup";
-import Button from "@/src/components/Button";
 import { useGetFee } from "@/src/lib/hook/useGetFee";
+import { SwapButton } from "./SwapButton";
 
 export default function SwapInput() {
   const [amount, setAmount] = useState<string>("0");
@@ -20,13 +18,6 @@ export default function SwapInput() {
   const [isEnoughBalance, setIsEnoughBalance] = useState<boolean>(true);
 
   const { fee } = useGetFee(selectedTokens.pay.contractAddress);
-
-  const { openPopup } = usePopupStore((state) => state);
-  const buttonTitle = () => {
-    if (!amount) return "Enter an amount";
-    if (!isEnoughBalance) return "Insufficient Balance";
-    else return "swap";
-  };
 
   return (
     <section className="shadow-customShadow p-6 w-full max-w-[480px] rounded-2xl bg-black-1 z-10">
@@ -62,17 +53,11 @@ export default function SwapInput() {
       <TransactionDetails
         contractAddress={selectedTokens.pay.contractAddress}
       />
-      <Button
-        onClick={() =>
-          openPopup(SwapConfirmPopup, {
-            tokens: selectedTokens,
-            amount,
-            fee,
-          })
-        }
-        title={buttonTitle()}
-        disabled={!amount || !isEnoughBalance}
-        className="bg-purple-500 text-black-1 mt-6"
+      <SwapButton
+        amount={amount}
+        fee={fee}
+        isEnoughBalance={isEnoughBalance}
+        tokens={selectedTokens}
       />
     </section>
   );

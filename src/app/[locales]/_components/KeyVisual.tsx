@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useIntersectionObserver } from "@/src/lib/hook/useIntersectionObserver";
-import Button from "@/src/components/Button";
-import { useTopbarStore } from "@/src/lib/stores/topbarStore/TopbarStoreProvider";
-import KeyVisualImage from "@/src/assets/image/keyVisual.webp";
-import Image from "next/image";
+import { useIntersectionObserver } from '@/src/lib/hook/useIntersectionObserver';
+import Button from '@/src/components/Button';
+import { useTopbarStore } from '@/src/lib/stores/topbarStore/TopbarStoreProvider';
+import KeyVisualImage from '@/src/assets/image/KeyVisual.webp';
+import Image from 'next/image';
 
 export default function KeyVisual() {
   const { setTarget } = useIntersectionObserver({
-    rootMargin: "0px 0px 0px 0px",
+    rootMargin: '0px 0px 0px 0px',
     threshold: 0.8,
     onEnter: () => setInvert(false),
     onLeave: () => setInvert(true),

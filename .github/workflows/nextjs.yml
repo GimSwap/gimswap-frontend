@@ -1,0 +1,59 @@
+name: GimSwap
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  
+
+      - name: Create diff
+        run: |
+          mkdir -p diff
+          git remote add target https://github.com/GimSwap/gimswap-frontend.git
+          git fetch target dev
+          git diff FETCH_HEAD > diff/changes.diff
+          ls -al diff  # List contents to verify
+          
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          repository: GimSwap/gimswap-frontend
+          token: ${{ secrets.GIMSWAP_GITHUB_TOKEN }}
+          ref: dev
+          path: target-repo  # Check out to a specific subdirectory
+
+      - name: Apply diff
+        run: |
+          cd target-repo  # Navigate to the target directory
+          git apply ../diff/changes.diff || echo "No changes to apply"
+          
+      - name: Commit changes
+        run: |
+          cd target-repo
+          git config --global user.email "admin@gimswap.com"
+          git config --global user.name "GimSwap"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Apply changes from main repo"
+          else
+            echo "No changes to commit"
+          fi
+          
+      - name: Push changes
+        run: |
+          cd target-repo
+          git push origin dev
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIMSWAP_GITHUB_TOKEN }}

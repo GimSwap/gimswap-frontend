@@ -10,7 +10,7 @@ export default function Swap() {
       <main className=" relative pb-[1020px] lg:pb-[1080px] w-full min-h-[100dvh]">
         <section className="pt-20 flex flex-col items-center mx-4relative z-10 absolute w-full">
           <h1 className="font-bold my-2">Swap</h1>
-          <p className="p1">You can swap between $ToT and Open Vouchers.</p>
+          <p className="p1">You can swap between $TOT and Open Vouchers.</p>
           <Link
             href="/"
             className="p1 text-purple-500 underline underline-offset-[2.5px] mb-6"

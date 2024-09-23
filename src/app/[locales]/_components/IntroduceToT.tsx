@@ -1,10 +1,10 @@
-import Image from "next/image";
-import ToTImage from "@/src/assets/image/ToTIcon.webp";
+import Image from 'next/image';
+import ToTImage from '@/src/assets/image/ToTIcon.webp';
 
 export default function IntroduceToT() {
   return (
     <section className="py-[100px]">
-      <h1 className="text-center font-bold mb-6">Introducing $ToT</h1>
+      <h1 className="text-center font-bold mb-6">Introducing $TOT</h1>
       <section className="bg-purple-500 rounded-2xl py-6 px-[30px] relative max-h-fit flex flex-col justify-center items-center lg:flex-row lg:h-[280px] overflow-hidden lg:justify-start">
         <Image
           src={ToTImage}

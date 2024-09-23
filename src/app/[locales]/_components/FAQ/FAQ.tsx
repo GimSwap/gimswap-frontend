@@ -1,9 +1,9 @@
-import Accordion from "@/src/components/Accordion";
+import Accordion from '@/src/components/Accordion';
 
 export default function FAQ() {
   return (
     <section className="w-full rounded-2xl p-6 shadow-customShadow flex flex-col gap-3 mb-[56px]">
-      <Accordion title="What is $ToT?">
+      <Accordion title="What is $TOT?">
         <p className="c1">
           TOT is a Real-World Asset(RWA) backed token issued based on
           Open(Voucher), a voucher that can be exchanged 1:1 with Korean Won.
@@ -52,7 +52,7 @@ export default function FAQ() {
           </li>
         </ul>
       </Accordion>
-      <Accordion title="How the conversion between $ToT and Open(Voucher) work?">
+      <Accordion title="How the conversion between $TOT and Open(Voucher) work?">
         <p className="c1">
           Since the exchange rate between $TOT and Open(Voucher) is 1:1, when
           Open(Voucher) is deposited, $TOT is minted and the Open(Voucher) is

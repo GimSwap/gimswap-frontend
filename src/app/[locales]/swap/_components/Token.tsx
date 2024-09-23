@@ -40,7 +40,7 @@ export default function Token({
 
   const handleMaxButton = () => {
     balance &&
-      setAmount?.(safeCalc.multiply(balance, token.unit).floor().toFixed());
+      setAmount?.(Math.floor(safeCalc.multiply(balance, token.unit) / 10000) * 10000);
   };
 
   useEffect(() => {

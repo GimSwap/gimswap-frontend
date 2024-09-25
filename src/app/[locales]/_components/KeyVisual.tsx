@@ -32,19 +32,14 @@ export default function KeyVisual() {
         <h1 className="text-black-1 text-center mb-2 font-bold max-w-[200px] lg:whitespace-nowrap lg:max-w-[1000px]">
           Real Tokens from Real Assets
         </h1>
-        <p className="p1 text-black-1 text-center mb-6">
-          The Platform for Tokenized
-          <br /> Real-World Assets.
+        <p className="p1 text-black-1 text-center mb-6 max-w-[170px] lg:max-w-[300px]">
+          The Platform for Tokenized Real-World Assets.
         </p>
         <Button
-          title="Join Our Telegram"
+          title="Get Real Tokens"
           className="bg-purple-500 text-black-1"
-          href="https://t.me/gimswap"
-          target="_blank"
+          href="/swap"
         />
-        <p className="p1 text-purple-300 pt-3">
-          Coming Soon - Stay Updated on GimSwap.
-        </p>
       </section>
     </section>
   );

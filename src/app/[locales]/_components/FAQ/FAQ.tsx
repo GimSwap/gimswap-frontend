@@ -1,21 +1,21 @@
-import Accordion from "@/src/components/Accordion";
+import Accordion from '@/src/components/Accordion';
 
 export default function FAQ() {
   return (
     <section className="w-full rounded-2xl p-6 shadow-customShadow flex flex-col gap-3 mb-[56px]">
-      <Accordion title="What is $ToT?">
+      <Accordion title="What is $KRWO?">
         <p className="c1">
-          TOT is a Real-World Asset(RWA) backed token issued based on
+          KRWO is a Real-World Asset(RWA) backed token issued based on
           Open(Voucher), a voucher that can be exchanged 1:1 with Korean Won.
-          $TOT is designed to serve as a bridge between the real world and the
+          $KRWO is designed to serve as a bridge between the real world and the
           Web3 universe.
         </p>
       </Accordion>
-      <Accordion title="Is $TOT a stablecoin?">
+      <Accordion title="Is $KRWO a stablecoin?">
         <p className="c1">
-          $TOT can be conisdered as an asset-backed stable coin, one of the
-          safest types of stablecoins. $TOT is fully backed by real-world
-          assets. You can exchange $TOT for Open(Voucher), which is redeemable
+          $KRWO can be conisdered as an asset-backed stable coin, one of the
+          safest types of stablecoins. $KRWO is fully backed by real-world
+          assets. You can exchange $KRWO for Open(Voucher), which is redeemable
           for Korean Won.
         </p>
       </Accordion>
@@ -47,18 +47,18 @@ export default function FAQ() {
             <span className="font-bold">Purchase from a DEX:</span>
             <br />
             Open(Voucher) is available on decentralized exchanges (DEX) for
-            those without a Korean bank account. You can swap crypto for $TOT
-            and then exchange $TOT for Open(Voucher) on GimSwap.
+            those without a Korean bank account. You can swap crypto for $KRWO
+            and then exchange $KRWO for Open(Voucher) on GimSwap.
           </li>
         </ul>
       </Accordion>
-      <Accordion title="How the conversion between $ToT and Open(Voucher) work?">
+      <Accordion title="How the conversion between $KRWO and Open(Voucher) work?">
         <p className="c1">
-          Since the exchange rate between $TOT and Open(Voucher) is 1:1, when
-          Open(Voucher) is deposited, $TOT is minted and the Open(Voucher) is
-          locked. Conversely, when $TOT is deposited, it is burned, and the
+          Since the exchange rate between $KRWO and Open(Voucher) is 1:1, when
+          Open(Voucher) is deposited, $KRWO is minted and the Open(Voucher) is
+          locked. Conversely, when $KRWO is deposited, it is burned, and the
           corresponding Open(Voucher) is unlocked. This mechanism ensures there
-          is no excess issuance of $TOT.
+          is no excess issuance of $KRWO.
         </p>
       </Accordion>
     </section>

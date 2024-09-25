@@ -1,15 +1,15 @@
-import { EXCHANGE_RATE_DECIMAL_OV_TO_TOT } from "@/src/lib/constants/token";
-import Button from "../Button";
-import PopupTemplate from "../PopupTemplate";
-import { TokenType } from "@/src/lib/types/TokenType";
-import { useSwap } from "@/src/lib/hook/useSwap";
-import { usePopupStore } from "@/src/lib/stores/popupStore/PopupStoreProvider";
-import { useEffect } from "react";
-import SwapLoadingPopup from "./SwapLoadingPopup";
-import SwapSuccessPopup from "./SwapSuccessPopup";
-import SwapErrorPopup from "./SwapErrorPopup";
-import { safeCalc } from "@/src/lib/utils/safeCalc";
-import { insertComma } from "@/src/lib/utils/insertComma";
+import { EXCHANGE_RATE_DECIMAL_OV_TO_KRWO } from '@/src/lib/constants/token';
+import Button from '../Button';
+import PopupTemplate from '../PopupTemplate';
+import { TokenType } from '@/src/lib/types/TokenType';
+import { useSwap } from '@/src/lib/hook/useSwap';
+import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
+import { useEffect } from 'react';
+import SwapLoadingPopup from './SwapLoadingPopup';
+import SwapSuccessPopup from './SwapSuccessPopup';
+import SwapErrorPopup from './SwapErrorPopup';
+import { safeCalc } from '@/src/lib/utils/safeCalc';
+import { insertComma } from '@/src/lib/utils/insertComma';
 
 interface SwapConfirmPopupProps {
   open: boolean;
@@ -76,7 +76,7 @@ export default function SwapConfirmPopup({
               )} ${tokens.pay.name}`}
             </h3>
             <p className="c1 stroke-black-8">
-              {`₩ ${BigInt(amount).toLocaleString("ko-kr", {
+              {`₩ ${BigInt(amount).toLocaleString('ko-kr', {
                 maximumFractionDigits: 14,
               })}`}
             </p>
@@ -88,7 +88,7 @@ export default function SwapConfirmPopup({
               )} ${tokens.receive.name}`}
             </h3>
             <p className="c1 text-black-8">
-              {`₩ ${BigInt(amount).toLocaleString("ko-kr", {
+              {`₩ ${BigInt(amount).toLocaleString('ko-kr', {
                 maximumFractionDigits: 14,
               })}`}
             </p>
@@ -98,16 +98,16 @@ export default function SwapConfirmPopup({
               <p className="c1 font-medium">Rate</p>
               <p className="c1 font-medium">
                 {`1 ${tokens.pay.name} = ${insertComma(
-                  safeCalc.pow(10, EXCHANGE_RATE_DECIMAL_OV_TO_TOT).toFixed(),
+                  safeCalc.pow(10, EXCHANGE_RATE_DECIMAL_OV_TO_KRWO).toFixed(),
                 )} ${tokens.receive.name}`}
               </p>
             </div>
             <div className="flex flex-row justify-between py-1">
               <p className="c1 font-medium">
-                GimSwap Fee ({fee ? fee.toFixed(2) : "0.00"}%)
+                GimSwap Fee ({fee ? fee.toFixed(2) : '0.00'}%)
               </p>
-              <p className={`c1 font-medium ${fee === 0 && "text-purple-500"}`}>
-                {fee === 0 ? "Free" : fee}
+              <p className={`c1 font-medium ${fee === 0 && 'text-purple-500'}`}>
+                {fee === 0 ? 'Free' : fee}
               </p>
             </div>
           </section>

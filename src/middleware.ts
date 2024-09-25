@@ -1,14 +1,14 @@
-import createMiddleware from "next-intl/middleware";
-import { locales } from "./i18n";
+import createMiddleware from 'next-intl/middleware';
+import { locales } from './i18n';
 
 export default createMiddleware({
   locales,
-  defaultLocale: "en",
+  defaultLocale: 'en',
 });
 export const config = {
   matcher: [
-    "/",
-    "/(en)/:path*",
-    "/((?!api|_next/static|_next/image|images|svg|favicon.ico|.*\\.avif$).*)",
+    '/',
+    '/(en)/:path*',
+    '/((?!api|_next/static|_next/image|images|svg|favicon.ico|.*\\.avif$).*)',
   ],
 };

@@ -1,223 +1,357 @@
+diff --git a/.github/workflows/nextjs.yml b/.github/workflows/nextjs.yml
+index 86875d8..4cbd66b 100644
+--- a/.github/workflows/nextjs.yml
++++ b/.github/workflows/nextjs.yml
+@@ -23,10 +23,10 @@ jobs:
+           mkdir -p diff
+           git remote add target https://github.com/GimSwap/gimswap-frontend.git
+           git fetch target dev
+-          git diff FETCH_HEAD > diff/changes.diff
++          git diff FETCH_HEAD > $GITHUB_WORKSPACE/diff/changes.diff
+ 
+       - name: Backup diff
+-        run: cp diff/changes.diff $HOME/changes.diff
++        run: cp $GITHUB_WORKSPACE/diff/changes.diff $HOME/changes.diff
+ 
+       - name: Checkout target repo
+         uses: actions/checkout@v4
+@@ -34,16 +34,22 @@ jobs:
+           repository: GimSwap/gimswap-frontend
+           token: ${{ secrets.GIMSWAP_GITHUB_TOKEN }}
+           ref: dev
++          fetch-depth: 0
+ 
+       - name: Restore diff
+         run: |
+           mkdir -p diff
+-          mv $HOME/changes.diff ./diff/changes.diff
++          mv $HOME/changes.diff $GITHUB_WORKSPACE/diff/changes.diff
++
++      - name: Convert line endings
++        run: |
++          sed -i 's/\r$//' $GITHUB_WORKSPACE/diff/changes.diff
+ 
+       - name: Apply diff
+         run: |
+-          git apply diff/changes.diff || echo "No changes to apply"
+-          
++          git apply --check $GITHUB_WORKSPACE/diff/changes.diff || echo "적용할 변경 사항이 없습니다."
++          git apply $GITHUB_WORKSPACE/diff/changes.diff || echo "적용할 변경 사항이 없습니다."
++
+       - name: Commit changes
+         run: |
+           git config --global user.email "admin@gimswap.com"
 diff --git a/diff/changes.diff b/diff/changes.diff
 deleted file mode 100644
-index fc25096..0000000
+index 0365de6..0000000
 --- a/diff/changes.diff
 +++ /dev/null
-@@ -1,299 +0,0 @@
+@@ -1,390 +0,0 @@
 -diff --git a/diff/changes.diff b/diff/changes.diff
 -deleted file mode 100644
--index 7a65085..0000000
+-index fc25096..0000000
 ---- a/diff/changes.diff
 -+++ /dev/null
--@@ -1,208 +0,0 @@
---diff --git a/.env b/.env
---index dee9c23..0cdf539 100644
------ a/.env
---+++ b/.env
---@@ -1,3 +1,3 @@
--- NEXT_PUBLIC_PROJECT_ID=428608266ab21522b57169631c22eff6
--- NEXT_PUBLIC_GA_ID=G-6D7XE5VY5Y
----NEXT_PUBLIC_GTM_ID=GTM-NV635GKQ
---+NEXT_PUBLIC_GTM_ID=GTM-NV635GKQ
---\ No newline at end of file
---diff --git a/.github/workflows/nextjs.yml b/.github/workflows/nextjs.yml
---index b1bdfb5..86875d8 100644
------ a/.github/workflows/nextjs.yml
---+++ b/.github/workflows/nextjs.yml
---@@ -16,7 +16,7 @@ jobs:
---       - name: Checkout current repo
---         uses: actions/checkout@v4
---         with:
----          fetch-depth: 0  
---+          fetch-depth: 0
--- 
---       - name: Create diff
---         run: |
---@@ -24,24 +24,28 @@ jobs:
---           git remote add target https://github.com/GimSwap/gimswap-frontend.git
---           git fetch target dev
---           git diff FETCH_HEAD > diff/changes.diff
----          ls -al diff  # List contents to verify
----          
---+
---+      - name: Backup diff
---+        run: cp diff/changes.diff $HOME/changes.diff
---+
---       - name: Checkout target repo
---         uses: actions/checkout@v4
---         with:
---           repository: GimSwap/gimswap-frontend
---           token: ${{ secrets.GIMSWAP_GITHUB_TOKEN }}
---           ref: dev
----          path: target-repo  # Check out to a specific subdirectory
---+
---+      - name: Restore diff
---+        run: |
---+          mkdir -p diff
---+          mv $HOME/changes.diff ./diff/changes.diff
--- 
---       - name: Apply diff
---         run: |
----          cd target-repo  # Navigate to the target directory
----          git apply ../diff/changes.diff || echo "No changes to apply"
---+          git apply diff/changes.diff || echo "No changes to apply"
---           
---       - name: Commit changes
---         run: |
----          cd target-repo
---           git config --global user.email "admin@gimswap.com"
---           git config --global user.name "GimSwap"
---           if [ -n "$(git status --porcelain)" ]; then
---@@ -50,10 +54,8 @@ jobs:
---           else
---             echo "No changes to commit"
---           fi
----          
---+
---       - name: Push changes
----        run: |
----          cd target-repo
----          git push origin dev
---+        run: git push origin dev
---         env:
---           GITHUB_TOKEN: ${{ secrets.GIMSWAP_GITHUB_TOKEN }}
---diff --git a/.gitignore b/.gitignore
---index f4e0152..f8ad509 100644
------ a/.gitignore
---+++ b/.gitignore
---@@ -37,4 +37,4 @@ next-env.d.ts
--- 
--- .idea
--- 
----.prettierrc
---+.prettierrc
---\ No newline at end of file
---diff --git a/src/app/[locales]/_components/FAQ/FAQ.tsx b/src/app/[locales]/_components/FAQ/FAQ.tsx
---index 2570411..dacaeae 100644
------ a/src/app/[locales]/_components/FAQ/FAQ.tsx
---+++ b/src/app/[locales]/_components/FAQ/FAQ.tsx
---@@ -1,9 +1,9 @@
----import Accordion from "@/src/components/Accordion";
---+import Accordion from '@/src/components/Accordion';
--- 
--- export default function FAQ() {
---   return (
---     <section className="w-full rounded-2xl p-6 shadow-customShadow flex flex-col gap-3 mb-[56px]">
----      <Accordion title="What is $ToT?">
---+      <Accordion title="What is $TOT?">
---         <p className="c1">
---           TOT is a Real-World Asset(RWA) backed token issued based on
---           Open(Voucher), a voucher that can be exchanged 1:1 with Korean Won.
---@@ -52,7 +52,7 @@ export default function FAQ() {
---           </li>
---         </ul>
---       </Accordion>
----      <Accordion title="How the conversion between $ToT and Open(Voucher) work?">
---+      <Accordion title="How the conversion between $TOT and Open(Voucher) work?">
---         <p className="c1">
---           Since the exchange rate between $TOT and Open(Voucher) is 1:1, when
---           Open(Voucher) is deposited, $TOT is minted and the Open(Voucher) is
---diff --git a/src/app/[locales]/_components/IntroduceToT.tsx b/src/app/[locales]/_components/IntroduceToT.tsx
---index 7ee6f6b..bde888d 100644
------ a/src/app/[locales]/_components/IntroduceToT.tsx
---+++ b/src/app/[locales]/_components/IntroduceToT.tsx
---@@ -1,10 +1,10 @@
----import Image from "next/image";
----import ToTImage from "@/src/assets/image/ToTIcon.webp";
---+import Image from 'next/image';
---+import ToTImage from '@/src/assets/image/ToTIcon.webp';
--- 
--- export default function IntroduceToT() {
---   return (
---     <section className="py-[100px]">
----      <h1 className="text-center font-bold mb-6">Introducing $ToT</h1>
---+      <h1 className="text-center font-bold mb-6">Introducing $TOT</h1>
---       <section className="bg-purple-500 rounded-2xl py-6 px-[30px] relative max-h-fit flex flex-col justify-center items-center lg:flex-row lg:h-[280px] overflow-hidden lg:justify-start">
---         <Image
---           src={ToTImage}
---diff --git a/src/app/[locales]/_components/KeyVisual.tsx b/src/app/[locales]/_components/KeyVisual.tsx
---index 3671801..cf9a3be 100644
------ a/src/app/[locales]/_components/KeyVisual.tsx
---+++ b/src/app/[locales]/_components/KeyVisual.tsx
---@@ -32,19 +32,14 @@ export default function KeyVisual() {
---         <h1 className="text-black-1 text-center mb-2 font-bold max-w-[200px] lg:whitespace-nowrap lg:max-w-[1000px]">
---           Real Tokens from Real Assets
---         </h1>
----        <p className="p1 text-black-1 text-center mb-6">
----          The Platform for Tokenized
----          <br /> Real-World Assets.
---+        <p className="p1 text-black-1 text-center mb-6 max-w-[170px] lg:max-w-[300px]">
---+          The Platform for Tokenized Real-World Assets.
---         </p>
---         <Button
----          title="Join Our Telegram"
---+          title="Get Real Tokens"
---           className="bg-purple-500 text-black-1"
----          href="https://t.me/gimswap"
----          target="_blank"
---+          href="/swap"
---         />
----        <p className="p1 text-purple-300 pt-3">
----          Coming Soon - Stay Updated on GimSwap.
----        </p>
---       </section>
---     </section>
---   );
+-@@ -1,299 +0,0 @@
+--diff --git a/diff/changes.diff b/diff/changes.diff
+--deleted file mode 100644
+--index 7a65085..0000000
+----- a/diff/changes.diff
+--+++ /dev/null
+--@@ -1,208 +0,0 @@
+---diff --git a/.env b/.env
+---index dee9c23..0cdf539 100644
+------ a/.env
+---+++ b/.env
+---@@ -1,3 +1,3 @@
+--- NEXT_PUBLIC_PROJECT_ID=428608266ab21522b57169631c22eff6
+--- NEXT_PUBLIC_GA_ID=G-6D7XE5VY5Y
+----NEXT_PUBLIC_GTM_ID=GTM-NV635GKQ
+---+NEXT_PUBLIC_GTM_ID=GTM-NV635GKQ
+---\ No newline at end of file
+---diff --git a/.github/workflows/nextjs.yml b/.github/workflows/nextjs.yml
+---index b1bdfb5..86875d8 100644
+------ a/.github/workflows/nextjs.yml
+---+++ b/.github/workflows/nextjs.yml
+---@@ -16,7 +16,7 @@ jobs:
+---       - name: Checkout current repo
+---         uses: actions/checkout@v4
+---         with:
+----          fetch-depth: 0  
+---+          fetch-depth: 0
+--- 
+---       - name: Create diff
+---         run: |
+---@@ -24,24 +24,28 @@ jobs:
+---           git remote add target https://github.com/GimSwap/gimswap-frontend.git
+---           git fetch target dev
+---           git diff FETCH_HEAD > diff/changes.diff
+----          ls -al diff  # List contents to verify
+----          
+---+
+---+      - name: Backup diff
+---+        run: cp diff/changes.diff $HOME/changes.diff
+---+
+---       - name: Checkout target repo
+---         uses: actions/checkout@v4
+---         with:
+---           repository: GimSwap/gimswap-frontend
+---           token: ${{ secrets.GIMSWAP_GITHUB_TOKEN }}
+---           ref: dev
+----          path: target-repo  # Check out to a specific subdirectory
+---+
+---+      - name: Restore diff
+---+        run: |
+---+          mkdir -p diff
+---+          mv $HOME/changes.diff ./diff/changes.diff
+--- 
+---       - name: Apply diff
+---         run: |
+----          cd target-repo  # Navigate to the target directory
+----          git apply ../diff/changes.diff || echo "No changes to apply"
+---+          git apply diff/changes.diff || echo "No changes to apply"
+---           
+---       - name: Commit changes
+---         run: |
+----          cd target-repo
+---           git config --global user.email "admin@gimswap.com"
+---           git config --global user.name "GimSwap"
+---           if [ -n "$(git status --porcelain)" ]; then
+---@@ -50,10 +54,8 @@ jobs:
+---           else
+---             echo "No changes to commit"
+---           fi
+----          
+---+
+---       - name: Push changes
+----        run: |
+----          cd target-repo
+----          git push origin dev
+---+        run: git push origin dev
+---         env:
+---           GITHUB_TOKEN: ${{ secrets.GIMSWAP_GITHUB_TOKEN }}
+---diff --git a/.gitignore b/.gitignore
+---index f4e0152..f8ad509 100644
+------ a/.gitignore
+---+++ b/.gitignore
+---@@ -37,4 +37,4 @@ next-env.d.ts
+--- 
+--- .idea
+--- 
+----.prettierrc
+---+.prettierrc
+---\ No newline at end of file
+---diff --git a/src/app/[locales]/_components/FAQ/FAQ.tsx b/src/app/[locales]/_components/FAQ/FAQ.tsx
+---index 2570411..dacaeae 100644
+------ a/src/app/[locales]/_components/FAQ/FAQ.tsx
+---+++ b/src/app/[locales]/_components/FAQ/FAQ.tsx
+---@@ -1,9 +1,9 @@
+----import Accordion from "@/src/components/Accordion";
+---+import Accordion from '@/src/components/Accordion';
+--- 
+--- export default function FAQ() {
+---   return (
+---     <section className="w-full rounded-2xl p-6 shadow-customShadow flex flex-col gap-3 mb-[56px]">
+----      <Accordion title="What is $ToT?">
+---+      <Accordion title="What is $TOT?">
+---         <p className="c1">
+---           TOT is a Real-World Asset(RWA) backed token issued based on
+---           Open(Voucher), a voucher that can be exchanged 1:1 with Korean Won.
+---@@ -52,7 +52,7 @@ export default function FAQ() {
+---           </li>
+---         </ul>
+---       </Accordion>
+----      <Accordion title="How the conversion between $ToT and Open(Voucher) work?">
+---+      <Accordion title="How the conversion between $TOT and Open(Voucher) work?">
+---         <p className="c1">
+---           Since the exchange rate between $TOT and Open(Voucher) is 1:1, when
+---           Open(Voucher) is deposited, $TOT is minted and the Open(Voucher) is
+---diff --git a/src/app/[locales]/_components/IntroduceToT.tsx b/src/app/[locales]/_components/IntroduceToT.tsx
+---index 7ee6f6b..bde888d 100644
+------ a/src/app/[locales]/_components/IntroduceToT.tsx
+---+++ b/src/app/[locales]/_components/IntroduceToT.tsx
+---@@ -1,10 +1,10 @@
+----import Image from "next/image";
+----import ToTImage from "@/src/assets/image/ToTIcon.webp";
+---+import Image from 'next/image';
+---+import ToTImage from '@/src/assets/image/ToTIcon.webp';
+--- 
+--- export default function IntroduceToT() {
+---   return (
+---     <section className="py-[100px]">
+----      <h1 className="text-center font-bold mb-6">Introducing $ToT</h1>
+---+      <h1 className="text-center font-bold mb-6">Introducing $TOT</h1>
+---       <section className="bg-purple-500 rounded-2xl py-6 px-[30px] relative max-h-fit flex flex-col justify-center items-center lg:flex-row lg:h-[280px] overflow-hidden lg:justify-start">
+---         <Image
+---           src={ToTImage}
+---diff --git a/src/app/[locales]/_components/KeyVisual.tsx b/src/app/[locales]/_components/KeyVisual.tsx
+---index 3671801..cf9a3be 100644
+------ a/src/app/[locales]/_components/KeyVisual.tsx
+---+++ b/src/app/[locales]/_components/KeyVisual.tsx
+---@@ -32,19 +32,14 @@ export default function KeyVisual() {
+---         <h1 className="text-black-1 text-center mb-2 font-bold max-w-[200px] lg:whitespace-nowrap lg:max-w-[1000px]">
+---           Real Tokens from Real Assets
+---         </h1>
+----        <p className="p1 text-black-1 text-center mb-6">
+----          The Platform for Tokenized
+----          <br /> Real-World Assets.
+---+        <p className="p1 text-black-1 text-center mb-6 max-w-[170px] lg:max-w-[300px]">
+---+          The Platform for Tokenized Real-World Assets.
+---         </p>
+---         <Button
+----          title="Join Our Telegram"
+---+          title="Get Real Tokens"
+---           className="bg-purple-500 text-black-1"
+----          href="https://t.me/gimswap"
+----          target="_blank"
+---+          href="/swap"
+---         />
+----        <p className="p1 text-purple-300 pt-3">
+----          Coming Soon - Stay Updated on GimSwap.
+----        </p>
+---       </section>
+---     </section>
+---   );
+---diff --git a/src/app/[locales]/swap/_components/Token.tsx b/src/app/[locales]/swap/_components/Token.tsx
+---index fb50f1f..3f26fda 100644
+------ a/src/app/[locales]/swap/_components/Token.tsx
+---+++ b/src/app/[locales]/swap/_components/Token.tsx
+---@@ -40,7 +40,7 @@ export default function Token({
+--- 
+---   const handleMaxButton = () => {
+---     balance &&
+----      setAmount?.(safeCalc.multiply(balance, token.unit).floor().toFixed());
+---+      setAmount?.(Math.floor(safeCalc.multiply(balance, token.unit) / 10000) * 10000);
+---   };
+--- 
+---   useEffect(() => {
+---diff --git a/src/app/[locales]/swap/page.tsx b/src/app/[locales]/swap/page.tsx
+---index e3e9e80..a8cdef7 100644
+------ a/src/app/[locales]/swap/page.tsx
+---+++ b/src/app/[locales]/swap/page.tsx
+---@@ -10,7 +10,7 @@ export default function Swap() {
+---       <main className=" relative pb-[1020px] lg:pb-[1080px] w-full min-h-[100dvh]">
+---         <section className="pt-20 flex flex-col items-center mx-4relative z-10 absolute w-full">
+---           <h1 className="font-bold my-2">Swap</h1>
+----          <p className="p1">You can swap between $ToT and Open Vouchers.</p>
+---+          <p className="p1">You can swap between $TOT and Open Vouchers.</p>
+---           <Link
+---             href="/"
+---             className="p1 text-purple-500 underline underline-offset-[2.5px] mb-6"
+---diff --git a/src/components/Accordion.tsx b/src/components/Accordion.tsx
+---index 1b724ac..e0313c2 100644
+------ a/src/components/Accordion.tsx
+---+++ b/src/components/Accordion.tsx
+---@@ -1,7 +1,7 @@
+----"use client";
+---+'use client';
+--- 
+----import { useState } from "react";
+----import ChevronUpIcon from "@/public/svg/chevron/up.svg";
+---+import { useState } from 'react';
+---+import ChevronUpIcon from '@/public/svg/chevron/up.svg';
+--- 
+--- interface AccordionProps {
+---   title: string;
+---@@ -19,11 +19,11 @@ export default function Accordion({ title, children, opened }: AccordionProps) {
+---       <div className="flex items-center justify-between mb-2 cursor-pointer">
+---         <p className="font-medium">{title}</p>
+---         <ChevronUpIcon
+----          className={`${open ? "rotate-180" : "rotate-0"} min-w-5`}
+---+          className={`${open ? 'rotate-0' : 'rotate-180'} min-w-5`}
+---         />
+---       </div>
+---       <div
+----        style={{ maxHeight: open ? "500px" : "0px" }}
+---+        style={{ maxHeight: open ? '500px' : '0px' }}
+---         className="transition-max-height duration-200 ease-in-out"
+---       >
+---         {children}
 --diff --git a/src/app/[locales]/swap/_components/Token.tsx b/src/app/[locales]/swap/_components/Token.tsx
---index fb50f1f..3f26fda 100644
+--index 3f26fda..6f68b3d 100644
 ----- a/src/app/[locales]/swap/_components/Token.tsx
 --+++ b/src/app/[locales]/swap/_components/Token.tsx
---@@ -40,7 +40,7 @@ export default function Token({
+--@@ -39,8 +39,14 @@ export default function Token({
+--   });
 -- 
 --   const handleMaxButton = () => {
---     balance &&
----      setAmount?.(safeCalc.multiply(balance, token.unit).floor().toFixed());
---+      setAmount?.(Math.floor(safeCalc.multiply(balance, token.unit) / 10000) * 10000);
+---    balance &&
+---      setAmount?.(Math.floor(safeCalc.multiply(balance, token.unit) / 10000) * 10000);
+--+    if (!balance || !setAmount) return;
+--+
+--+    const multipliedBalance = safeCalc.multiply(balance, token.unit);
+--+    const asDecimal = safeCalc.divide(multipliedBalance.toFixed(), 10000);
+--+
+--+    const truncatedAmount = Math.floor(Number(asDecimal));
+--+
+--+    setAmount(safeCalc.multiply(truncatedAmount, 10000).toFixed());
 --   };
 -- 
 --   useEffect(() => {
---diff --git a/src/app/[locales]/swap/page.tsx b/src/app/[locales]/swap/page.tsx
---index e3e9e80..a8cdef7 100644
------ a/src/app/[locales]/swap/page.tsx
---+++ b/src/app/[locales]/swap/page.tsx
---@@ -10,7 +10,7 @@ export default function Swap() {
---       <main className=" relative pb-[1020px] lg:pb-[1080px] w-full min-h-[100dvh]">
---         <section className="pt-20 flex flex-col items-center mx-4relative z-10 absolute w-full">
---           <h1 className="font-bold my-2">Swap</h1>
----          <p className="p1">You can swap between $ToT and Open Vouchers.</p>
---+          <p className="p1">You can swap between $TOT and Open Vouchers.</p>
---           <Link
---             href="/"
---             className="p1 text-purple-500 underline underline-offset-[2.5px] mb-6"
---diff --git a/src/components/Accordion.tsx b/src/components/Accordion.tsx
---index 1b724ac..e0313c2 100644
------ a/src/components/Accordion.tsx
---+++ b/src/components/Accordion.tsx
---@@ -1,7 +1,7 @@
----"use client";
---+'use client';
+--diff --git a/src/lib/hook/useGetBalance.tsx b/src/lib/hook/useGetBalance.tsx
+--index 452b6a9..3d97cca 100644
+----- a/src/lib/hook/useGetBalance.tsx
+--+++ b/src/lib/hook/useGetBalance.tsx
+--@@ -1,10 +1,11 @@
+-- import {
+--   useWeb3ModalAccount,
+--   useWeb3ModalProvider,
+---} from "@web3modal/ethers/react";
+---import { BrowserProvider, ethers } from "ethers";
+---import { useEffect, useState } from "react";
+---import getBalanceAbi from "@/src/lib/utils/abis/getERC20Balance.json";
+--+} from '@web3modal/ethers/react';
+--+import { BrowserProvider, ethers } from 'ethers';
+--+import { useEffect, useState } from 'react';
+--+import getBalanceAbi from '@/src/lib/utils/abis/getERC20Balance.json';
+--+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 -- 
----import { useState } from "react";
----import ChevronUpIcon from "@/public/svg/chevron/up.svg";
---+import { useState } from 'react';
---+import ChevronUpIcon from '@/public/svg/chevron/up.svg';
+-- interface GetBalanceProps {
+--   contractAddress: string;
+--@@ -15,10 +16,16 @@ export const getBalance = ({ contractAddress, decimal }: GetBalanceProps) => {
+--   const [balance, setBalance] = useState<string | null>(null);
+--   const { walletProvider } = useWeb3ModalProvider();
+--   const { address: walletAddress } = useWeb3ModalAccount();
+--+  const { chainId } = useWeb3ModalAccount();
 -- 
--- interface AccordionProps {
---   title: string;
---@@ -19,11 +19,11 @@ export default function Accordion({ title, children, opened }: AccordionProps) {
---       <div className="flex items-center justify-between mb-2 cursor-pointer">
---         <p className="font-medium">{title}</p>
---         <ChevronUpIcon
----          className={`${open ? "rotate-180" : "rotate-0"} min-w-5`}
---+          className={`${open ? 'rotate-0' : 'rotate-180'} min-w-5`}
---         />
---       </div>
---       <div
----        style={{ maxHeight: open ? "500px" : "0px" }}
---+        style={{ maxHeight: open ? '500px' : '0px' }}
---         className="transition-max-height duration-200 ease-in-out"
---       >
---         {children}
+--   useEffect(() => {
+--     (async () => {
+---      if (!walletProvider) return;
+--+      if (
+--+        !walletProvider ||
+--+        !contractAddress ||
+--+        !checkIsAvailableChain(chainId)
+--+      )
+--+        return;
+-- 
+--       const provider = new BrowserProvider(walletProvider);
+--       const signer = await provider.getSigner();
+--@@ -29,10 +36,11 @@ export const getBalance = ({ contractAddress, decimal }: GetBalanceProps) => {
+--         signer,
+--       );
+--       const balance = await contract.balanceOf(walletAddress);
+---
+--       setBalance(ethers.formatUnits(balance, decimal));
+--     })();
+---  }, [walletProvider, contractAddress]);
+--+
+--+    return () => setBalance(null);
+--+  }, [walletProvider, contractAddress, chainId]);
+-- 
+--   return { balance };
+-- };
+--diff --git a/src/lib/utils/checkIsAvailableChain.ts b/src/lib/utils/checkIsAvailableChain.ts
+--new file mode 100644
+--index 0000000..c990545
+----- /dev/null
+--+++ b/src/lib/utils/checkIsAvailableChain.ts
+--@@ -0,0 +1,6 @@
+--+const availableChain = [Number(process.env.NEXT_PUBLIC_KLAYTN_CHAIN_ID)];
+--+
+--+export const checkIsAvailableChain = (chainId: number | undefined) => {
+--+  if (!chainId) return false;
+--+  return availableChain.includes(chainId);
+--+};
 -diff --git a/src/app/[locales]/swap/_components/Token.tsx b/src/app/[locales]/swap/_components/Token.tsx
 -index 3f26fda..6f68b3d 100644
 ---- a/src/app/[locales]/swap/_components/Token.tsx

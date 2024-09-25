@@ -1,4 +1,4 @@
-import { OPEN_VOUCHER, TOT } from '@/src/lib/constants/token';
+import { OPEN_VOUCHER, KRWO } from '@/src/lib/constants/token';
 import { getBalance } from '@/src/lib/hook/useGetBalance';
 import { useEffect } from 'react';
 import { insertComma } from '@/src/lib/utils/insertComma';
@@ -8,7 +8,7 @@ interface TokenProps {
   type: 'pay' | 'receive';
   amount: string;
   setAmount?: React.Dispatch<React.SetStateAction<string>>;
-  token: typeof OPEN_VOUCHER | typeof TOT;
+  token: typeof OPEN_VOUCHER | typeof KRWO;
   isWritable: boolean;
   setIsEnoughBalance?: React.Dispatch<React.SetStateAction<boolean>>;
 }

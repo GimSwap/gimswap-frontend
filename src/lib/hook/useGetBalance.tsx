@@ -19,7 +19,6 @@ export const getBalance = ({ contractAddress, decimal }: GetBalanceProps) => {
   const { chainId } = useWeb3ModalAccount();
 
   useEffect(() => {
-    console.log(!checkIsAvailableChain(chainId));
     (async () => {
       if (
         !walletProvider ||
@@ -37,7 +36,6 @@ export const getBalance = ({ contractAddress, decimal }: GetBalanceProps) => {
         signer,
       );
       const balance = await contract.balanceOf(walletAddress);
-      console.log(balance, decimal);
       setBalance(ethers.formatUnits(balance, decimal));
     })();
 

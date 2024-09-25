@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import ChevronRightIcon from "@/public/svg/chevron/right.svg";
-import OpenVoucherIcon from "@/public/svg/token/open-voucher-border.svg";
-import { useAddToken } from "@/src/lib/hook/useAddToken";
-import { OPEN_VOUCHER, TOT } from "@/src/lib/constants/token";
+import ChevronRightIcon from '@/public/svg/chevron/right.svg';
+import OpenVoucherIcon from '@/public/svg/token/open-voucher-border.svg';
+import { useAddToken } from '@/src/lib/hook/useAddToken';
+import { OPEN_VOUCHER, KRWO } from '@/src/lib/constants/token';
 
 export default function AddTokens() {
   const { addToken } = useAddToken();
@@ -15,9 +15,9 @@ export default function AddTokens() {
       symbol: OPEN_VOUCHER.symbol,
     });
     addToken({
-      address: TOT.contractAddress,
-      image: TOT.imageUrl,
-      symbol: TOT.symbol,
+      address: KRWO.contractAddress,
+      image: KRWO.imageUrl,
+      symbol: KRWO.symbol,
     });
   };
 
@@ -30,7 +30,7 @@ export default function AddTokens() {
         <h5 className="font-medium text-black-8">Add Token to Wallet</h5>
         <div className="relative flex flex-row items-center">
           <OpenVoucherIcon className="z-10" />
-          <TOT.icon className="-translate-x-1" />
+          <KRWO.icon className="-translate-x-1" />
         </div>
       </div>
       <ChevronRightIcon />

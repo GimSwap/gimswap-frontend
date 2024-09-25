@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Token from './Token';
-import { OPEN_VOUCHER, TOT } from '@/src/lib/constants/token';
+import { OPEN_VOUCHER, KRWO } from '@/src/lib/constants/token';
 import ArrowDownIcon from '@/public/svg/arrow/arrow-down.svg';
 import TransactionDetails from './TransactionDetails';
 import { TokenType } from '@/src/lib/types/TokenType';
@@ -14,7 +14,7 @@ export default function SwapInput() {
   const [selectedTokens, setSelectedTokens] = useState<{
     pay: TokenType;
     receive: TokenType;
-  }>({ pay: OPEN_VOUCHER, receive: TOT });
+  }>({ pay: OPEN_VOUCHER, receive: KRWO });
   const [isEnoughBalance, setIsEnoughBalance] = useState<boolean>(true);
 
   const { fee } = useGetFee(selectedTokens.pay.contractAddress, amount);

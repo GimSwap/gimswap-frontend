@@ -1,0 +1,56 @@
+diff --git a/.github/workflows/nextjs.yml b/.github/workflows/nextjs.yml
+index 86875d8..4cbd66b 100644
+--- a/.github/workflows/nextjs.yml
++++ b/.github/workflows/nextjs.yml
+@@ -23,10 +23,10 @@ jobs:
+           mkdir -p diff
+           git remote add target https://github.com/GimSwap/gimswap-frontend.git
+           git fetch target dev
+-          git diff FETCH_HEAD > diff/changes.diff
++          git diff FETCH_HEAD > $GITHUB_WORKSPACE/diff/changes.diff
+ 
+       - name: Backup diff
+-        run: cp diff/changes.diff $HOME/changes.diff
++        run: cp $GITHUB_WORKSPACE/diff/changes.diff $HOME/changes.diff
+ 
+       - name: Checkout target repo
+         uses: actions/checkout@v4
+@@ -34,16 +34,22 @@ jobs:
+           repository: GimSwap/gimswap-frontend
+           token: ${{ secrets.GIMSWAP_GITHUB_TOKEN }}
+           ref: dev
++          fetch-depth: 0
+ 
+       - name: Restore diff
+         run: |
+           mkdir -p diff
+-          mv $HOME/changes.diff ./diff/changes.diff
++          mv $HOME/changes.diff $GITHUB_WORKSPACE/diff/changes.diff
++
++      - name: Convert line endings
++        run: |
++          sed -i 's/\r$//' $GITHUB_WORKSPACE/diff/changes.diff
+ 
+       - name: Apply diff
+         run: |
+-          git apply diff/changes.diff || echo "No changes to apply"
+-          
++          git apply --check $GITHUB_WORKSPACE/diff/changes.diff || echo "적용할 변경 사항이 없습니다."
++          git apply $GITHUB_WORKSPACE/diff/changes.diff || echo "적용할 변경 사항이 없습니다."
++
+       - name: Commit changes
+         run: |
+           git config --global user.email "admin@gimswap.com"
+diff --git a/src/app/[locales]/_components/KeyVisual.tsx b/src/app/[locales]/_components/KeyVisual.tsx
+index cf9a3be..a81de4f 100644
+--- a/src/app/[locales]/_components/KeyVisual.tsx
++++ b/src/app/[locales]/_components/KeyVisual.tsx
+@@ -24,7 +24,7 @@ export default function KeyVisual() {
+         <Image
+           src={KeyVisualImage}
+           alt="key-visual"
+-          className="w-[345px] h-[auto] rotate-[20deg] lg:w-[auto] lg:h-[90%] lg:max-w-[38vw] lg:ml-[91px] max-w-[750px] -translate-y-6 lg:translate-y-0 lg:translate-x-20"
++          className="w-[345px] h-[auto] lg:w-[auto] lg:h-[90%] lg:max-w-[38vw] lg:ml-[91px] max-w-[750px] -translate-y-6 lg:translate-y-0 lg:translate-x-20"
+           priority
+         />
+       </section>

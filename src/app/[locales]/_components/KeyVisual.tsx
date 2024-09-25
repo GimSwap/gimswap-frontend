@@ -24,7 +24,7 @@ export default function KeyVisual() {
         <Image
           src={KeyVisualImage}
           alt="key-visual"
-          className="w-[345px] h-[auto] rotate-[20deg] lg:w-[auto] lg:h-[90%] lg:max-w-[38vw] lg:ml-[91px] max-w-[750px] -translate-y-6 lg:translate-y-0 lg:translate-x-20"
+          className="w-[345px] h-[auto] lg:w-[auto] lg:h-[90%] lg:max-w-[38vw] lg:ml-[91px] max-w-[750px] -translate-y-6 lg:translate-y-0 lg:translate-x-20"
           priority
         />
       </section>

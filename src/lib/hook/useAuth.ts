@@ -7,17 +7,22 @@ import {
 } from 'wagmi';
 import { WALLETS } from '@/src/lib/constants/wallets';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
+import { openMetamaskUrl } from '@/src/lib/utils/openMetamaskUrl';
 
 export const useAuth = () => {
   const { connectAsync, connectors } = useConnect();
   const { disconnectAsync } = useDisconnect({ config: wagmiConfig });
   const { chainId } = useAccount();
-  const currentUrl = `${window.location.hostname}/${window.location.pathname}`;
+  const currentUrl = `${window.location.hostname}${window.location.pathname}`;
   const connect = useCallback(
     async (wallet: (typeof WALLETS)[0]) => {
       const findConnector = connectors.find((c) => c.id === wallet.connectorId);
       try {
         if (!wallet.installed && wallet.deepLink) {
+          if (wallet.id === 'metaMask') {
+            openMetamaskUrl(`${wallet.deepLink}${currentUrl}`);
+            return;
+          }
           window.open(`${wallet.deepLink}${currentUrl}`, '_blank');
           return;
         }

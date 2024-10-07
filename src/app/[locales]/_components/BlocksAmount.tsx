@@ -57,7 +57,7 @@ export default async function BlocksAmount() {
           alt="openvoucher"
         />
         <h5 className="text-black-1 ml-1">1 OV</h5>
-        <h5 className="mx-2 text-black-1">≈</h5>
+        <h5 className="mx-2 text-black-1">=</h5>
         <Image src={KRWO.imageUrl} width={20} height={20} alt="KRWO" />
         <h5 className="text-black-1 ml-1">10,000 KRWO</h5>
       </div>

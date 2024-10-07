@@ -38,7 +38,7 @@ export const WALLETS = [
     get transport() {
       return window.ethereum;
     },
-    deepLink: 'https://metamask.app.link/dapp',
+    deepLink: 'https://metamask.app.link/dapp/',
   },
   {
     id: 'Kaia',
@@ -54,6 +54,6 @@ export const WALLETS = [
     get transport() {
       return this.isMobile ? window.ethereum : window.klaytn;
     },
-    deepLink: 'https://app.kaiawallet.io/u',
+    deepLink: 'https://app.kaiawallet.io/u/',
   },
 ];

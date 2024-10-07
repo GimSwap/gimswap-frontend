@@ -10,7 +10,7 @@ export default function DescriptionCard({
   title,
 }: DescriptionCardProps) {
   return (
-    <section className="p-6 rounded-2xl bg-black-3">
+    <section className="p-6 rounded-2xl bg-black-3 flex-1">
       <div className="mb-3">{Icon}</div>
       <h3 className="text-purple-500 font-bold mb-1">{title}</h3>
       <p className="p1">{description}</p>

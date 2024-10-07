@@ -1,31 +1,24 @@
-import { useWeb3ModalProvider } from '@web3modal/ethers/react';
-import { BrowserProvider, ethers } from 'ethers';
-import { useEffect, useState } from 'react';
 import { CONTRACT_ADDRESS } from '../constants/contractAddress';
 import getFeeAbi from '@/src/lib/utils/abis/getFeeAbi.json';
+import { useReadContract } from 'wagmi';
+import { type Abi } from 'viem';
+//@ts-ignore
+import { ResolvedRegister } from '@wagmi/core/src/types/register';
 
-export const useGetFee = (contractAddress: string, amount: string) => {
-  const { walletProvider } = useWeb3ModalProvider();
-  const [fee, setFee] = useState<number | null>(null);
+export const useGetFee = (amount: string) => {
+  const { data: fee, isPending } = useReadContract<
+    Abi,
+    'feeNumberator',
+    [],
+    ResolvedRegister['config'],
+    { data: bigint }
+  >({
+    abi: getFeeAbi as Abi,
+    address: CONTRACT_ADDRESS.GimSwap as `0x${string}`,
+    functionName: 'feeNumerator',
+  });
 
-  useEffect(() => {
-    if (!amount || amount === '0') return;
-    (async () => {
-      if (!walletProvider) return;
+  if (amount === '0' || isPending) return { fee: null };
 
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      const contract = new ethers.Contract(
-        CONTRACT_ADDRESS.GimSwap,
-        getFeeAbi,
-        signer,
-      );
-
-      const feeNumerator = await contract.feeNumerator();
-      setFee(Number(feeNumerator));
-    })();
-  }, [walletProvider, contractAddress, amount]);
-
-  return { fee };
+  return { fee: Number(fee) };
 };

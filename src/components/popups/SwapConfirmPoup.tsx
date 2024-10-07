@@ -15,6 +15,7 @@ interface SwapConfirmPopupProps {
   open: boolean;
   onClose: () => void;
   amount: string;
+  setAmount: React.Dispatch<React.SetStateAction<string>>;
   fee: number | null;
   tokens: {
     receive: TokenType;
@@ -26,37 +27,44 @@ export default function SwapConfirmPopup({
   onClose,
   open,
   amount,
+  setAmount,
   tokens,
   fee,
 }: SwapConfirmPopupProps) {
-  const { swap, error, isLoading, isSuccess, receipt } = useSwap(
+  const { swap, error, isPending, isSuccess, hash } = useSwap(
     tokens.pay,
     amount,
   );
   const { openPopup, closePopup } = usePopupStore((state) => state);
+
   useEffect(() => {
-    if (isLoading) {
+    if (isPending) {
       openPopup(SwapLoadingPopup, {
         tokens,
         amount,
       });
+      return;
     }
+
     if (isSuccess) {
       closePopup(SwapLoadingPopup);
       onClose();
+      setAmount('0');
       openPopup(SwapSuccessPopup, {
         tokens,
         amount,
-        receipt: receipt!,
+        hash: hash!,
         closePrevPopup: onClose,
       });
+      return;
     }
+
     if (error) {
       closePopup(SwapLoadingPopup);
       onClose();
       openPopup(SwapErrorPopup);
     }
-  }, [isLoading, isSuccess, error]);
+  }, [isPending, isSuccess, error]);
 
   return (
     <PopupTemplate

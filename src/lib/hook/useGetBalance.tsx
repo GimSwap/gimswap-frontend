@@ -1,11 +1,6 @@
-import {
-  useWeb3ModalAccount,
-  useWeb3ModalProvider,
-} from '@web3modal/ethers/react';
-import { BrowserProvider, ethers } from 'ethers';
-import { useEffect, useState } from 'react';
 import getBalanceAbi from '@/src/lib/utils/abis/getERC20Balance.json';
-import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { useAccount, useReadContract } from 'wagmi';
+import { safeCalc } from '@/src/lib/utils/safeCalc';
 
 interface GetBalanceProps {
   contractAddress: string;
@@ -13,34 +8,21 @@ interface GetBalanceProps {
 }
 
 export const getBalance = ({ contractAddress, decimal }: GetBalanceProps) => {
-  const [balance, setBalance] = useState<string | null>(null);
-  const { walletProvider } = useWeb3ModalProvider();
-  const { address: walletAddress } = useWeb3ModalAccount();
-  const { chainId } = useWeb3ModalAccount();
+  const { address } = useAccount();
 
-  useEffect(() => {
-    (async () => {
-      if (
-        !walletProvider ||
-        !contractAddress ||
-        !checkIsAvailableChain(chainId)
-      )
-        return;
+  const { data: balance, isPending } = useReadContract({
+    abi: getBalanceAbi,
+    address: contractAddress as `0x${string}`,
+    functionName: 'balanceOf',
+    args: [address],
+  });
 
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
+  if (isPending || !balance) return { balance: 0 };
 
-      const contract = new ethers.Contract(
-        contractAddress,
-        getBalanceAbi,
-        signer,
-      );
-      const balance = await contract.balanceOf(walletAddress);
-      setBalance(ethers.formatUnits(balance, decimal));
-    })();
+  const formattedDecimal = safeCalc.pow(10, decimal).toString();
+  const formattedBalance = safeCalc
+    .divide(balance.toString(), formattedDecimal)
+    .toString();
 
-    return () => setBalance(null);
-  }, [walletProvider, contractAddress, chainId]);
-
-  return { balance };
+  return { balance: formattedBalance };
 };

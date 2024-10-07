@@ -2,16 +2,15 @@ import Button from '@/src/components/Button';
 import SwapConfirmPopup from '@/src/components/popups/SwapConfirmPoup';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import { TokenType } from '@/src/lib/types/TokenType';
-import {
-  useWeb3Modal,
-  useWeb3ModalAccount,
-  useSwitchNetwork,
-} from '@web3modal/ethers/react';
-import { KLAYTN } from '@/src/lib/constants/token';
+import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
+import { useAccount, useConfig } from 'wagmi';
+import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
+import { useCallback } from 'react';
 
 interface SwapButtonProps {
   tokens: { pay: TokenType; receive: TokenType };
   amount: string;
+  setAmount: React.Dispatch<React.SetStateAction<string>>;
   fee: number | null;
   isEnoughBalance: boolean;
 }
@@ -19,52 +18,56 @@ interface SwapButtonProps {
 export const SwapButton = ({
   tokens,
   amount,
+  setAmount,
   fee,
   isEnoughBalance,
 }: SwapButtonProps) => {
   const { openPopup } = usePopupStore((state) => state);
-  const { isConnected } = useWeb3ModalAccount();
-  const { open } = useWeb3Modal();
-  const { chainId } = useWeb3ModalAccount();
-  const { switchNetwork } = useSwitchNetwork();
-  const isAvailableNetwork = chainId === Number(KLAYTN.chainId);
+  const { isConnected, chain } = useAccount();
+  const { chains } = useConfig();
+  const { switchChain } = useSwitchNetwork();
+  const isWrongNetwork = chains.every(
+    (availableChain) => availableChain.id !== chain?.id,
+  );
 
   const handleButtonClick = async () => {
     if (!isConnected) {
-      open();
+      openPopup(SelectWalletPopup);
       return;
     }
 
-    if (!isAvailableNetwork) {
-      await switchNetwork(Number(KLAYTN.chainId));
+    if (isWrongNetwork) {
+      await switchChain();
       return;
     }
 
     openPopup(SwapConfirmPopup, {
       tokens,
       amount,
+      setAmount,
       fee,
     });
   };
 
-  const buttonTitle = () => {
+  const buttonTitle = useCallback(() => {
     if (!isConnected) return 'Connect Wallet';
-    if (chainId !== Number(KLAYTN.chainId)) return 'Switch the Network';
-    if (!amount) return 'Enter an amount';
+    if (isWrongNetwork) return 'Switch the Network';
+    if (amount === '0') return 'Enter an amount';
     if (!isEnoughBalance) return 'Insufficient Balance';
-    else return 'Swap';
-  };
+    return 'Swap';
+  }, [isConnected, isWrongNetwork, amount, isEnoughBalance, chain?.id]);
 
-  const buttonState = () => {
-    if (!isAvailableNetwork || !isConnected) return false;
-    if (!isEnoughBalance || !amount || amount === '0') return true;
+  const isButtonEnabled = () => {
+    if (isWrongNetwork) return true;
+    if (!isConnected) return true;
+    return isEnoughBalance && amount && amount !== '0';
   };
 
   return (
     <Button
       onClick={handleButtonClick}
       title={buttonTitle()}
-      disabled={buttonState()}
+      disabled={!isButtonEnabled()}
       className="bg-purple-500 text-black-1 mt-6"
     />
   );

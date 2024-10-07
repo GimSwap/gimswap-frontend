@@ -30,7 +30,7 @@ export const KRWO: TokenType = {
 
 export const KLAYTN = {
   chainId: 0x2019,
-  chainName: 'Klaytn Cypress',
+  chainName: 'Kaia',
   blockExplorerUrl: process.env.NEXT_PUBLIC_KLAYTN_BLOCK_EXPLORER_URLS,
   klaytnRpcUrl: process.env.NEXT_PUBLIC_KLAYTN_RPC_URL,
   currency: 'KLAY',

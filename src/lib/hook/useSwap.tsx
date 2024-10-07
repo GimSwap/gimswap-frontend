@@ -1,70 +1,75 @@
-import {
-  useWeb3ModalAccount,
-  useWeb3ModalProvider,
-} from "@web3modal/ethers/react";
-import { BrowserProvider, ContractTransactionReceipt, ethers } from "ethers";
-import { useCallback, useState } from "react";
-import { CONTRACT_ADDRESS } from "../constants/contractAddress";
-import swapAbi from "@/src/lib/utils/abis/swapAbi.json";
-import { TokenType } from "../types/TokenType";
-import { makeSwapArgument } from "../utils/makeSwapArgument";
-import { safeCalc } from "../utils/safeCalc";
+import swapAbi from '@/src/lib/utils/abis/swapAbi.json';
+import { TokenType } from '../types/TokenType';
+import { makeSwapArgument } from '../utils/makeSwapArgument';
+import { safeCalc } from '../utils/safeCalc';
+import { CONTRACT_ADDRESS } from '../constants/contractAddress';
+import { useState } from 'react';
+import { createPublicClient, createWalletClient, custom } from 'viem';
+import { kaia } from 'wagmi/chains';
+import { http, useAccount } from 'wagmi';
+import { WALLETS } from '@/src/lib/constants/wallets';
 
 export const useSwap = (token: TokenType, amount: string) => {
-  const { walletProvider } = useWeb3ModalProvider();
-  const { address } = useWeb3ModalAccount();
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [receipt, setReceipt] = useState<ContractTransactionReceipt | null>(
-    null,
+  const [hash, setHash] = useState<`0x${string}` | null>(null);
+
+  const { address, connector } = useAccount();
+
+  const to = CONTRACT_ADDRESS.GimSwap;
+  const amountToString = safeCalc.divide(amount, token.unit).toFixed();
+  const value = safeCalc.multiply(
+    amountToString,
+    safeCalc.pow(10, token.decimal).toFixed(),
   );
-  const [error, setError] = useState<string | null>(null);
+  const callee = CONTRACT_ADDRESS.GimSwap;
 
-  const swap = useCallback(async () => {
-    if (!walletProvider) {
-      setError("No wallet provider available");
-      return;
-    }
+  const publicClient = createPublicClient({
+    chain: kaia,
+    transport: http(),
+  });
 
-    setIsLoading(true);
+  const swap = async () => {
+    if (!connector || !address) return;
+    const currentWalletInfo = WALLETS.find(({ id }) => connector.id === id);
 
     try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
+      const walletClient = createWalletClient({
+        chain: kaia,
+        transport: custom(await currentWalletInfo?.transport),
+      });
+      setIsPending(true);
 
-      const swapContract = new ethers.Contract(
-        token.contractAddress,
-        swapAbi,
-        signer,
+      const args = makeSwapArgument(
+        token.method,
+        to,
+        BigInt(value.toFixed()),
+        callee,
       );
 
-      const to = CONTRACT_ADDRESS.GimSwap;
+      const hash = await walletClient.writeContract({
+        address: token.contractAddress as `0x${string}`,
+        abi: swapAbi,
+        functionName: token.method,
+        account: address as `0x${string}`,
+        args,
+      });
 
-      const amountToString = safeCalc.divide(amount, token.unit).toFixed();
+      if (!hash) throw new Error(`transaction error`);
+      setHash(hash);
 
-      const value = safeCalc.multiply(
-        amountToString,
-        safeCalc.pow(10, token.decimal).toFixed(),
-      );
+      const { status } = await publicClient.waitForTransactionReceipt({ hash });
 
-      const callee = CONTRACT_ADDRESS.GimSwap;
-
-      const tx = await swapContract[token.method](
-        ...makeSwapArgument(token.method, to, BigInt(value.toFixed()), callee),
-      );
-
-      const receipt = (await tx.wait()) as ContractTransactionReceipt;
-
-      setReceipt(receipt);
-      setIsSuccess(true);
+      if (status === 'success') setIsSuccess(true);
+      else if (status === 'reverted') setIsError(true);
     } catch (error) {
-      console.error("Swap transaction failed:", error);
-      setError("Transaction failed");
+      console.error(error);
+      setIsError(true);
     } finally {
-      setIsLoading(false);
+      setIsPending(false);
     }
-  }, [walletProvider, amount, address, token]);
+  };
 
-  return { swap, isLoading, isSuccess, error, receipt };
+  return { swap, isSuccess, isPending, error: isError, hash };
 };

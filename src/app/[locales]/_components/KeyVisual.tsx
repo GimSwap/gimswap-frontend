@@ -33,7 +33,7 @@ export default function KeyVisual() {
           Real Tokens from Real Assets
         </h1>
         <p className="p1 text-black-1 text-center mb-6 max-w-[170px] lg:max-w-[300px]">
-          The Platform for Tokenized Real-World Assets.
+          The Platform for Tokenized Fiat-backed Assets.
         </p>
         <Button
           title="Get Real Tokens"

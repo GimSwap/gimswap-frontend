@@ -1,29 +1,22 @@
-"use client";
-import { useWeb3ModalProvider } from "@web3modal/ethers/react";
-import { BrowserProvider } from "ethers";
+'use client';
+
+import { watchAsset } from '@wagmi/core';
+import { wagmiConfig } from '@/src/lib/utils/wagmi';
 
 interface useAddTokenProps {
   address: string;
   symbol: string;
-  image: any;
+  image: string;
+  decimals: number;
 }
 
 export const useAddToken = () => {
-  const { walletProvider } = useWeb3ModalProvider();
-
-  const addToken = async ({ address, symbol, image }: useAddTokenProps) => {
-    if (!walletProvider) return;
-
+  const addToken = async (props: useAddTokenProps) => {
     try {
-      const provider = new BrowserProvider(walletProvider);
-      const signer = await provider.getSigner();
-
-      await signer.provider.send("wallet_watchAsset", {
-        type: "ERC20",
+      await watchAsset(wagmiConfig, {
+        type: 'ERC20',
         options: {
-          address,
-          symbol,
-          image,
+          ...props,
         },
       });
     } catch (err) {

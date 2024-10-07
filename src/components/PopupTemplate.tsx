@@ -1,9 +1,9 @@
-import CloseIcon from "@/public/svg/close.svg";
-import { useEffect } from "react";
-import Lottie from "lottie-react";
-import loadingLottie from "@/public/lottie/loading.json";
-import successLottie from "@/public/lottie/success.json";
-import failLottie from "@/public/lottie/fail.json";
+import CloseIcon from '@/public/svg/close.svg';
+import { useEffect } from 'react';
+import Lottie from 'lottie-react';
+import loadingLottie from '@/public/lottie/loading.json';
+import successLottie from '@/public/lottie/success.json';
+import failLottie from '@/public/lottie/fail.json';
 
 const iconType = {
   loading: <Lottie animationData={loadingLottie} loop className="h-16 w-16" />,
@@ -34,15 +34,14 @@ export default function PopupTemplate({
   children?: React.ReactNode;
   useTemplate?: boolean;
   showCloseButton?: boolean;
-  subTitle?: string;
   onClose: () => void;
   icon?: keyof typeof iconType;
   open: boolean;
 }) {
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, []);
 
@@ -53,7 +52,7 @@ export default function PopupTemplate({
     >
       <div
         className={`fixed bottom-0 lg:bottom-1/2 lg:left:1/2 lg:translate-y-1/2 lg:rounded-b-2xl bg-black-1 h-auto w-full rounded-t-2xl flex items-center flex-col max-w-[480px] m-[0_auto] inset-x-0 ${
-          !open ? "slideOut" : "slideIn"
+          !open ? 'slideOut' : 'slideIn'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -64,7 +63,7 @@ export default function PopupTemplate({
             </div>
           )}
 
-          <div className={`${!useTemplate && "mt-9"}`}>
+          <div className={`${!useTemplate && 'mt-9'}`}>
             {showCloseButton && (
               <CloseIcon
                 className="absolute right-6 top-6"

@@ -3,28 +3,28 @@ import Accordion from '@/src/components/Accordion';
 export default function FAQ() {
   return (
     <section className="w-full rounded-2xl p-6 shadow-customShadow flex flex-col gap-3 mb-[56px]">
-      <Accordion title="What is $KRWO?">
+      <Accordion title="What is KRWO?">
         <p className="c1">
-          KRWO is a Real-World Asset(RWA) backed token issued based on
-          Open(Voucher), a voucher that can be exchanged 1:1 with Korean Won.
-          $KRWO is designed to serve as a bridge between the real world and the
-          Web3 universe.
+          KRWO is a Fiat-backed Asset token backed by a voucher token,
+          Open(Voucher), which can be exchanged on a one-to-one basis for Korean
+          Won. It is designed to serve as a bridge that connects the real world
+          to the Web3 ecosystem.
         </p>
       </Accordion>
-      <Accordion title="Is $KRWO a stablecoin?">
+      <Accordion title="Is KRWO a stablecoin?">
         <p className="c1">
-          $KRWO can be conisdered as an asset-backed stable coin, one of the
-          safest types of stablecoins. $KRWO is fully backed by real-world
-          assets. You can exchange $KRWO for Open(Voucher), which is redeemable
-          for Korean Won.
+          KRWO could be considered an asset-backed stablecoin, one of the safest
+          types of stablecoins. Since it is fully backed by Fiat-backed Assets,
+          you can redeem Korean Won by exchanging KRWO for Open(Voucher), or
+          mint KRWO by purchasing Open(Voucher) with Korean Won.
         </p>
       </Accordion>
       <Accordion title="What is Open(Voucher)?">
         <p className="c1">
-          Open(Voucher) is a voucher issued by Open(Asset) that can be exchanged
-          1:1 with Korean Won. It can be transferred and redeemed on the
-          blockchain, making it usable not only within the Open(Voucher) service
-          but also in various Web3 platforms.
+          Open(Voucher), a voucher that can be exchanged for Korean Won on a
+          one-to-one basis, is issued by Open(Asset). It is designed to be used
+          and transferred on the blockchain, allowing it to be freely utilized
+          across various Web3 ecosystems beyond the Open(Voucher) service.
         </p>
       </Accordion>
       <Accordion title="Where can I get Open(Voucher)?">
@@ -42,23 +42,22 @@ export default function FAQ() {
             bank account can deposit funds into the Open(Voucher) service and
             receive Open(Voucher) in return.
           </li>
-
           <li className="list-decimal">
             <span className="font-bold">Purchase from a DEX:</span>
             <br />
             Open(Voucher) is available on decentralized exchanges (DEX) for
-            those without a Korean bank account. You can swap crypto for $KRWO
-            and then exchange $KRWO for Open(Voucher) on GimSwap.
+            those without a Korean bank account. Crypto can be swapped for KRWO,
+            which can then be exchanged for Open(Voucher) on GimSwap.
           </li>
         </ul>
       </Accordion>
-      <Accordion title="How the conversion between $KRWO and Open(Voucher) work?">
+      <Accordion title="How the conversion between KRWO and Open(Voucher) work?">
         <p className="c1">
-          Since the exchange rate between $KRWO and Open(Voucher) is 1:1, when
-          Open(Voucher) is deposited, $KRWO is minted and the Open(Voucher) is
-          locked. Conversely, when $KRWO is deposited, it is burned, and the
+          Since the exchange rate between KRWO and Open(Voucher) is 1:1, when
+          Open(Voucher) is deposited, KRWO is minted and the Open(Voucher) is
+          locked. Conversely, when KRWO is deposited, it is burned, and the
           corresponding Open(Voucher) is unlocked. This mechanism ensures there
-          is no excess issuance of $KRWO.
+          is no excess issuance of KRWO.
         </p>
       </Accordion>
     </section>

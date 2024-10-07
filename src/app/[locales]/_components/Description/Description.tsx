@@ -1,8 +1,8 @@
-import DescriptionCard from "./DescriptionCard";
-import guardImage from "@/src/assets/icons/guard.webp";
-import arrowImage from "@/src/assets/icons/arrow.webp";
-import directionImage from "@/src/assets/icons/direction.webp";
-import Image from "next/image";
+import DescriptionCard from './DescriptionCard';
+import guardImage from '@/src/assets/icons/guard.webp';
+import arrowImage from '@/src/assets/icons/arrow.webp';
+import directionImage from '@/src/assets/icons/direction.webp';
+import Image from 'next/image';
 
 export default function Description() {
   return (
@@ -13,10 +13,12 @@ export default function Description() {
           Icon={<Image src={guardImage} alt="RWA" width={60} height={60} />}
           title={
             <>
-              100%<br></br>RWA backed
+              100%
+              <br />
+              Fiat-backed
             </>
           }
-          description="Tokens issued by GimSwap are backed by RWAs, making them interchangeable with those assets"
+          description="Tokens issued by GimSwap are fully backed by fiat-based assets, making them interchangeable with those assets"
         />
         <DescriptionCard
           Icon={
@@ -27,7 +29,7 @@ export default function Description() {
               Convenient Trade<br></br>and Usage
             </>
           }
-          description="RWA tokens can be easily traded on chain as well as used for daily life or service development."
+          description="Fiat-backed tokens can be seamlessly traded on the blockchain and utilized in everyday transactions or incorporated into service."
         />
         <DescriptionCard
           Icon={

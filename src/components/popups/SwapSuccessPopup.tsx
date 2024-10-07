@@ -1,12 +1,10 @@
-import { TokenType } from "@/src/lib/types/TokenType";
-import PopupTemplate from "../PopupTemplate";
-import ArrowDownIcon from "@/public/svg/arrow/arrow-narrow-down.svg";
-import { Link } from "@/src/navigation";
-import { ContractTransactionReceipt } from "ethers";
-import { useWeb3ModalAccount } from "@web3modal/ethers/react";
-import { CHAIN_ID_TO_BLOCK_EXPLORER } from "@/src/lib/constants/blockExplorer";
-import { safeCalc } from "@/src/lib/utils/safeCalc";
-import { insertComma } from "@/src/lib/utils/insertComma";
+import { TokenType } from '@/src/lib/types/TokenType';
+import PopupTemplate from '../PopupTemplate';
+import ArrowDownIcon from '@/public/svg/arrow/arrow-narrow-down.svg';
+import { CHAIN_ID_TO_BLOCK_EXPLORER } from '@/src/lib/constants/blockExplorer';
+import { safeCalc } from '@/src/lib/utils/safeCalc';
+import { insertComma } from '@/src/lib/utils/insertComma';
+import { useAccount } from 'wagmi';
 
 interface SwapProgressPopupProps {
   open: boolean;
@@ -16,7 +14,7 @@ interface SwapProgressPopupProps {
     receive: TokenType;
   };
   amount: string;
-  receipt: ContractTransactionReceipt;
+  hash: `0x${string}`;
   closePrevPopup: () => void;
 }
 
@@ -25,10 +23,10 @@ export default function SwapSuccessPopup({
   open,
   tokens,
   amount,
-  receipt,
+  hash,
   closePrevPopup,
 }: SwapProgressPopupProps) {
-  const { chainId } = useWeb3ModalAccount();
+  const { chainId } = useAccount();
 
   return (
     <PopupTemplate
@@ -59,13 +57,13 @@ export default function SwapSuccessPopup({
             ${tokens.receive.name}`}</h5>
           </div>
         </section>
-        <Link
-          href={`${CHAIN_ID_TO_BLOCK_EXPLORER[chainId!]}/${receipt.hash}`}
+        <a
+          href={`${CHAIN_ID_TO_BLOCK_EXPLORER[chainId!]}/${hash}`}
           className="text-purple-500 underline underline-offset-[2.5px] mt-4 mb-5"
           target="_blank"
         >
           View on Explorer
-        </Link>
+        </a>
       </section>
     </PopupTemplate>
   );

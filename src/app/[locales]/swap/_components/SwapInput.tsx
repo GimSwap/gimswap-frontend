@@ -17,8 +17,7 @@ export default function SwapInput() {
   }>({ pay: OPEN_VOUCHER, receive: KRWO });
   const [isEnoughBalance, setIsEnoughBalance] = useState<boolean>(true);
 
-  const { fee } = useGetFee(selectedTokens.pay.contractAddress, amount);
-
+  const { fee } = useGetFee(amount);
   return (
     <section className="shadow-customShadow p-6 w-full max-w-[480px] rounded-2xl bg-black-1 z-10">
       <section className="relative flex flex-col gap-3 mb-4">
@@ -53,6 +52,7 @@ export default function SwapInput() {
       <TransactionDetails fee={fee} />
       <SwapButton
         amount={amount}
+        setAmount={setAmount}
         fee={fee}
         isEnoughBalance={isEnoughBalance}
         tokens={selectedTokens}

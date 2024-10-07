@@ -57,7 +57,7 @@ export default function Token({
           safeCalc.divide(amount, token.unit).toFixed(),
         ),
       );
-  }, [amount, setIsEnoughBalance]);
+  }, [type, amount, setIsEnoughBalance, balance, token.unit]);
 
   return (
     <section

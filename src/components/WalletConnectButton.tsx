@@ -1,54 +1,62 @@
-import {
-  useWeb3Modal,
-  useWeb3ModalAccount,
-  useWalletInfo,
-} from '@web3modal/ethers/react';
+// WalletConnectButton.tsx
+import React, { memo } from 'react';
 import { shortenAddress } from '../lib/utils/shortenAddress';
-import { WALLET_ICONS } from '../lib/constants/walletIcons';
+import { useAccount } from 'wagmi';
+import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
+import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
+import { WALLET_ICONS } from '@/src/lib/constants/walletIcons';
 
 interface WalletConnectButtonProps {
   size: 'small' | 'large';
 }
 
-export default function WalletConnectButton({
-  size,
-}: WalletConnectButtonProps) {
-  const { address } = useWeb3ModalAccount();
-  const { walletInfo } = useWalletInfo();
-  const { open, close } = useWeb3Modal();
+const WalletConnectButton = memo(({ size }: WalletConnectButtonProps) => {
+  const { openPopup } = usePopupStore((state) => state);
+  const { address, connector } = useAccount();
+
   const handleOpen = async () => {
     try {
-      open();
+      openPopup(SelectWalletPopup);
     } catch (err) {
       console.error('Failed to open wallet connect modal', err);
-      close();
     }
   };
-  const WalletIcon = walletInfo?.name && WALLET_ICONS[walletInfo.name];
 
+  const buttonTitle = () => {
+    switch (size) {
+      case 'small':
+        return (
+          <>
+            {WalletIcon && <WalletIcon className="w-4 h-4 rounded-full" />}
+            <p className="c1 font-bold text-black-1">
+              {address ? shortenAddress(address) : 'Connect'}
+            </p>
+          </>
+        );
+
+      case 'large':
+        return (
+          <>
+            {WalletIcon && <WalletIcon className="w-6 h-6 rounded-full" />}
+            <h5 className="text-h5 font-bold text-black-1">
+              {address ? shortenAddress(address) : 'Connect Wallet'}
+            </h5>
+          </>
+        );
+    }
+  };
+
+  const WalletIcon = connector ? WALLET_ICONS[connector.name] : null;
   return (
     <button
-      className={`bg-purple-500 font-medium text-black-1 rounded-lg ${
-        size === 'small' ? 'c1 py-2 px-3' : 'py-3 px-4 text-h5 font-bold'
+      className={`bg-purple-500 font-medium rounded-lg flex items-center justify-center ${
+        size === 'small' ? 'c1 py-2 px-3 gap-1' : 'py-3 px-4 gap-2'
       }`}
       onClick={handleOpen}
     >
-      {address ? (
-        <section className="flex gap-1 justify-center">
-          <section className="flex gap-1">
-            {WalletIcon && (
-              <WalletIcon
-                className={`${
-                  size === 'small' ? 'w-4 h-4 p-[1.6px]' : 'w-6 h-6 p-[2.4px]'
-                }" bg-black-1 rounded-full`}
-              />
-            )}
-            {shortenAddress(address)}
-          </section>
-        </section>
-      ) : (
-        'Connect'
-      )}
+      {buttonTitle()}
     </button>
   );
-}
+});
+
+export default WalletConnectButton;

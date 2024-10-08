@@ -14,7 +14,7 @@ const isMetamaskInstalled = () => {
 
   if (checkIsMobileBrowser('metamask')) return true;
   else if (checkIsMobileBrowser('kaia')) return false;
-  else return !!window.ethereum.isMetaMask;
+  else return !!window?.ethereum?.isMetaMask;
 };
 
 export const isKaiaWalletInstalled = () => {
@@ -39,7 +39,7 @@ export const WALLETS = [
       return checkIsMobileBrowser('metamask');
     },
     get transport() {
-      return window.ethereum;
+      return window?.ethereum;
     },
     deepLink: 'https://metamask.app.link/dapp/',
   },

@@ -2,34 +2,25 @@ import ExchangeIcon from '@/public/svg/exchange.svg';
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { KRWO, OPEN_VOUCHER } from '@/src/lib/constants/token';
 import Image from 'next/image';
-import totalSupplyAbi from '@/src/lib/utils/abis/getTotalSupplyAbi.json';
 import { CONTRACT_ADDRESS } from '@/src/lib/constants/contractAddress';
 import { createPublicClient, formatUnits } from 'viem';
 import { kaia } from 'wagmi/chains';
 import { http } from 'wagmi';
-import getBalanceAbi from '@/src/lib/utils/abis/getERC20Balance.json';
+import totalSupplyAbi from '@/src/lib/utils/abis/getTotalSupplyAbi.json';
 
 export default async function BlocksAmount() {
   const client = createPublicClient({
     chain: kaia,
     transport: http(kaia.rpcUrls.default.http[0]),
+    cacheTime: 0,
   });
 
-  const [totalSupply, balance] = await Promise.all([
-    (await client.readContract({
-      abi: totalSupplyAbi,
-      address: CONTRACT_ADDRESS.KRWO as `0x${string}`,
-      functionName: 'totalSupply',
-    })) as bigint,
-    (await client.readContract({
-      abi: getBalanceAbi,
-      address: CONTRACT_ADDRESS.OpenVoucher as `0x${string}`,
-      functionName: 'balanceOf',
-      args: [CONTRACT_ADDRESS.GimSwap],
-    })) as bigint,
-  ]);
+  const totalSupply = (await client.readContract({
+    abi: totalSupplyAbi,
+    address: CONTRACT_ADDRESS.KRWO as `0x${string}`,
+    functionName: 'totalSupply',
+  })) as bigint;
 
-  const lockedOpenVoucher = formatUnits(balance, OPEN_VOUCHER.decimal);
   const KRWOTotalSupply = formatUnits(totalSupply, KRWO.decimal);
 
   return (
@@ -38,7 +29,7 @@ export default async function BlocksAmount() {
         <div className="rounded-2xl border border-purple-200 p-6 flex flex-col gap-1 bg-[rgba(255,255,255,0.1)] flex-1 lg:items-center">
           <p className="p1 text-black-1">Locked Open Voucher</p>
           <h3 className="font-bold text-black-1">
-            {insertComma(lockedOpenVoucher)} OV
+            {(Number(KRWOTotalSupply) / 10000).toLocaleString()} OV
           </h3>
         </div>
         <div className="rounded-2xl border border-purple-200 p-6 flex flex-col gap-1 bg-[rgba(255,255,255,0.1)] flex-1 lg:items-center">

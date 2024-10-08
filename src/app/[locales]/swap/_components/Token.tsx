@@ -62,7 +62,7 @@ export default function Token({
   return (
     <section
       className={`rounded-lg bg-black-3 p-4 ${
-        isWritable && 'border border-[#137EFC]'
+        isWritable && 'border border-purple-500'
       }`}
     >
       <section className="flex justify-between pb-1 cursor-pointer">

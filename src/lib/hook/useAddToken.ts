@@ -9,6 +9,7 @@ interface useAddTokenProps {
 
 export const useAddToken = () => {
   const addToken = async (props: useAddTokenProps) => {
+    if (!window) return;
     try {
       await window.ethereum.request({
         method: 'wallet_watchAsset',

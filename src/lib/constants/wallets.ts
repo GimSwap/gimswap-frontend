@@ -12,15 +12,18 @@ const isMetamaskInstalled = () => {
     return false;
   }
 
-  return window.ethereum?.isMetaMask ? true : false;
+  if (checkIsMobileBrowser('metamask')) return true;
+  else if (checkIsMobileBrowser('kaia')) return false;
+  else return !!window.ethereum.isMetaMask;
 };
 
-const isKaiaWalletInstalled = () => {
+export const isKaiaWalletInstalled = () => {
   if (typeof window === 'undefined') {
     return false;
   }
 
-  return window.klaytn ? true : false;
+  if (checkIsMobileBrowser('kaia')) return true;
+  else return !!window.klaytn;
 };
 
 export const WALLETS = [

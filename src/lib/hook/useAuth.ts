@@ -12,7 +12,7 @@ import { openMetamaskUrl } from '@/src/lib/utils/openMetamaskUrl';
 export const useAuth = () => {
   const { connectAsync, connectors } = useConnect();
   const { disconnectAsync } = useDisconnect({ config: wagmiConfig });
-  const { chainId } = useAccount();
+  const { chainId, isConnected } = useAccount();
   const currentUrl = `${window.location.hostname}${window.location.pathname}`;
   const connect = useCallback(
     async (wallet: (typeof WALLETS)[0]) => {
@@ -27,6 +27,7 @@ export const useAuth = () => {
           return;
         }
 
+        if (isConnected) await disconnectAsync();
         await connectAsync({
           connector: findConnector!,
           chainId,

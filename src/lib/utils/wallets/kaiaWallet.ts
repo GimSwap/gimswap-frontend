@@ -10,7 +10,7 @@ import {
   ProviderRpcError,
 } from 'viem';
 import { type Connector, ConnectorNotConnectedError } from '@wagmi/core';
-import { isKaiaWalletInstalled } from '@/src/lib/constants/wallets';
+import { checkIsMobileBrowser } from '@/src/lib/utils/checkIsMobileBrowser';
 
 type Provider = ReturnType<
   Transport<'custom', unknown, EIP1193RequestFn<WalletRpcSchema>>
@@ -88,9 +88,9 @@ export function kaikasConnector() {
       },
 
       getProvider() {
-        return isKaiaWalletInstalled()
-          ? Promise.resolve(window.klaytn)
-          : Promise.resolve(window.ethereum);
+        return checkIsMobileBrowser('kaia')
+          ? Promise.resolve(window.ethereum)
+          : Promise.resolve(window.klaytn);
       },
 
       async isAuthorized() {

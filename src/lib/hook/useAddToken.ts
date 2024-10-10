@@ -1,5 +1,7 @@
 'use client';
 
+import { useAccount } from 'wagmi';
+
 interface useAddTokenProps {
   address: string;
   symbol: string;
@@ -8,10 +10,13 @@ interface useAddTokenProps {
 }
 
 export const useAddToken = () => {
+  const { connector } = useAccount();
   const addToken = async (props: useAddTokenProps) => {
-    if (!window) return;
+    if (!connector) return;
+    const provider = await connector.getProvider();
     try {
-      await window.ethereum.request({
+      // @ts-ignore
+      await provider.request({
         method: 'wallet_watchAsset',
         params: {
           type: 'ERC20',

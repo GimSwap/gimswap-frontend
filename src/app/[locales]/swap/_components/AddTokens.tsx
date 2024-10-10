@@ -9,14 +9,14 @@ import { useAccount } from 'wagmi';
 export default function AddTokens() {
   const { addToken } = useAddToken();
   const { isConnected } = useAccount();
-  const handleAddToken = () => {
-    addToken({
+  const handleAddToken = async () => {
+    await addToken({
       address: OPEN_VOUCHER.contractAddress,
       image: OPEN_VOUCHER.imageUrl,
       symbol: OPEN_VOUCHER.symbol,
       decimals: OPEN_VOUCHER.decimal,
     });
-    addToken({
+    await addToken({
       address: KRWO.contractAddress,
       image: KRWO.imageUrl,
       symbol: KRWO.symbol,

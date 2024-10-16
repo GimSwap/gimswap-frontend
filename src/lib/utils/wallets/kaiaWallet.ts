@@ -101,7 +101,7 @@ export function kaikasConnector() {
         return window.klaytn._kaikas.isEnabled();
       },
 
-      onAccountsChanged(accounts) {
+      async onAccountsChanged(accounts) {
         if (accounts.length === 0) this.onDisconnect();
         else
           config.emitter.emit('change', {
@@ -163,7 +163,13 @@ export function kaikasConnector() {
                     chainId: id,
                     chainName: chain.name,
                     nativeCurrency: chain.nativeCurrency,
-                    rpcUrls: [chain.rpcUrls.public?.http[0] ?? ''],
+                    rpcUrls: [
+                      'https://public-en.node.kaia.io',
+                      'https://kaia-mainnet.rpc.grove.city/v1/803ceedf',
+                      'https://klaytn.drpc.org',
+                      'https://go.getblock.io/d7094dbd80ab474ba7042603fe912332',
+                      'https://1rpc.io/klay',
+                    ],
                     blockExplorerUrls: [
                       process.env.NEXT_PUBLIC_KLAYTN_BLOCK_EXPLORER_URLS!,
                     ],

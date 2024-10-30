@@ -1,7 +1,7 @@
-import { Link } from '@/src/navigation';
 import SwapInput from './_components/SwapInput';
 import AddTokens from './_components/AddTokens';
 import NavbarColorChanger from './_components/NavbarColorChanger';
+import DocsButton from '@/src/app/[locales]/swap/_components/DocsButton';
 
 export default function Swap() {
   return (
@@ -10,13 +10,10 @@ export default function Swap() {
       <main className=" relative pb-[1020px] lg:pb-[1080px] w-full min-h-[100dvh]">
         <section className="pt-20 flex flex-col items-center mx-4relative z-10 absolute w-full">
           <h1 className="font-bold my-2">Swap</h1>
-          <p className="p1">You can swap between KRWO and Open Vouchers.</p>
-          <Link
-            href="/"
-            className="p1 text-purple-500 underline underline-offset-[2.5px] mb-6"
-          >
-            Want to know more about Open Vouchers?
-          </Link>
+          <p className="p1 pb-2">
+            You can swap between KRWO and Open Vouchers.
+          </p>
+          <DocsButton />
           <SwapInput />
           <AddTokens />
         </section>

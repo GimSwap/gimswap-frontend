@@ -17,7 +17,7 @@ import { headers } from 'next/headers';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
 
 export const metadata: Metadata = {
-  title: 'GIM SWAP',
+  title: 'GIM SWAP | KRWO',
   description:
     'Real Tokens from Real Assets: The Platform for Tokenized Fiat-backed Assets.',
   icons: {

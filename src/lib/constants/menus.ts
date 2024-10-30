@@ -1,17 +1,17 @@
 export const MENUS = [
   {
-    title: "Home",
-    url: "/",
+    title: 'Home',
+    url: '/',
     externalLink: false,
   },
   {
-    title: "Swap",
-    url: "/swap",
+    title: 'Swap',
+    url: '/swap',
     externalLink: false,
   },
-  // {
-  //   title: "docs",
-  //   url: "/docs",
-  //   externalLink: true,
-  // },
+  {
+    title: 'Docs',
+    url: 'https://docs.gimswap.com/',
+    externalLink: true,
+  },
 ];

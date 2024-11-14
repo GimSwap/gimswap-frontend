@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import TradeCategory from '../_components/TradeCategory';
-import gear from '@/src/assets/image/Gear.webp';
+import gear from '@/src/assets/image/gear.webp';
 import Button from '@/src/components/Button';
 import LinkButton from './_components/LinkButton';
 import { DEX_LIST } from '@/src/lib/constants/dex';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Token from './Token';
+import Token from '../../_components/Token';
 import { OPEN_VOUCHER, KRWO } from '@/src/lib/constants/token';
 import ArrowDownIcon from '@/public/svg/arrow/arrow-down.svg';
 import TransactionDetails from './TransactionDetails';
@@ -19,7 +19,7 @@ export default function SwapInput() {
 
   const { fee } = useGetFee(amount);
   return (
-    <section className="shadow-customShadow p-6 w-full max-w-[480px] rounded-2xl bg-black-1 z-10">
+    <>
       <section className="relative flex flex-col gap-3 mb-4">
         <Token
           type="pay"
@@ -57,6 +57,6 @@ export default function SwapInput() {
         isEnoughBalance={isEnoughBalance}
         tokens={selectedTokens}
       />
-    </section>
+    </>
   );
 }

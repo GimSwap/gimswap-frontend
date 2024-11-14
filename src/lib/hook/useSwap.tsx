@@ -23,6 +23,7 @@ export const useSwap = (token: TokenType, amount: string) => {
     amountToString,
     safeCalc.pow(10, token.decimal).toFixed(),
   );
+
   const callee = CONTRACT_ADDRESS.GimSwap;
 
   const publicClient = createPublicClient({

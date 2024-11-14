@@ -38,7 +38,7 @@ export default function KeyVisual() {
         <Button
           title="Get Real Tokens"
           className="bg-purple-500 text-black-1"
-          href="/swap"
+          href="/trade/swap"
         />
       </section>
     </section>

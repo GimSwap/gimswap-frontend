@@ -1,3 +1,5 @@
+'use client';
+
 import { OPEN_VOUCHER, KRWO } from '@/src/lib/constants/token';
 import { getBalance } from '@/src/lib/hook/useGetBalance';
 import { useEffect } from 'react';

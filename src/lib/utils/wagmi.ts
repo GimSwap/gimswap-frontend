@@ -1,5 +1,5 @@
 import { http, createConfig, createStorage, noopStorage } from 'wagmi';
-import { kaia } from 'wagmi/chains';
+import { kaia, kairos } from 'wagmi/chains';
 import { injected, walletConnect } from 'wagmi/connectors';
 import { kaikasConnector } from '@/src/lib/utils/wallets/kaiaWallet';
 import { fallback } from 'viem';
@@ -8,7 +8,7 @@ const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 if (!projectId) throw new Error('there is no projectId');
 
 export const wagmiConfig = createConfig({
-  chains: [kaia],
+  chains: process.env.NODE_ENV === 'production' ? [kaia] : [kairos],
   connectors: [
     walletConnect({ projectId }),
     kaikasConnector(),
@@ -22,11 +22,16 @@ export const wagmiConfig = createConfig({
       http('https://go.getblock.io/d7094dbd80ab474ba7042603fe912332'),
       http('https://1rpc.io/klay'),
     ]),
+    [kairos.id]: fallback([
+      http('https://responsive-green-emerald.kaia-kairos.quiknode.pro'),
+      http('https://rpc.ankr.com/klaytn_testnet'),
+      http('https://public-en.kairos.node.kaia.io'),
+    ]),
   },
   ssr: true,
   storage: createStorage({
     storage: typeof window !== 'undefined' ? window.localStorage : noopStorage,
     key: 'GimSwap',
   }),
-  syncConnectedChain: false,
+  syncConnectedChain: true,
 });

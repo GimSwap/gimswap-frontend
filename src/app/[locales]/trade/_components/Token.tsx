@@ -5,6 +5,9 @@ import { getBalance } from '@/src/lib/hook/useGetBalance';
 import { useEffect } from 'react';
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
+import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
+import NeedDepositOVPopup from '@/src/components/popups/NeedDepositOVPopup';
+import { OVDepositPopupState } from '../swap/_utils/OVDepositPopupState';
 
 interface TokenProps {
   type: 'pay' | 'receive';
@@ -23,6 +26,7 @@ export default function Token({
   isWritable,
   setIsEnoughBalance,
 }: TokenProps) {
+  const { openPopup } = usePopupStore((state) => state);
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!setAmount) return;
     const value = e.target.value;
@@ -60,6 +64,13 @@ export default function Token({
         ),
       );
   }, [type, amount, setIsEnoughBalance, balance, token.unit]);
+
+  useEffect(() => {
+    if (token === OPEN_VOUCHER && balance === 0 && isWritable) {
+      const { shouldShowPopup } = OVDepositPopupState();
+      shouldShowPopup && openPopup(NeedDepositOVPopup);
+    }
+  }, [token, balance, isWritable]);
 
   return (
     <section

@@ -8,7 +8,7 @@ const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
 if (!projectId) throw new Error('there is no projectId');
 
 export const wagmiConfig = createConfig({
-  chains: process.env.NODE_ENV === 'production' ? [kaia] : [kairos],
+  chains: process.env.VERCEL_ENV === 'production' ? [kaia] : [kairos],
   connectors: [
     walletConnect({ projectId }),
     kaikasConnector(),

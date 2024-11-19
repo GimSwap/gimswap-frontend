@@ -87,7 +87,7 @@ export function kaikasConnector() {
         return await window.caver.klay.getChainId();
       },
 
-      getProvider() {
+      async getProvider() {
         return checkIsMobileBrowser('kaia')
           ? Promise.resolve(window.ethereum)
           : Promise.resolve(window.klaytn);

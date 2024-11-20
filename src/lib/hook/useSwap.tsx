@@ -26,14 +26,14 @@ export const useSwap = (token: TokenType, amount: string) => {
 
   const callee = CONTRACT_ADDRESS.GimSwap;
 
+  const network = process.env.VERCEL_ENV !== "production" ? kairos : kaia;
   const publicClient = createPublicClient({
-    chain: kaia,
+    chain: network,
     transport: http(),
   });
 
   const swap = async () => {
     if (!connector || !address) return;
-    const network = process.env.VERCEL_ENV !== "production" ? kairos : kaia;
     const currentWalletInfo = WALLETS.find(({ id }) => connector.id === id);
 
     try {
@@ -60,9 +60,7 @@ export const useSwap = (token: TokenType, amount: string) => {
 
       if (!hash) throw new Error(`transaction error`);
       setHash(hash);
-
       const { status } = await publicClient.waitForTransactionReceipt({ hash });
-
       if (status === "success") setIsSuccess(true);
       else if (status === "reverted") setIsError(true);
     } catch (error) {

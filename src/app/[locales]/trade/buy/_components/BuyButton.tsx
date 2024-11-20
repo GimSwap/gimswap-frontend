@@ -1,11 +1,11 @@
-import Button from '@/src/components/Button';
-import { useAccount } from 'wagmi';
-import { makeSignMessage } from '../_utils/makeSignMessage';
-import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
-import useSign from '@/src/lib/hook/useSign';
-import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
-import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
-import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
+import Button from "@/src/components/Button";
+import { useAccount } from "wagmi";
+import { makeSignMessage } from "../_utils/makeSignMessage";
+import { usePopupStore } from "@/src/lib/stores/popupStore/PopupStoreProvider";
+import useSign from "@/src/lib/hook/useSign";
+import SelectWalletPopup from "@/src/components/popups/SelectWalletPopup";
+import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
+import useSwitchNetwork from "@/src/lib/hook/useSwitchNetwork";
 
 interface BuyButtonProps {
   amount: string;
@@ -18,7 +18,7 @@ export default function BuyButton({ amount }: BuyButtonProps) {
   const { sign } = useSign();
 
   const handleOpenVoucherPayment = (url: string) => {
-    window.open(url, 'openvoucherPayment', 'popup=true,width=380,height=780');
+    window.open(url, "openvoucherPayment", "popup=true,width=380,height=780");
   };
 
   const handleBuy = async () => {
@@ -32,10 +32,11 @@ export default function BuyButton({ amount }: BuyButtonProps) {
 
     const searchParams = new URLSearchParams({
       amount,
-      method: 'purchase',
+      method: "purchase",
       walletAddress: address,
       redirectOnSuccess: `${window.location.origin}/trade/swap`,
       redirectOnError: window.location.href,
+      redirectOnCancel: window.location.href,
       signature,
       signMessage: btoa(signMessage),
       chainId: chainId.toString(),
@@ -50,25 +51,25 @@ export default function BuyButton({ amount }: BuyButtonProps) {
     console.log(chainId);
     if (!isConnected)
       return {
-        title: 'Connect Wallet',
+        title: "Connect Wallet",
         disabled: false,
         onClick: () => openPopup(SelectWalletPopup),
       };
 
     if (!checkIsAvailableChain(chainId))
       return {
-        title: 'Switch Network',
+        title: "Switch Network",
         disabled: false,
         onClick: async () => await switchChain(),
       };
     if (+amount <= 0)
       return {
-        title: 'Enter an amount',
+        title: "Enter an amount",
         disabled: true,
       };
 
     return {
-      title: 'Buy',
+      title: "Buy",
       disabled: false,
       onClick: handleBuy,
     };
@@ -82,10 +83,11 @@ export default function BuyButton({ amount }: BuyButtonProps) {
     if (!signature) return;
 
     const searchParams = new URLSearchParams({
-      method: 'history',
+      method: "history",
       walletAddress: address,
       redirectOnSuccess: `${window.location.origin}/trade/swap`,
       redirectOnError: window.location.href,
+      redirectOnCancel: window.location.href,
       signature,
       signMessage: btoa(signMessage),
       chainId: process.env.NEXT_PUBLIC_KLAYTN_CHAIN_ID!,
@@ -105,7 +107,7 @@ export default function BuyButton({ amount }: BuyButtonProps) {
         className="c1 font-medium text-black-8 underline underline-offset-[3px] text-center"
         onClick={handleHistoryButtonClick}
       >
-        {isConnected ? 'View History' : ''}
+        {isConnected ? "View History" : ""}
       </button>
     </>
   );

@@ -1,20 +1,21 @@
 import { useSwitchChain } from 'wagmi';
-import { kaia } from 'wagmi/chains';
+import { kaia, kairos } from 'wagmi/chains';
 
 export default function useSwitchNetwork() {
-  const { chains, switchChain } = useSwitchChain();
+  const { switchChain } = useSwitchChain();
+  const network = process.env.VERCEL_ENV !== 'production' ? kairos : kaia;
   const handleSwitch = async () => {
     switchChain({
-      chainId: chains[0].id,
+      chainId: network.id,
       addEthereumChainParameter: {
         nativeCurrency: {
-          name: 'KLAY',
-          symbol: 'KLAY',
+          name: 'KAIA',
+          symbol: 'KAIA',
           decimals: 18,
         },
-        chainName: 'Kaia',
-        rpcUrls: kaia.rpcUrls.default.http,
-        blockExplorerUrls: [kaia.blockExplorers.default.url],
+        chainName: network.name,
+        rpcUrls: network.rpcUrls.default.http,
+        blockExplorerUrls: [network.blockExplorers.default.url],
       },
     });
   };

@@ -119,10 +119,9 @@ export function kaikasConnector() {
       },
 
       async switchChain({ chainId }: { chainId: number }) {
+        const id = numberToHex(chainId);
         const provider = await this.getProvider();
         if (!provider) throw new Error('Connector not found');
-        const id = numberToHex(chainId);
-
         try {
           await Promise.all([
             provider.request({
@@ -149,7 +148,6 @@ export function kaikasConnector() {
           const chain = config.chains.find((x) => x.id === chainId);
           this.onChainChanged('0');
           if (!chain) throw new Error('Chain not supported by this Connector');
-
           if (
             (error as ProviderRpcError).code === 4902 ||
             (error as ProviderRpcError<{ originalError?: { code: number } }>)
@@ -163,13 +161,7 @@ export function kaikasConnector() {
                     chainId: id,
                     chainName: chain.name,
                     nativeCurrency: chain.nativeCurrency,
-                    rpcUrls: [
-                      'https://public-en.node.kaia.io',
-                      'https://kaia-mainnet.rpc.grove.city/v1/803ceedf',
-                      'https://klaytn.drpc.org',
-                      'https://go.getblock.io/d7094dbd80ab474ba7042603fe912332',
-                      'https://1rpc.io/klay',
-                    ],
+                    rpcUrls: chain.rpcUrls.default.http,
                     blockExplorerUrls: [
                       process.env.NEXT_PUBLIC_KLAYTN_BLOCK_EXPLORER_URLS!,
                     ],

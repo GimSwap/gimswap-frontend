@@ -69,7 +69,7 @@ export default function BuyButton({ amount }: BuyButtonProps) {
       };
 
     return {
-      title: "Buy",
+      title: "Sign and Buy",
       disabled: false,
       onClick: handleBuy,
     };

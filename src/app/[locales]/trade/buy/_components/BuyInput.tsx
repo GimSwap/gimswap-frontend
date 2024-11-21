@@ -1,15 +1,16 @@
-'use client';
+"use client";
 
-import OpenVoucherIcon from '@/public/svg/token/open-voucher.svg';
-import KrFlagIcon from '@/public/svg/token/kr-flag.svg';
-import { safeCalc } from '@/src/lib/utils/safeCalc';
-import { useState } from 'react';
-import BuyButton from './BuyButton';
+import OpenVoucherIcon from "@/public/svg/token/open-voucher.svg";
+import KrFlagIcon from "@/public/svg/token/kr-flag.svg";
+import { safeCalc } from "@/src/lib/utils/safeCalc";
+import { useState } from "react";
+import BuyButton from "./BuyButton";
+import { insertComma } from "@/src/lib/utils/insertComma";
 
 const OPEN_VOUCHER_UNIT = 10000;
 
 export default function BuyInput() {
-  const [amount, setAmount] = useState<string>('1');
+  const [amount, setAmount] = useState<string>("1");
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isNaN(Number(e.target.value))) return;
@@ -30,7 +31,9 @@ export default function BuyInput() {
           <input
             type="tel"
             disabled
-            value={safeCalc.multiply(amount, OPEN_VOUCHER_UNIT).toFixed()}
+            value={insertComma(
+              safeCalc.multiply(amount, OPEN_VOUCHER_UNIT).toFixed(),
+            )}
             inputMode="numeric"
             placeholder="0"
             className="font-bold text-h2 w-full placeholder-black-6 text-black-6"

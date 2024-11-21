@@ -10,7 +10,7 @@ export const MENUS = [
     externalLink: false,
   },
   {
-    title: "Buy",
+    title: "Buy OV",
     url: "/trade/buy",
     externalLink: false,
   },

@@ -48,7 +48,6 @@ export default function BuyButton({ amount }: BuyButtonProps) {
   };
 
   const BuyButtonState = () => {
-    console.log(chainId);
     if (!isConnected)
       return {
         title: "Connect Wallet",

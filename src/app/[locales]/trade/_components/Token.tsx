@@ -41,7 +41,7 @@ export default function Token({
     );
     setAmount(safeCalc.multiply(value, token.unit).toFixed());
   };
-  const { balance } = getBalance({
+  const { balance, isPending } = getBalance({
     contractAddress: token.contractAddress,
     decimal: token.decimal,
   });
@@ -68,11 +68,18 @@ export default function Token({
   }, [type, amount, setIsEnoughBalance, balance, token.unit]);
 
   useEffect(() => {
-    if (token === OPEN_VOUCHER && balance === 0 && isWritable && isConnected) {
+    console.log(isPending, isConnected, balance);
+    if (
+      token === OPEN_VOUCHER &&
+      balance === 0 &&
+      isWritable &&
+      !isPending &&
+      isConnected
+    ) {
       const { shouldShowPopup } = OVDepositPopupState();
       shouldShowPopup && openPopup(NeedDepositOVPopup);
     }
-  }, [token, balance, isWritable, isConnected]);
+  }, [balance, isWritable, isPending, isConnected]);
 
   return (
     <section

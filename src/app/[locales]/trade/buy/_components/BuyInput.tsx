@@ -8,13 +8,19 @@ import BuyButton from "./BuyButton";
 import { insertComma } from "@/src/lib/utils/insertComma";
 
 const OPEN_VOUCHER_UNIT = 10000;
+const MAX_AMOUNT = 100000;
 
 export default function BuyInput() {
   const [amount, setAmount] = useState<string>("1");
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isNaN(Number(e.target.value))) return;
-    setAmount(e.target.value);
+    if (Number(e.target.value) >= MAX_AMOUNT) {
+      setAmount(MAX_AMOUNT.toString());
+      return;
+    }
+
+    setAmount(Math.floor(Number(e.target.value)).toString());
   };
 
   return (

@@ -64,7 +64,7 @@ export default function Topbar() {
             </Link>
           ))}
           <h4 className="text-black-12 absolute left-1/2 -translate-x-1/2 font-bold">
-            {process.env.NEXT_PUBLIC_VERCEL_ENV !== "production" && "Testnet"}
+            {process.env.NEXT_PUBLIC_ENV_MODE !== "production" && "Testnet"}
           </h4>
           <WalletConnectButton size="small" />
         </section>

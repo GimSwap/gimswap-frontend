@@ -68,7 +68,6 @@ export default function Token({
   }, [type, amount, setIsEnoughBalance, balance, token.unit]);
 
   useEffect(() => {
-    console.log(isPending, isConnected, balance);
     if (
       token === OPEN_VOUCHER &&
       balance === 0 &&

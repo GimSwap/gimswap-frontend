@@ -26,7 +26,8 @@ export const useSwap = (token: TokenType, amount: string) => {
 
   const callee = CONTRACT_ADDRESS.GimSwap;
 
-  const network = process.env.VERCEL_ENV !== "production" ? kairos : kaia;
+  const network =
+    process.env.NEXT_PUBLIC_ENV_MODE !== "production" ? kairos : kaia;
   const publicClient = createPublicClient({
     chain: network,
     transport: http(),

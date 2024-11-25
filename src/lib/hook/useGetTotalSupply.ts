@@ -3,20 +3,14 @@ import totalSupplyAbi from '@/src/lib/utils/abis/getTotalSupplyAbi.json';
 import { CONTRACT_ADDRESS } from '@/src/lib/constants/contractAddress';
 import { createPublicClient, fallback, formatUnits, http } from 'viem';
 import { KRWO } from '@/src/lib/constants/token';
-import { kaia } from 'wagmi/chains';
+import { kaia, kairos } from 'wagmi/chains';
 
 export const useGetTotalSupply = () => {
   const [totalSupply, setTotalSupply] = useState<string | null>(null);
+  const network = process.env.VERCEL_ENV !== 'production' ? kairos : kaia;
   const client = createPublicClient({
-    chain: kaia,
-    transport: fallback([
-      http('https://public-en.node.kaia.io'),
-      http('https://kaia-mainnet.rpc.grove.city/v1/803ceedf'),
-      http('https://klaytn.drpc.org'),
-      http('https://go.getblock.io/d7094dbd80ab474ba7042603fe912332'),
-      http('https://1rpc.io/klay'),
-    ]),
-
+    chain: network,
+    transport: fallback([http(network.rpcUrls.default.http[0])]),
     cacheTime: 0,
   });
   useEffect(() => {

@@ -14,7 +14,7 @@ export default function DocsButton() {
         <p className="p1 font-medium text-purple-500 ml-1 mr-2 rounded-[inherit] bg-purple-50 whitespace-nowrap">
           How to Get KRWO
         </p>
-        <ChevronRightIcon />
+        <ChevronRightIcon className="stroke-purple-500" />
       </section>
     </Link>
   );

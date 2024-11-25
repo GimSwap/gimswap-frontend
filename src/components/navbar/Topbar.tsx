@@ -56,13 +56,16 @@ export default function Topbar() {
               href={url}
               className={`p1 font-medium ${
                 navbarStyle().menuItems
-              } min-w-[52px] hidden lg:block`}
+              } min-w-[52px] hidden lg:block text-center`}
               target={externalLink ? "_blank" : "_self"}
               key={title}
             >
               {title}
             </Link>
           ))}
+          <h4 className="text-black-12 absolute left-1/2 -translate-x-1/2 font-bold">
+            {process.env.NEXT_PUBLIC_VERCEL_ENV !== "production" && "Testnet"}
+          </h4>
           <WalletConnectButton size="small" />
         </section>
       </nav>

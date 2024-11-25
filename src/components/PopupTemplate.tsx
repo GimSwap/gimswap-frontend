@@ -4,6 +4,7 @@ import Lottie from 'lottie-react';
 import loadingLottie from '@/public/lottie/loading.json';
 import successLottie from '@/public/lottie/success.json';
 import failLottie from '@/public/lottie/fail.json';
+import alertLottie from '@/public/lottie/alert.json';
 
 const iconType = {
   loading: <Lottie animationData={loadingLottie} loop className="h-16 w-16" />,
@@ -18,7 +19,14 @@ const iconType = {
     <Lottie
       animationData={failLottie}
       loop={false}
-      className="h-[74px] w-[74px] -translate-y-4"
+      className="h-[74px] w-[74px] -mt-1"
+    />
+  ),
+  alert: (
+    <Lottie
+      animationData={alertLottie}
+      loop={false}
+      className="h-[100px] w-[100px] -mt-4 -mb-5"
     />
   ),
 };
@@ -58,8 +66,8 @@ export default function PopupTemplate({
       >
         <div className="w-full">
           {useTemplate && (
-            <div className="px-6 flex flex-col items-center pt-6 relative">
-              <div className="mt-14">{icon && iconType[icon]}</div>
+            <div className="px-6 flex flex-col items-center relative">
+              <div className="mt-[52px]">{icon && iconType[icon]}</div>
             </div>
           )}
 

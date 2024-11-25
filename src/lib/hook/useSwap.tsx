@@ -1,13 +1,13 @@
-import swapAbi from '@/src/lib/utils/abis/swapAbi.json';
-import { TokenType } from '../types/TokenType';
-import { makeSwapArgument } from '../utils/makeSwapArgument';
-import { safeCalc } from '../utils/safeCalc';
-import { CONTRACT_ADDRESS } from '../constants/contractAddress';
-import { useState } from 'react';
-import { createPublicClient, createWalletClient, custom } from 'viem';
-import { kaia } from 'wagmi/chains';
-import { http, useAccount } from 'wagmi';
-import { WALLETS } from '@/src/lib/constants/wallets';
+import swapAbi from "@/src/lib/utils/abis/swapAbi.json";
+import { TokenType } from "../types/TokenType";
+import { makeSwapArgument } from "../utils/makeSwapArgument";
+import { safeCalc } from "../utils/safeCalc";
+import { CONTRACT_ADDRESS } from "../constants/contractAddress";
+import { useState } from "react";
+import { createPublicClient, createWalletClient, custom } from "viem";
+import { kaia, kairos } from "wagmi/chains";
+import { http, useAccount } from "wagmi";
+import { WALLETS } from "@/src/lib/constants/wallets";
 
 export const useSwap = (token: TokenType, amount: string) => {
   const [isPending, setIsPending] = useState<boolean>(false);
@@ -23,10 +23,12 @@ export const useSwap = (token: TokenType, amount: string) => {
     amountToString,
     safeCalc.pow(10, token.decimal).toFixed(),
   );
+
   const callee = CONTRACT_ADDRESS.GimSwap;
 
+  const network = process.env.VERCEL_ENV !== "production" ? kairos : kaia;
   const publicClient = createPublicClient({
-    chain: kaia,
+    chain: network,
     transport: http(),
   });
 
@@ -36,7 +38,7 @@ export const useSwap = (token: TokenType, amount: string) => {
 
     try {
       const walletClient = createWalletClient({
-        chain: kaia,
+        chain: network,
         transport: custom(await currentWalletInfo?.transport),
       });
       setIsPending(true);
@@ -58,12 +60,11 @@ export const useSwap = (token: TokenType, amount: string) => {
 
       if (!hash) throw new Error(`transaction error`);
       setHash(hash);
-
       const { status } = await publicClient.waitForTransactionReceipt({ hash });
-
-      if (status === 'success') setIsSuccess(true);
-      else if (status === 'reverted') setIsError(true);
+      if (status === "success") setIsSuccess(true);
+      else if (status === "reverted") setIsError(true);
     } catch (error) {
+      console.log(error, "error");
       console.error(error);
       setIsError(true);
     } finally {

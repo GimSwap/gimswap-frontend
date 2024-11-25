@@ -1,7 +1,7 @@
-import SwapInput from './_components/SwapInput';
-import AddTokens from './_components/AddTokens';
-import NavbarColorChanger from './_components/NavbarColorChanger';
-import DocsButton from '@/src/app/[locales]/swap/_components/DocsButton';
+import SwapInput from '../trade/swap/_components/SwapInput';
+import AddTokens from '../trade/swap/_components/AddTokens';
+import NavbarColorChanger from '../trade/swap/_components/NavbarColorChanger';
+import DocsButton from '../trade/swap/_components/DocsButton';
 
 export default function Swap() {
   return (

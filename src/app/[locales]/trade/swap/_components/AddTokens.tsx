@@ -27,7 +27,7 @@ export default function AddTokens() {
   if (!isConnected) return <></>;
   return (
     <section
-      className="p-4 mt-4 w-full shadow-customShadow bg-black-1 rounded-2xl flex justify-between max-w-[480px]"
+      className="p-4 mt-4 w-full shadow-customShadow bg-black-1 rounded-2xl flex justify-between max-w-[480px] cursor-pointer"
       onClick={handleAddToken}
     >
       <div className="flex items-center gap-2">
@@ -37,7 +37,7 @@ export default function AddTokens() {
           <KRWO.icon className="-translate-x-1" />
         </div>
       </div>
-      <ChevronRightIcon />
+      <ChevronRightIcon className="stroke-black-8" />
     </section>
   );
 }

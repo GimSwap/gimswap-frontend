@@ -9,7 +9,6 @@ export default function Footer() {
         <section className="pt-6 pb-[80px]">
           <p className="p1">Contact: contact@gimswap.com</p>
           <p className="p1">Copyright 2024 Gimswap. All rights reserved.</p>
-          <p className="p1">Commit Hash: {process.env.COMMIT_HASH}</p>
         </section>
       </div>
       <Socials />

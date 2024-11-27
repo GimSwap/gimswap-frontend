@@ -19,7 +19,6 @@ export const useAuth = () => {
     async (wallet: (typeof WALLETS)[0]) => {
       const findConnector = connectors.find((c) => c.id === wallet.connectorId);
       try {
-        throw new Error('test');
         if (!wallet.installed && wallet.deepLink) {
           if (wallet.id === 'metaMask') {
             openMetamaskUrl(`${wallet.deepLink}${currentUrl}`);

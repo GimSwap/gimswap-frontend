@@ -41,10 +41,9 @@ export const useSwap = (token: TokenType, amount: string) => {
     try {
       const walletClient = createWalletClient({
         chain: network,
-        transport: custom(await currentWalletInfo?.transport),
+        transport: custom(currentWalletInfo?.transport),
       });
       setIsPending(true);
-
       const args = makeSwapArgument(
         token.method,
         to,
@@ -67,7 +66,7 @@ export const useSwap = (token: TokenType, amount: string) => {
       else if (status === "reverted") setIsError(true);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      fetchSendLog({ name: 'swap', error: errorMessage });
+      fetchSendLog({ name: 'swap', error: errorMessage, currentWalletInfo, network, isPending });
       setIsError(true);
     } finally {
       setIsPending(false);

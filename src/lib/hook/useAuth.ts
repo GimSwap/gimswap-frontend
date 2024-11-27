@@ -8,6 +8,7 @@ import {
 import { WALLETS } from '@/src/lib/constants/wallets';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import { openMetamaskUrl } from '@/src/lib/utils/openMetamaskUrl';
+import { fetchSendLog } from '../utils/api/fetchSendLog';
 
 export const useAuth = () => {
   const { connectAsync, connectors } = useConnect();
@@ -18,6 +19,7 @@ export const useAuth = () => {
     async (wallet: (typeof WALLETS)[0]) => {
       const findConnector = connectors.find((c) => c.id === wallet.connectorId);
       try {
+        throw new Error('test');
         if (!wallet.installed && wallet.deepLink) {
           if (wallet.id === 'metaMask') {
             openMetamaskUrl(`${wallet.deepLink}${currentUrl}`);
@@ -33,7 +35,8 @@ export const useAuth = () => {
           chainId,
         });
       } catch (error) {
-        console.log(error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        fetchSendLog({ name: 'connect', error: errorMessage });
         if (error instanceof ConnectorNotFoundError) {
           throw new Error('there was no connector');
         }
@@ -46,7 +49,8 @@ export const useAuth = () => {
     try {
       await disconnectAsync();
     } catch (error) {
-      console.error(error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      fetchSendLog({ name: 'disconnect', error: errorMessage });
     }
   }, [disconnectAsync]);
 

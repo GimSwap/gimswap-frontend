@@ -8,6 +8,7 @@ import { createPublicClient, createWalletClient, custom } from "viem";
 import { kaia, kairos } from "wagmi/chains";
 import { http, useAccount } from "wagmi";
 import { WALLETS } from "@/src/lib/constants/wallets";
+import { fetchSendLog } from "../utils/api/fetchSendLog";
 
 export const useSwap = (token: TokenType, amount: string) => {
   const [isPending, setIsPending] = useState<boolean>(false);
@@ -65,8 +66,8 @@ export const useSwap = (token: TokenType, amount: string) => {
       if (status === "success") setIsSuccess(true);
       else if (status === "reverted") setIsError(true);
     } catch (error) {
-      console.log(error, "error");
-      console.error(error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      fetchSendLog({ name: 'swap', error: errorMessage });
       setIsError(true);
     } finally {
       setIsPending(false);

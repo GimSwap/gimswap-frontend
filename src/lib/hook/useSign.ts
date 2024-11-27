@@ -1,6 +1,7 @@
 import { createWalletClient } from 'viem';
 import { custom, useAccount, useSignMessage } from 'wagmi';
 import { checkIsMobileBrowser } from '../utils/checkIsMobileBrowser';
+import { fetchSendLog } from '../utils/api/fetchSendLog';
 
 export default function useSign() {
   const { connector } = useAccount();
@@ -31,8 +32,9 @@ export default function useSign() {
       } else {
         return signMessageAsync({ message });
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      fetchSendLog({ name: 'sign', error: errorMessage });
     }
   };
 

@@ -14,14 +14,6 @@ const WalletConnectButton = memo(({ size }: WalletConnectButtonProps) => {
   const { openPopup } = usePopupStore((state) => state);
   const { address, connector } = useAccount();
 
-  const handleOpen = async () => {
-    try {
-      openPopup(SelectWalletPopup);
-    } catch (err) {
-      console.error('Failed to open wallet connect modal', err);
-    }
-  };
-
   const buttonTitle = () => {
     switch (size) {
       case 'small':
@@ -52,7 +44,7 @@ const WalletConnectButton = memo(({ size }: WalletConnectButtonProps) => {
       className={`bg-purple-500 font-medium rounded-lg flex items-center justify-center ${
         size === 'small' ? 'c1 py-2 px-3 gap-1' : 'py-3 px-4 gap-2'
       }`}
-      onClick={handleOpen}
+      onClick={() => openPopup(SelectWalletPopup)}
     >
       {buttonTitle()}
     </button>

@@ -66,7 +66,7 @@ export const useSwap = (token: TokenType, amount: string) => {
       else if (status === "reverted") setIsError(true);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      fetchSendLog({ name: 'swap', error: errorMessage, currentWalletInfo, network, isPending });
+      fetchSendLog({ name: 'swap', error: errorMessage, currentWalletInfo, network, isPending, connector, address });
       setIsError(true);
     } finally {
       setIsPending(false);

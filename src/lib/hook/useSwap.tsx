@@ -36,7 +36,7 @@ export const useSwap = (token: TokenType, amount: string) => {
 
   const swap = async () => {
     if (!connector || !address) return;
-    const currentWalletInfo = WALLETS.find(({ id }) => connector.id === id);
+    const currentWalletInfo = WALLETS.find(({ id }) => connector.id.replace(/\s+/g, '').toLowerCase().includes(id.toLowerCase()));
 
     try {
       const walletClient = createWalletClient({

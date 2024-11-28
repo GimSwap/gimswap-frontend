@@ -6,7 +6,6 @@ import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
 import { useAccount, useConfig } from 'wagmi';
 import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
 import { useCallback } from 'react';
-import {fetchSendLog} from "@/src/lib/utils/api/fetchSendLog";
 
 interface SwapButtonProps {
   tokens: { pay: TokenType; receive: TokenType };
@@ -32,7 +31,6 @@ export const SwapButton = ({
   );
 
   const handleButtonClick = async () => {
-    fetchSendLog({ name: 'swap-button-click', isConnected, isWrongNetwork, isEnoughBalance, amount, chains });
     if (!isConnected) {
       openPopup(SelectWalletPopup);
       return;

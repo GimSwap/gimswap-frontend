@@ -16,12 +16,14 @@ export default function SwapInput() {
     receive: TokenType;
   }>({ pay: OPEN_VOUCHER, receive: KRWO });
   const [isEnoughBalance, setIsEnoughBalance] = useState<boolean>(true);
+  const [rerenderTrigger, setRerenderTrigger] = useState<number>(0);
 
   const { fee } = useGetFee(amount);
   return (
     <>
       <section className="relative flex flex-col gap-3 mb-4">
         <Token
+          key={`pay-${rerenderTrigger}`}
           type="pay"
           token={selectedTokens.pay}
           setAmount={setAmount}
@@ -42,6 +44,7 @@ export default function SwapInput() {
           <ArrowDownIcon />
         </button>
         <Token
+          key={`receive-${rerenderTrigger}`}
           type="receive"
           token={selectedTokens.receive}
           amount={amount}
@@ -56,6 +59,7 @@ export default function SwapInput() {
         fee={fee}
         isEnoughBalance={isEnoughBalance}
         tokens={selectedTokens}
+        onComplete={() => setRerenderTrigger((prev) => prev + 1)}
       />
     </>
   );

@@ -1,4 +1,4 @@
-export type AbiMethodType = "transferVoucherAndCall" | "transferAndCall";
+export type AbiMethodType = 'transferVoucherAndCall' | 'transferAndCall';
 
 export interface TokenType {
   name: string;
@@ -6,7 +6,7 @@ export interface TokenType {
   contractAddress: string;
   icon: React.ElementType;
   imageUrl: string;
-  symbol: string;
+  symbol: 'OV' | 'KRWO';
   method: AbiMethodType;
   decimal: number;
 }

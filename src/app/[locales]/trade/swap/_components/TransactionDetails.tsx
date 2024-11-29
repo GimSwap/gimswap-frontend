@@ -18,7 +18,7 @@ export default function TransactionDetails({ fee }: TransactionDetailsProps) {
         <div className="flex gap-[2px]">
           <div className="relative">
             <QuestionMartIcon onClick={openTooltip} />
-            <Tooltip className="whitespace-nowrap bg-[rgba(20,20,20,0.6)] rounded-lg px-3 py-[6px] text-black-1 c1 after:left-6 -translate-x-[22px] translate-y-3">
+            <Tooltip className="whitespace-nowrap bg-[rgba(0,0,0,0.5)] rounded-lg px-3 py-[6px] text-black-1 c1 after:left-6 -translate-x-[22px] translate-y-3">
               This fee is applied to ensure
               <br /> the best experience with Gimswap.
               <br />

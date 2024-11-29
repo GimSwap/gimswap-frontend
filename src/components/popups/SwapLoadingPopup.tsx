@@ -12,6 +12,7 @@ interface SwapLoadingPopupProps {
     receive: TokenType;
   };
   amount: string;
+  closePrevPopup: () => void;
 }
 
 export default function SwapLoadingPopup({
@@ -19,9 +20,13 @@ export default function SwapLoadingPopup({
   open,
   tokens,
   amount,
+  closePrevPopup,
 }: SwapLoadingPopupProps) {
   return (
-    <PopupTemplate showCloseButton open={open} onClose={onClose} icon="loading">
+    <PopupTemplate showCloseButton open={open} onClose={() => {
+      closePrevPopup();
+      onClose();
+    }} icon="loading">
       <section className="px-6">
         <h3 className="font-bold text-center py-4">Confirming swap</h3>
         <section className="rounded-lg bg-black-3 flex flex-col justify-center items-center p-4 gap-[6px]">

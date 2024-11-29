@@ -1,44 +1,61 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface TooltipProps {
   children: React.ReactNode;
   className?: string;
+  tailPosition?: 'top' | 'bottom';
 }
 
-export const useToolTip = () => {
+interface UseToolTipProps<T> {
+  closeOnClick?: boolean;
+  dependency?: T;
+}
+
+export const useToolTip = <T,>(
+  { closeOnClick, dependency }: UseToolTipProps<T> = { closeOnClick: true },
+) => {
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
 
-  const openTooltip = () => {
+  const openTooltip = useCallback(() => {
     setIsTooltipOpen(true);
-  };
+  }, [dependency]);
 
-  const closeTooltip = () => {
+  const closeTooltip = useCallback(() => {
     setIsTooltipOpen(false);
-  };
+  }, [dependency]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         tooltipRef.current &&
-        !tooltipRef.current.contains(event.target as Node)
+        !tooltipRef.current.contains(event.target as Node) &&
+        closeOnClick
       ) {
         closeTooltip();
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [closeOnClick]);
 
-  const Tooltip = ({ children, className }: TooltipProps) => {
-    if (!isTooltipOpen) return null;
+  const Tooltip = ({
+    children,
+    className,
+    tailPosition = 'top',
+  }: TooltipProps) => {
+    const tailPositionClass = {
+      top: 'speech-bubble-tail-top',
+      bottom: 'speech-bubble-tail-bottom',
+    };
+    if (!isTooltipOpen) return <></>;
     return (
       <div
         ref={tooltipRef}
-        className={`absolute after:border-t-[0px] after:border-x-[5.5px] after:border-b-[7.5px] after:border-t-[transparent] after:border-x-[transparent] after:border-b-[rgba(20,20,20,0.6)] after:content-[""] after:absolute after:-top-[7.5px] ${className}`}
+        className={`absolute ${tailPositionClass[tailPosition]} ${className}`}
       >
         {children}
       </div>

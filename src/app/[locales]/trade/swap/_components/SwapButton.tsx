@@ -13,6 +13,7 @@ interface SwapButtonProps {
   setAmount: React.Dispatch<React.SetStateAction<string>>;
   fee: number | null;
   isEnoughBalance: boolean;
+  onComplete: () => void;
 }
 
 export const SwapButton = ({
@@ -21,6 +22,7 @@ export const SwapButton = ({
   setAmount,
   fee,
   isEnoughBalance,
+  onComplete,
 }: SwapButtonProps) => {
   const { openPopup } = usePopupStore((state) => state);
   const { isConnected, chain } = useAccount();
@@ -46,6 +48,7 @@ export const SwapButton = ({
       amount,
       setAmount,
       fee,
+      onComplete,
     });
   };
 

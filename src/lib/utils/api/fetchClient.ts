@@ -3,7 +3,10 @@ import { fetchSendLog } from './fetchSendLog';
 
 const serverBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 if (!serverBaseUrl) {
-  fetchSendLog({ name: 'fetchClient', error: 'the environment variable is not set' });
+  fetchSendLog({
+    name: 'fetchClient',
+    error: 'the environment variable is not set',
+  });
   throw new Error('the environment variable is not set');
 }
 
@@ -21,17 +24,11 @@ class FetchError extends Error {
   }
 }
 
-async function Fetch(
-  endpoint: string,
-  options?: Partial<InitType>,
-) {
-  return handleFetch(
-    `${serverBaseUrl}${endpoint}`,
-    {
-      ...options,
-      cache: 'no-store',
-    },
-  );
+async function Fetch(endpoint: string, options?: Partial<InitType>) {
+  return handleFetch(`${serverBaseUrl}${endpoint}`, {
+    ...options,
+    cache: 'no-store',
+  });
 }
 
 async function handleFetch(
@@ -40,13 +37,13 @@ async function handleFetch(
 ): Promise<any> {
   let headers: HeadersInit = {
     'Content-Type': 'application/json',
-    credentials: 'include',
     ...options?.headers,
   };
   try {
     const response = await fetch(url, {
       ...options,
       headers,
+      credentials: 'include',
     });
     if (!response.ok) {
       const errorData = await response.json();

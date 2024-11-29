@@ -21,6 +21,7 @@ interface SwapConfirmPopupProps {
     receive: TokenType;
     pay: TokenType;
   };
+  onComplete: () => void;
 }
 
 export default function SwapConfirmPopup({
@@ -30,6 +31,7 @@ export default function SwapConfirmPopup({
   setAmount,
   tokens,
   fee,
+  onComplete,
 }: SwapConfirmPopupProps) {
   const { swap, error, isPending, isSuccess, hash } = useSwap(
     tokens.pay,
@@ -42,6 +44,11 @@ export default function SwapConfirmPopup({
       openPopup(SwapLoadingPopup, {
         tokens,
         amount,
+        closePrevPopup: () => {
+          closePopup(SwapLoadingPopup);
+          onClose();
+          openPopup(SwapErrorPopup);
+        }
       });
       return;
     }
@@ -49,6 +56,7 @@ export default function SwapConfirmPopup({
     if (isSuccess) {
       closePopup(SwapLoadingPopup);
       onClose();
+      onComplete();
       setAmount('0');
       openPopup(SwapSuccessPopup, {
         tokens,

@@ -87,18 +87,18 @@ input:focus {
   border: none;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield; /* 파이어폭스 기본 초기화 */
 }
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 .bg-glass {
-  background-image: url("../../assets/image/glass.webp");
+  background-image: url('../../assets/image/glass.webp');
   background-size: contain;
   background-repeat: no-repeat;
   background-position-x: center;
@@ -107,10 +107,14 @@ input[type="number"]::-webkit-inner-spin-button {
 
 @media (min-width: 1024px) {
   .bg-glass {
-    background-image: url("../../assets/image/glass.webp"),
-      url("../../assets/image/glass-flipped.webp");
-    background-size: 600px auto, 600px auto;
-    background-position: calc(50% - 300px) bottom, calc(50% + 300px) bottom;
+    background-image: url('../../assets/image/glass.webp'),
+      url('../../assets/image/glass-flipped.webp');
+    background-size:
+      600px auto,
+      600px auto;
+    background-position:
+      calc(50% - 300px) bottom,
+      calc(50% + 300px) bottom;
     background-repeat: no-repeat;
   }
 }
@@ -154,25 +158,47 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .docs-gradient::before {
-  content: "";
+  content: '';
   width: 100%;
   aspect-ratio: 1/1;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: conic-gradient(#DDD1FF 60deg, #926CFF, #DDD1FF);
+  background: conic-gradient(#ddd1ff 60deg, #926cff, #ddd1ff);
   animation: docsAnimate 2s ease-in-out infinite;
 }
 
 @keyframes docsAnimate {
   0% {
-    transform: translate(-50%, -50%) scale(1) rotate(0turn)
+    transform: translate(-50%, -50%) scale(1) rotate(0turn);
   }
   50% {
-    transform: translate(-50%, -50%) scale(1) rotate(0.5turn)
+    transform: translate(-50%, -50%) scale(1) rotate(0.5turn);
   }
   100% {
-    transform: translate(-50%, -50%) scale(1) rotate(1turn)
+    transform: translate(-50%, -50%) scale(1) rotate(1turn);
   }
+}
+
+.speech-bubble-tail-top::after {
+  content: '';
+  position: absolute;
+  border-top: 0;
+  border-left: 5.5px solid transparent;
+  border-right: 5.5px solid transparent;
+  border-bottom: 7.5px solid rgba(0, 0, 0, 0.5);
+  top: 0.2px;
+  transform: translateY(-100%);
+}
+
+.speech-bubble-tail-bottom::after {
+  content: '';
+  position: absolute;
+  border-top: 7.5px solid rgba(0, 0, 0, 0.5);
+  border-left: 5.5px solid transparent;
+  border-right: 5.5px solid transparent;
+  border-bottom: 0px;
+  bottom: 0.2px;
+  transform: translateY(100%);
 }

@@ -18,7 +18,7 @@ export default function Swap() {
           <AddTokens />
         </section>
       </main>
-      <div className="absolute w-full left-1/2 -translate-x-1/2 bottom-[20px]">
+      <div className="absolute w-full left-1/2 -translate-x-1/2 bottom-0">
         <div className="max-w-[480px] lg:max-w-[100vw] m-[0_auto] relative">
           <div className="bg-glass h-[calc(100dvh-160px)]" />
         </div>

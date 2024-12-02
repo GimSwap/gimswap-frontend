@@ -17,7 +17,7 @@ export default function BalanceCard() {
     select: (data) => data.balance,
   });
   return (
-    <section className="shadow-customShadow p-4 rounded-2xl bg-black-1 flex flex-col max-w-[480px] m-[0_auto]">
+    <section className="shadow-customShadow p-4 rounded-2xl bg-black-1 flex flex-col max-w-[480px] m-[0_auto] relative z-10">
       <div className="flex flex-row gap-1 pb-1 items-center">
         <div className="py-1 px-1 bg-purple-50 rounded-full">
           <WalletIcon className="w-4 h-4" />
@@ -26,9 +26,7 @@ export default function BalanceCard() {
       </div>
       <h5>
         <span className="font-bold">
-          {data?.krwo
-            ? (data.krwo / 10 ** KRWO.decimal).toLocaleString()
-            : '0'}
+          {data?.krwo ? (data.krwo / 10 ** KRWO.decimal).toLocaleString() : '0'}
         </span>{' '}
         {KRWO.symbol}
       </h5>

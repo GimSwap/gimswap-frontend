@@ -10,7 +10,7 @@ export default function TradeLayout({
   return (
     <>
       <NavbarColorChanger />
-      <section className="px-4 bg-black-2 pt-[calc(72px+16px)]">
+      <section className="px-4 bg-black-2 pt-[calc(72px+16px)] relative">
         <BalanceCard />
         {children}
         <BackgroundGlasses />

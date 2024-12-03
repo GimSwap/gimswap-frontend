@@ -8,13 +8,11 @@ export default function TradeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="pb-[360px] bg-black-2 relative pt-[88px] px-4">
       <NavbarColorChanger />
-      <section className="px-4 bg-black-2 pt-[calc(72px+16px)] relative">
-        <BalanceCard />
-        {children}
-        <BackgroundGlasses />
-      </section>
-    </>
+      <BalanceCard />
+      {children}
+      <BackgroundGlasses />
+    </div>
   );
 }

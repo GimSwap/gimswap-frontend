@@ -27,7 +27,7 @@ export default function AddTokens() {
   if (!isConnected) return <></>;
   return (
     <section
-      className="p-4 mt-4 w-full shadow-customShadow bg-black-1 rounded-2xl flex justify-between max-w-[480px] cursor-pointer"
+      className="p-4 mt-4 w-full shadow-customShadow bg-black-1 rounded-2xl flex justify-between max-w-[480px] cursor-pointer mx-auto z-10 relative"
       onClick={handleAddToken}
     >
       <div className="flex items-center gap-2">

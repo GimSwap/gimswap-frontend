@@ -97,6 +97,10 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
 }
 
+input:disabled {
+  color: #bfbfbf;
+}
+
 .bg-glass {
   background-image: url('../../assets/image/glass.webp');
   background-size: contain;
@@ -119,25 +123,42 @@ input[type='number']::-webkit-inner-spin-button {
   }
 }
 
-@keyframes slideIn {
-  from {
-    transform: translate3d(0, 100%, 0);
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(0, 100%, 0);
-  }
-}
-
 @media (max-width: 1024px) {
+  @keyframes slideIn {
+    from {
+      transform: translate3d(0, 100%, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 100%, 0);
+    }
+  }
+
+  @keyframes innerPopupSlideIn {
+    from {
+      transform: translate3d(0, 100%, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes innerPopupSlideOut {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 100%, 0);
+    }
+  }
   .slideIn {
     animation: slideIn 0.3s forwards ease-out;
     transform: translate3d(0, 0, 0);
@@ -146,6 +167,67 @@ input[type='number']::-webkit-inner-spin-button {
 
   .slideOut {
     animation: slideOut 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+
+  .innerPopupSlideIn {
+    animation: innerPopupSlideIn 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+
+  .innerPopupSlideOut {
+    animation: innerPopupSlideOut 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+}
+
+@media (min-width: 1024px) {
+  @keyframes slideOut {
+    from {
+      opacity: 1;
+      display: block;
+    }
+    to {
+      opacity: 0;
+      display: none;
+    }
+  }
+  @keyframes innerPopupSlideIn {
+    from {
+      transform: translate3d(-50%, 0, 0);
+      opacity: 0;
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes innerPopupSlideOut {
+    from {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+      opacity: 0;
+    }
+  }
+  .slideOut {
+    animation: slideOut 0.1s forwards;
+  }
+
+  .innerPopupSlideIn {
+    animation: innerPopupSlideIn 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+
+  .innerPopupSlideOut {
+    animation: innerPopupSlideOut 0.3s forwards;
     transform: translate3d(0, 0, 0);
     will-change: transform, opacity;
   }
@@ -199,6 +281,54 @@ input[type='number']::-webkit-inner-spin-button {
   border-left: 5.5px solid transparent;
   border-right: 5.5px solid transparent;
   border-bottom: 0px;
-  bottom: 0.2px;
-  transform: translateY(100%);
+  bottom: 1px;
+  transform: translateY(113%);
+}
+
+@keyframes slideFromLeft {
+  from {
+    transform: translateX(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .slideFromLeft {
+    animation: slideFromLeft 0.2s forwards;
+  }
+}
+
+.custom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  outline: none;
+  transition: opacity 0.2s;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #926cff;
+    opacity: 1 !important;
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    cursor: pointer;
+  }
+
+  &::-webkit-slider-thumb:before {
+    content: '123123';
+    position: absolute;
+    top: 12px;
+    left: 0;
+    background: #926cff;
+  }
 }

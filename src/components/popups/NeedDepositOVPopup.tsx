@@ -20,16 +20,12 @@ export default function NeedDepositOVPopup({
           Buy Open Voucher to earn KRWO.
         </h5>
         <section className="py-5 flex flex-row gap-2 w-full">
-          <Button
-            title="Cancel"
-            className="bg-purple-50 text-purple-500"
-            onClick={onClose}
-          />
-          <Button
-            title="Buy"
-            className="bg-purple-500 text-black-1"
-            href="/trade/buy"
-          />
+          <Button color="secondary" size="xl" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button color="primary" size="xl" href="/trade/buy">
+            Buy
+          </Button>
         </section>
       </section>
     </PopupTemplate>

@@ -1,4 +1,6 @@
-import { Link } from '@/src/navigation';
+'use client';
+
+import { Link } from '@/src/i18n/routing';
 import Image, { StaticImageData } from 'next/image';
 
 interface LinkButtonProps {
@@ -21,11 +23,11 @@ export default function LinkButton({
       className="px-4 py-3 rounded-lg border border-black-4 flex flex-row justify-between w-full items-center"
     >
       <div className="flex flex-row gap-3 ">
-        <div className="w-11 h-11 relative border border-black-7 rounded-full grid place-items-center">
+        <div className="w-11 h-11 relative rounded-full grid place-items-center">
           <Image src={icon} alt={title} />
         </div>
         <div className="flex flex-col">
-          <h5 className="font-bold">{title}</h5>
+          <h5 className="font-bold text-black-8">{title}</h5>
           <p className="p1 text-black-7">{subtitle}</p>
         </div>
       </div>

@@ -2,8 +2,15 @@ import SwapInput from '../trade/swap/_components/SwapInput';
 import AddTokens from '../trade/swap/_components/AddTokens';
 import NavbarColorChanger from '../trade/swap/_components/NavbarColorChanger';
 import DocsButton from '../trade/swap/_components/DocsButton';
+import { setRequestLocale } from 'next-intl/server';
 
-export default function Swap() {
+export default function Swap({
+  params: { locales },
+}: {
+  params: { locales: string };
+}) {
+  setRequestLocale(locales);
+
   return (
     <section className="px-4 bg-black-2">
       <NavbarColorChanger />

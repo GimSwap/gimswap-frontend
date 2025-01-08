@@ -35,11 +35,9 @@ export default function KeyVisual() {
         <p className="p1 text-black-1 text-center mb-6 max-w-[170px] lg:max-w-[300px]">
           The Platform for Tokenized Fiat-backed Assets.
         </p>
-        <Button
-          title="Swap"
-          className="bg-purple-500 text-black-1"
-          href="/trade/swap"
-        />
+        <Button href="/trade/swap" color="primary" size="xl">
+          Swap
+        </Button>
       </section>
     </section>
   );

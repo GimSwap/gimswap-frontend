@@ -47,8 +47,7 @@ export default function SwapConfirmPopup({
         closePrevPopup: () => {
           closePopup(SwapLoadingPopup);
           onClose();
-          openPopup(SwapErrorPopup);
-        }
+        },
       });
       return;
     }
@@ -68,9 +67,9 @@ export default function SwapConfirmPopup({
     }
 
     if (error) {
+      openPopup(SwapErrorPopup);
       closePopup(SwapLoadingPopup);
       onClose();
-      openPopup(SwapErrorPopup);
     }
   }, [isPending, isSuccess, error]);
 
@@ -128,11 +127,9 @@ export default function SwapConfirmPopup({
             </div>
           </section>
         </section>
-        <Button
-          title="Confirm swap"
-          className="bg-purple-500 text-black-1 my-4"
-          onClick={swap}
-        />
+        <Button className="my-4" color="primary" size="xl" onClick={swap}>
+          Confirm swap
+        </Button>
       </div>
     </PopupTemplate>
   );

@@ -47,7 +47,9 @@ export default function Token({
   });
 
   const symbol = token.symbol.toLowerCase() as 'ov' | 'krwo';
-  const balance = data ? data[symbol] / 10 ** token.decimal : 0;
+  const balance = data
+    ? safeCalc.divide(data[symbol], 10 ** token.decimal).toString()
+    : 0;
   const handleMaxButton = () => {
     if (!balance || !setAmount) return;
 
@@ -72,7 +74,9 @@ export default function Token({
   return (
     <section
       className={`rounded-lg bg-black-3 ${
-        isWritable ? "pt-[15px] pr-[15px] pb-[15px] pl-[15px] border border-purple-500" : "p-4"
+        isWritable
+          ? 'pt-[15px] pr-[15px] pb-[15px] pl-[15px] border border-purple-500'
+          : 'p-4'
       }`}
     >
       <section className="flex justify-between pb-1 cursor-pointer">

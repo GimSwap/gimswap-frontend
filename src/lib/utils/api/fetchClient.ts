@@ -53,7 +53,7 @@ async function handleFetch(
         errorData,
       );
     }
-    return camelCase(await response.json(), 3);
+    return camelCase(await response.json(), 4);
   } catch (error) {
     console.error('fetch error:', error);
 
@@ -61,4 +61,16 @@ async function handleFetch(
   }
 }
 
-export { Fetch };
+async function isrFetch(
+  endpoint: string,
+  time = 0,
+  tags?: string[],
+  options?: Partial<InitType>,
+) {
+  return handleFetch(`${serverBaseUrl}${endpoint}`, {
+    ...options,
+    next: { revalidate: time, tags },
+  });
+}
+
+export { Fetch, isrFetch };

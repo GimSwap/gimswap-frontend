@@ -16,7 +16,7 @@ export const useAuth = () => {
   const { chainId, isConnected } = useAccount();
   const currentUrl = `${window.location.hostname}${window.location.pathname}`;
   const connect = useCallback(
-    async (wallet: (typeof WALLETS)[0]) => {
+    async (wallet: (typeof WALLETS)[0], reload?: boolean) => {
       const findConnector = connectors.find((c) => c.id === wallet.connectorId);
       try {
         if (!wallet.installed && wallet.deepLink) {
@@ -33,8 +33,10 @@ export const useAuth = () => {
           connector: findConnector!,
           chainId,
         });
+        reload && window.location.reload();
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
         fetchSendLog({ name: 'connect', error: errorMessage });
         if (error instanceof ConnectorNotFoundError) {
           throw new Error('there was no connector');
@@ -44,14 +46,19 @@ export const useAuth = () => {
     [connectors, connectAsync, chainId],
   );
 
-  const disconnect = useCallback(async () => {
-    try {
-      await disconnectAsync();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      fetchSendLog({ name: 'disconnect', error: errorMessage });
-    }
-  }, [disconnectAsync]);
+  const disconnect = useCallback(
+    async (reload?: boolean) => {
+      try {
+        await disconnectAsync();
+        reload && window.location.reload();
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+        fetchSendLog({ name: 'disconnect', error: errorMessage });
+      }
+    },
+    [disconnectAsync],
+  );
 
   return { connect, disconnect };
 };

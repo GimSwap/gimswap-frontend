@@ -1,7 +1,7 @@
 'use client';
 
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
-import { usePathname } from '@/src/navigation';
+import { usePathname } from '@/src/i18n/routing';
 import { useEffect } from 'react';
 
 export default function PopupList() {

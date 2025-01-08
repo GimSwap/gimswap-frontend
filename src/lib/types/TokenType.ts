@@ -6,7 +6,8 @@ export interface TokenType {
   contractAddress: string;
   icon: React.ElementType;
   imageUrl: string;
-  symbol: 'OV' | 'KRWO';
+  symbol: 'OV' | 'KRWO' | 'USDT' | 'KAIA';
   method: AbiMethodType;
   decimal: number;
+  color?: string;
 }

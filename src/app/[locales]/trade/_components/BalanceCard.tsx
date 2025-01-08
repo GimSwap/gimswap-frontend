@@ -2,10 +2,12 @@
 
 import WalletIcon from '@/public/svg/wallet.svg';
 import { KRWO, OPEN_VOUCHER } from '@/src/lib/constants/token';
-import { Link } from '@/src/navigation';
+import { Link } from '@/src/i18n/routing';
 import { fetchGetBalance } from '@/src/lib/utils/api/fetchGetBalance';
 import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
+import { safeCalc } from '@/src/lib/utils/safeCalc';
+import { insertComma } from '@/src/lib/utils/insertComma';
 
 export default function BalanceCard() {
   const { address } = useAccount();
@@ -16,6 +18,7 @@ export default function BalanceCard() {
     enabled: !!address,
     select: (data) => data.balance,
   });
+
   return (
     <section className="shadow-customShadow p-4 rounded-2xl bg-black-1 flex flex-col max-w-[480px] m-[0_auto] relative z-10">
       <div className="flex flex-row gap-1 pb-1 items-center">
@@ -26,7 +29,14 @@ export default function BalanceCard() {
       </div>
       <h5>
         <span className="font-bold">
-          {data?.krwo ? (data.krwo / 10 ** KRWO.decimal).toLocaleString() : '0'}
+          {data?.krwo
+            ? insertComma(
+                safeCalc
+                  .divide(data.krwo, 10 ** KRWO.decimal)
+                  .floor()
+                  .toString(),
+              )
+            : '0'}
         </span>{' '}
         {KRWO.symbol}
       </h5>
@@ -37,9 +47,12 @@ export default function BalanceCard() {
           <p className="c1 text-black-8">
             <span className="font-bold">
               {data?.ov
-                ? (
-                    data.ov / Math.pow(10, OPEN_VOUCHER.decimal)
-                  ).toLocaleString()
+                ? insertComma(
+                    safeCalc
+                      .divide(data.ov, 10 ** OPEN_VOUCHER.decimal)
+                      .floor()
+                      .toString(),
+                  )
                 : '0'}
             </span>{' '}
             {OPEN_VOUCHER.symbol}

@@ -69,9 +69,12 @@ export const SwapButton = ({
   return (
     <Button
       onClick={handleButtonClick}
-      title={buttonTitle()}
       disabled={!isButtonEnabled()}
-      className="bg-purple-500 text-black-1 mt-6"
-    />
+      className="mt-6"
+      color="primary"
+      size="xl"
+    >
+      {buttonTitle()}
+    </Button>
   );
 };

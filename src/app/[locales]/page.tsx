@@ -4,8 +4,15 @@ import FAQ from './_components/FAQ/FAQ';
 import IntroduceKRWO from './_components/IntroduceKRWO';
 import KeyVisual from './_components/KeyVisual';
 import BlocksAmount from '@/src/app/[locales]/_components/BlocksAmount';
+import { setRequestLocale } from 'next-intl/server';
 
-export default async function Home() {
+export default async function Home({
+  params: { locales },
+}: {
+  params: { locales: string };
+}) {
+  setRequestLocale(locales);
+
   const { locked } = await fetchGetBlockAmount();
   return (
     <main className="flex flex-col items-center pb-[280px]">

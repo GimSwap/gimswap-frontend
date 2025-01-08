@@ -1,6 +1,6 @@
-import getBalanceAbi from "@/src/lib/utils/abis/getERC20Balance.json";
-import { useAccount, useReadContract } from "wagmi";
-import { safeCalc } from "@/src/lib/utils/safeCalc";
+import getBalanceAbi from '@/src/lib/utils/abis/getERC20Balance.json';
+import { useAccount, useReadContract } from 'wagmi';
+import { safeCalc } from '@/src/lib/utils/safeCalc';
 
 interface GetBalanceProps {
   contractAddress: string;
@@ -13,7 +13,7 @@ export const getBalance = ({ contractAddress, decimal }: GetBalanceProps) => {
   const { data: balance, isPending } = useReadContract({
     abi: getBalanceAbi,
     address: contractAddress as `0x${string}`,
-    functionName: "balanceOf",
+    functionName: 'balanceOf',
     args: [address],
   });
 

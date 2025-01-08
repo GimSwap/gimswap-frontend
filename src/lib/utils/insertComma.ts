@@ -1,3 +1,10 @@
 export const insertComma = (str: string) => {
-  return str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const [integerPart, decimalPart] = str.split('.');
+  const formattedIntegerPart = integerPart.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ',',
+  );
+  return decimalPart
+    ? `${formattedIntegerPart}.${decimalPart}`
+    : formattedIntegerPart;
 };

@@ -1,8 +1,7 @@
 'use client';
 
 import { useToolTip } from '@/src/lib/hook/useToolTip';
-import { Link } from '@/src/navigation';
-import { usePathname } from '@/src/navigation';
+import { Link, usePathname } from '@/src/i18n/routing';
 import { useEffect } from 'react';
 import bellLottie from '@/public/lottie/bell.json';
 import Lottie from 'lottie-react';
@@ -31,7 +30,7 @@ export default function TradeCategory() {
 
   useEffect(() => {
     if (
-      (selectedMethod === 'swap' && data?.ov === 0) ||
+      (selectedMethod === 'swap' && Number(data?.ov) === 0) ||
       selectedMethod === 'buy'
     ) {
       openTooltip();

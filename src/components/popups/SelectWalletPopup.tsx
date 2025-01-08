@@ -7,11 +7,15 @@ import { useAccount } from 'wagmi';
 interface SelectWalletPopupProps {
   onClose: () => void;
   open: boolean;
+  reloadOnConnect?: boolean;
+  reloadOnDisconnect?: boolean;
 }
 
 export default function SelectWalletPopup({
   onClose,
   open,
+  reloadOnConnect = true,
+  reloadOnDisconnect = true,
 }: SelectWalletPopupProps) {
   const { connect, disconnect } = useAuth();
   const { connector, isConnected } = useAccount();
@@ -30,7 +34,7 @@ export default function SelectWalletPopup({
             return (
               <button
                 onClick={async () => {
-                  await connect(wallet).then(() => onClose());
+                  await connect(wallet, reloadOnConnect).then(() => onClose());
                 }}
                 className={`bg-black-2 rounded-lg py-3 px-4 flex flex-row gap-3 items-center ${isCurrentWallet && 'border border-purple-500'}`}
                 key={wallet.id}
@@ -50,7 +54,7 @@ export default function SelectWalletPopup({
           {isConnected && (
             <button
               onClick={async () => {
-                await disconnect().then(() => onClose());
+                await disconnect(reloadOnDisconnect).then(() => onClose());
               }}
               className={`bg-black-2 rounded-lg py-3 px-4 flex flex-row gap-3 items-center`}
             >

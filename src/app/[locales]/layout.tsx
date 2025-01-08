@@ -5,7 +5,7 @@ import Topbar from '../../components/navbar/Topbar';
 import Footer from '../../components/navbar/Footer/Footer';
 import { TopbarStoreProvider } from '@/src/lib/stores/topbarStore/TopbarStoreProvider';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { AppKit } from '@/src/lib/utils/web3modal';
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import { PopupStoreProvider } from '@/src/lib/stores/popupStore/PopupStoreProvider';
@@ -15,6 +15,14 @@ import QueryClientProvider from '@/src/components/provider/TanstackQueryProvider
 import { cookieToInitialState } from 'wagmi';
 import { headers } from 'next/headers';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
+import { locales } from '@/src/i18n';
+import { notFound } from 'next/navigation';
+import { routing } from '@/src/i18n/routing';
+import { LiquidityStoreProvider } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
+
+export const generateStaticParams = () => {
+  return locales.map((locale) => ({ locales: locale }));
+};
 
 export const metadata: Metadata = {
   title: 'GIM SWAP | KRWO',
@@ -61,14 +69,21 @@ const pretendard = localFont({
 
 export default async function RootLayout({
   children,
-  params: { locale },
+  params: { locales },
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: { locales: string };
 }) {
+  const header = headers();
+
+  if (!routing.locales.includes(locales as any)) {
+    notFound();
+  }
+
+  setRequestLocale(locales);
   const wgamiInitialState = cookieToInitialState(
     wagmiConfig,
-    headers().get('cookie'),
+    header.get('cookie'),
   );
 
   const messages = await getMessages();
@@ -77,7 +92,7 @@ export default async function RootLayout({
   if (!GA_ID) throw new Error("There's no GA id");
   if (!GTM_ID) throw new Error("There's no GTM id");
   return (
-    <html lang={locale} className={pretendard.variable}>
+    <html lang={locales} className={pretendard.variable}>
       <GoogleAnalytics gaId={GA_ID} />
       <GoogleTagManager gtmId="GTM-NV635GKQ" />
       <body>
@@ -87,10 +102,12 @@ export default async function RootLayout({
               <AppKit>
                 <PopupStoreProvider>
                   <TopbarStoreProvider>
-                    <Topbar />
-                    {children}
-                    <Footer />
-                    <PopupList />
+                    <LiquidityStoreProvider>
+                      <Topbar />
+                      {children}
+                      <Footer />
+                      <PopupList />
+                    </LiquidityStoreProvider>
                   </TopbarStoreProvider>
                 </PopupStoreProvider>
               </AppKit>

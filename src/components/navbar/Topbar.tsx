@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import LogoIcon from "@/public/svg/logo.svg";
-import MenuIcon from "@/public/svg/menu.svg";
-import WalletConnectButton from "../WalletConnectButton";
-import { useTopbarStore } from "@/src/lib/stores/topbarStore/TopbarStoreProvider";
-import { Link, usePathname } from "@/src/navigation";
-import { MENUS } from "@/src/lib/constants/menus";
-import { useState } from "react";
-import LeftSidebar from "./LeftSidebar";
+import LogoIcon from '@/public/svg/logo.svg';
+import MenuIcon from '@/public/svg/menu.svg';
+import WalletConnectButton from '../WalletConnectButton';
+import { useTopbarStore } from '@/src/lib/stores/topbarStore/TopbarStoreProvider';
+import { Link, usePathname } from '@/src/i18n/routing';
+import { MENUS } from '@/src/lib/constants/menus';
+import { useState } from 'react';
+import LeftSidebar from './LeftSidebar';
 
 export default function Topbar() {
   const { invert } = useTopbarStore((state) => state);
@@ -16,26 +16,26 @@ export default function Topbar() {
   const pathname = usePathname();
 
   const navbarStyle = () => {
-    if (pathname === "/")
+    if (pathname === '/')
       return {
-        backgroundColor: invert ? "bg-[#fff]" : "bg-[transparent]",
-        logo: invert ? "invert" : "invert-0",
-        menu: invert ? "invert-0" : "invert",
-        menuItems: invert ? "text-black-12" : "text-black-1",
+        backgroundColor: invert ? 'bg-[#fff]' : 'bg-[transparent]',
+        logo: invert ? 'invert' : 'invert-0',
+        menu: invert ? 'invert-0' : 'invert',
+        menuItems: invert ? 'text-black-12' : 'text-black-1',
       };
     else
       return {
-        backgroundColor: invert ? "bg-[#fff]" : "bg-[transparent]",
-        logo: "invert",
-        menu: "invert-0",
-        menuItems: "text-black-12",
+        backgroundColor: invert ? 'bg-[#fff]' : 'bg-[transparent]',
+        logo: 'invert',
+        menu: 'invert-0',
+        menuItems: 'text-black-12',
       };
   };
 
   return (
     <>
       <nav
-        className={`w-full h-topbar fixed top-0 flex items-center px-4 justify-between z-20 transition-all duration-500 ${
+        className={`w-full h-topbar fixed top-0 flex items-center px-4 justify-between z-50 transition-all duration-500 ${
           navbarStyle().backgroundColor
         }`}
       >
@@ -57,14 +57,14 @@ export default function Topbar() {
               className={`p1 font-medium ${
                 navbarStyle().menuItems
               } min-w-[52px] hidden lg:block text-center`}
-              target={externalLink ? "_blank" : "_self"}
+              target={externalLink ? '_blank' : '_self'}
               key={title}
             >
               {title}
             </Link>
           ))}
           <h4 className="text-black-12 absolute left-1/2 -translate-x-1/2 font-bold">
-            {process.env.NEXT_PUBLIC_ENV_MODE !== "production" && "Testnet"}
+            {process.env.NEXT_PUBLIC_ENV_MODE !== 'production' && 'Testnet'}
           </h4>
           <WalletConnectButton size="small" />
         </section>

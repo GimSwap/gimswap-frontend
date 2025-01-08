@@ -1,7 +1,8 @@
 export interface GetBalanceResponseType {
   balance: {
-    krwo: number;
-    ov: number;
+    krwo: string;
+    ov: string;
+    usdt: string;
   };
 }
 

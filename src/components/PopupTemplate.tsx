@@ -5,6 +5,7 @@ import loadingLottie from '@/public/lottie/loading.json';
 import successLottie from '@/public/lottie/success.json';
 import failLottie from '@/public/lottie/fail.json';
 import alertLottie from '@/public/lottie/alert.json';
+import { usePopupStore } from '../lib/stores/popupStore/PopupStoreProvider';
 
 const iconType = {
   loading: <Lottie animationData={loadingLottie} loop className="h-16 w-16" />,
@@ -35,6 +36,7 @@ export default function PopupTemplate({
   children,
   useTemplate = true,
   showCloseButton = false,
+  closeButtonStyle,
   onClose,
   icon,
   open,
@@ -42,25 +44,33 @@ export default function PopupTemplate({
   children?: React.ReactNode;
   useTemplate?: boolean;
   showCloseButton?: boolean;
+  closeButtonStyle?: string;
   onClose: () => void;
   icon?: keyof typeof iconType;
   open: boolean;
 }) {
+  const { unmountPopup } = usePopupStore((state) => state);
   useEffect(() => {
     document.body.style.overflow = 'hidden';
+    document.addEventListener('animationend', ({ animationName }) => {
+      if (animationName === 'slideOut' && !open) {
+        unmountPopup();
+      }
+    });
     return () => {
       document.body.style.overflow = 'auto';
+      document.removeEventListener('animationend', () => {});
     };
-  }, []);
+  }, [open]);
 
   return (
     <div
-      className="fixed top-0 w-[100vw] h-[100dvh] bg-[rgba(33,33,33,0.3)] z-50 max-w-480px"
-      onClick={() => onClose()}
+      className="fixed top-0 w-[100vw] h-[100dvh] bg-[rgba(33,33,33,0.3)] z-50"
+      onClick={onClose}
     >
       <div
         className={`fixed bottom-0 lg:bottom-1/2 lg:left:1/2 lg:translate-y-1/2 lg:rounded-b-2xl bg-black-1 h-auto w-full rounded-t-2xl flex items-center flex-col max-w-[480px] m-[0_auto] inset-x-0 ${
-          !open ? 'slideOut' : 'slideIn'
+          open ? 'slideIn' : 'slideOut'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -74,8 +84,8 @@ export default function PopupTemplate({
           <div className={`${!useTemplate && 'mt-9'}`}>
             {showCloseButton && (
               <CloseIcon
-                className="absolute right-6 top-6"
-                onClick={() => onClose()}
+                className={`absolute right-6 top-6 ${closeButtonStyle}`}
+                onClick={onClose}
               />
             )}
             {children}

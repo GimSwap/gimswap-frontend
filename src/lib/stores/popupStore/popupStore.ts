@@ -1,6 +1,6 @@
-import { createStore } from "zustand";
-import React from "react";
-import { ClosePopupType, OpenPopupType } from "@/src/lib/types/PopupType";
+import { createStore } from 'zustand';
+import React from 'react';
+import { ClosePopupType, OpenPopupType } from '@/src/lib/types/PopupType';
 
 interface Popups<T = any> {
   Component: React.ComponentType<T>;
@@ -9,29 +9,34 @@ interface Popups<T = any> {
 
 interface PopupState {
   popups: Popups[];
+  innerPopups: Popups[];
 }
 
 interface PopupAction {
-  setPopups: (updater: (prevPopups: Popups[]) => Popups[]) => void;
   openPopup: OpenPopupType;
   closePopup: ClosePopupType;
-  clearPopups: () => void;
+  clearPopups: (isInner?: boolean) => void;
+  closeAllPopup: () => void;
+  unmountPopup: (isInner?: boolean) => void;
 }
 
 export type PopupStoreType = PopupState & PopupAction;
 
 export const defaultInitState: PopupState = {
   popups: [],
+  innerPopups: [],
 };
 
 export function createPopupStore(initState: PopupState = defaultInitState) {
-  return createStore<PopupStoreType>()((set) => {
-    const closePopupLogic = (
+  return createStore<PopupStoreType>()((set, get) => {
+    const handleClosePopup = (
       Component: React.ComponentType,
-      unmountTime = 200,
+      isInner: boolean = false,
     ) => {
       set((state) => {
-        const newPopups = state.popups.map((popup) => {
+        const _popups = isInner ? state.innerPopups : state.popups;
+
+        const newPopups = _popups.map((popup) => {
           if (popup.Component === Component) {
             return {
               Component: popup.Component,
@@ -40,58 +45,68 @@ export function createPopupStore(initState: PopupState = defaultInitState) {
           }
           return popup;
         });
+        return isInner ? { innerPopups: newPopups } : { popups: newPopups };
+      });
+    };
 
-        const unmountPopup = () => {
-          set((state) => ({
-            popups: state.popups.filter(
-              (popup) => popup.Component !== Component,
-            ),
-          }));
-        };
+    const handleUnmountPopup = (isInner = false) => {
+      set((state) => {
+        const _popups = isInner ? state.innerPopups : state.popups;
+        const newPopups = _popups.filter((popup) => popup.props.open);
+        return isInner ? { innerPopups: newPopups } : { popups: newPopups };
+      });
+    };
 
-        if (unmountTime > 0) {
-          setTimeout(unmountPopup, unmountTime);
-        } else {
-          unmountPopup();
+    const handleOpenPopup = (
+      Component: React.ComponentType,
+      props: any,
+      isInner: boolean = false,
+    ) => {
+      set((state) => {
+        const _popups = isInner ? state.innerPopups : state.popups;
+        const isAlreadyOpen = _popups.some(
+          (popup) => popup.Component === Component,
+        );
+
+        if (isAlreadyOpen) {
+          return state;
         }
 
-        return { popups: newPopups };
+        const newPopups = [
+          ..._popups,
+          {
+            Component,
+            props: {
+              ...props,
+              open: true,
+              onClose: () => handleClosePopup(Component, isInner),
+            },
+          },
+        ];
+        return isInner ? { innerPopups: newPopups } : { popups: newPopups };
       });
+    };
+
+    const handleCloseAllPopup = () => {
+      get().popups.forEach((popup) => {
+        handleClosePopup(popup.Component);
+      });
+      get().innerPopups.forEach((popup) => {
+        handleClosePopup(popup.Component, true);
+      });
+      handleUnmountPopup();
     };
 
     return {
       ...initState,
-      setPopups: (updater) =>
-        set((state) => ({ popups: updater(state.popups) })),
-      openPopup: (Component, props) => {
-        set((state) => {
-          const isAlreadyOpen = state.popups.some(
-            (popup) => popup.Component === Component,
-          );
-
-          if (isAlreadyOpen) {
-            return state;
-          }
-
-          return {
-            popups: [
-              ...state.popups,
-              {
-                Component,
-                props: {
-                  ...props,
-                  open: true,
-                  onClose: () => closePopupLogic(Component),
-                },
-              },
-            ],
-          };
-        });
-      },
-      clearPopups: () => set({ popups: [] }),
-      closePopup: (Component, unmountTime = 200) => {
-        closePopupLogic(Component, unmountTime);
-      },
+      openPopup: handleOpenPopup,
+      closePopup: handleClosePopup,
+      closeAllPopup: handleCloseAllPopup,
+      clearPopups: (isInner = false) =>
+        set(() => {
+          return isInner ? { innerPopups: [] } : { popups: [] };
+        }),
+      unmountPopup: handleUnmountPopup,
     };
   });
 }

@@ -52,9 +52,8 @@ export default function TradeCategory() {
         const isSelected = selectedMethod === key;
         const showNew = key === 'liquidity' && chain === kaia;
         return (
-          <div className="flex flex-row gap-[2px]">
+          <div className="flex flex-row gap-[2px]" key={key}>
             <Link
-              key={key}
               href={url}
               className={`flex flex-col pb-2 ${
                 isSelected ? 'border-b-2 border-black-12' : ''

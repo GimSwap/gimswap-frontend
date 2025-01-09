@@ -54,29 +54,31 @@ export default function TransactionSuccessPopup({
     >
       <section className="flex flex-col items-center px-6 pb-5">
         <h3 className="font-bold pb-4">{title}</h3>
-        <AddInfo
-          tokens={tokens}
-          totalLiquidity={totalLiquidity}
-          title={titleMap[type]}
-          harvestTokens={harvestTokens}
-        />
-        {resultLiquidity && (
-          <>
-            <ArrowDownIcon className="my-3" />
-            <section className="px-4 py-3 rounded-lg bg-purple-50 w-full flex flex-row justify-between">
-              <p className="text-purple-500 p1">{resultTitleMap[type]}</p>
-              <p className="text-purple-500 p1 font-bold">
-                {`₩ ${insertComma(formatNumber(resultLiquidity, 0))}`}
-              </p>
-            </section>
-          </>
-        )}
-        <Link
-          className="text-h5 text-purple-500 font-medium pt-5 underline underline-offset-[2.5px]"
-          href={`${KLAYTN.blockExplorerUrl}/tx/${txHash}`}
-        >
-          View on Explorer
-        </Link>
+        <div className="w-full flex flex-col items-center max-lg:max-h-[calc(95dvh-255px)] overflow-y-scroll scrollbar-hide">
+          <AddInfo
+            tokens={tokens}
+            totalLiquidity={totalLiquidity}
+            title={titleMap[type]}
+            harvestTokens={harvestTokens}
+          />
+          {resultLiquidity && (
+            <>
+              <ArrowDownIcon className="my-3" />
+              <section className="px-4 py-3 rounded-lg bg-purple-50 w-full flex flex-row justify-between">
+                <p className="text-purple-500 p1">{resultTitleMap[type]}</p>
+                <p className="text-purple-500 p1 font-bold">
+                  {`₩ ${insertComma(formatNumber(resultLiquidity, 0))}`}
+                </p>
+              </section>
+            </>
+          )}
+          <Link
+            className="text-h5 text-purple-500 font-medium pt-5 underline underline-offset-[2.5px]"
+            href={`${KLAYTN.blockExplorerUrl}/tx/${txHash}`}
+          >
+            View on Explorer
+          </Link>
+        </div>
         <Button
           color="primary"
           size="xl"

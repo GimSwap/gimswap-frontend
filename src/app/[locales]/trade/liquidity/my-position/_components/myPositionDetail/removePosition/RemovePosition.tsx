@@ -93,7 +93,7 @@ export default function RemovePosition({
         <h3 className="font-bold">Remove</h3>
       </div>
       <div className="max-h-[calc(95dvh-124px)] overflow-y-scroll overflow-x-hidden scrollbar-hide pb-[124px]">
-        <section className="flex flex-col gap-3 my-3 max-lg:max-h-[calc(100dvh-210px)] overflow-y-scroll overflow-x-hidden scrollbar-hide">
+        <section className="flex flex-col gap-3 my-3 max-lg:max-h-[calc(100dvh-210px)] overflow-y-scroll overflow-x-hidden scrollbar-hide w-full">
           <section className="bg-black-3 py-3 px-4 rounded-lg mb-1">
             <div className="pb-2 flex flex-row justify-between">
               <p className="p1">My Liquidity</p>

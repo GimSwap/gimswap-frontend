@@ -172,7 +172,7 @@ export default function AddLiquidityReviewPopup({
     <PopupTemplate open={open} onClose={onClose} showCloseButton>
       <h3 className="font-bold -mt-7 ml-6">Review</h3>
       <section className="px-6 py-3">
-        <div className="overflow-y-scroll scrollbar-hide max-lg:max-h-[calc(95dvh-94px)]">
+        <div className="overflow-y-scroll scrollbar-hide max-lg:max-h-[calc(95dvh-94px)] w-full">
           {!isAllowancePending || !isKrwoAllowancePending ? (
             <ApproveMax
               spenderAddress={usdtAllowance?.spenderAddress}

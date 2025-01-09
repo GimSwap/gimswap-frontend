@@ -170,26 +170,28 @@ export default function AddLiquidityReviewPopup({
     <PopupTemplate open={open} onClose={onClose} showCloseButton>
       <h3 className="font-bold -mt-7 ml-6">Review</h3>
       <section className="px-6 py-3">
-        {!isAllowancePending || !isKrwoAllowancePending ? (
-          <ApproveMax
-            spenderAddress={usdtAllowance?.spenderAddress}
-            isPending={isAllowancePending || isKrwoAllowancePending}
-            isApproved={isApproved}
-            setIsApproved={setIsApproved}
+        <div className="overflow-y-scroll scrollbar-hide max-lg:max-h-[calc(95dvh-94px)]">
+          {!isAllowancePending || !isKrwoAllowancePending ? (
+            <ApproveMax
+              spenderAddress={usdtAllowance?.spenderAddress}
+              isPending={isAllowancePending || isKrwoAllowancePending}
+              isApproved={isApproved}
+              setIsApproved={setIsApproved}
+            />
+          ) : (
+            <ButtonLoading />
+          )}
+          <PositionInfo {...position} />
+          <p className="p1 pt-4 pb-3">You Add</p>
+          <TotalAdd
+            mode={mode}
+            USDTAmount={reviewInfo?.amount0 || '0'}
+            KRWOAmount={reviewInfo?.amount1 || '0'}
+            totalAmount={formatNumber(totalAmount, 0)}
+            userInputTokenAmount={tokenAmount}
+            title="Total Liquidity"
           />
-        ) : (
-          <ButtonLoading />
-        )}
-        <PositionInfo {...position} />
-        <p className="p1 pt-4 pb-3">You Add</p>
-        <TotalAdd
-          mode={mode}
-          USDTAmount={reviewInfo?.amount0 || '0'}
-          KRWOAmount={reviewInfo?.amount1 || '0'}
-          totalAmount={formatNumber(totalAmount, 0)}
-          userInputTokenAmount={tokenAmount}
-          title="Total Liquidity"
-        />
+        </div>
         <Button
           size="xl"
           color="primary"

@@ -125,11 +125,7 @@ export default function MyPositions() {
     _positions,
   ]);
 
-  if (
-    isPendingPositions ||
-    positions.some((data) => data.isPending) ||
-    !positions
-  )
+  if (isPendingPositions || positions.some((data) => data.isPending))
     return (
       <div className="w-full min-h-[150px] grid place-items-center">
         <LoadingSpinner />

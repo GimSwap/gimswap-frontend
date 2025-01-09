@@ -178,39 +178,41 @@ export default function MyPositionAddLiquidityReviewPopup({
     >
       <h3 className="font-bold -mt-4 ml-6">Review</h3>
       <section className="px-6 py-3 flex flex-col gap-3 items-center w-full">
-        {!isUsdtAllowancePending || !isKrwoAllowancePending ? (
-          <ApproveMax
-            spenderAddress={usdtAllowance?.spenderAddress}
-            isPending={isUsdtAllowancePending || isKrwoAllowancePending}
-            isApproved={isApproved}
-            setIsApproved={setIsApproved}
+        <div className="overflow-y-scroll scrollbar-hide max-lg:max-h-[calc(95dvh-94px)]">
+          {!isUsdtAllowancePending || !isKrwoAllowancePending ? (
+            <ApproveMax
+              spenderAddress={usdtAllowance?.spenderAddress}
+              isPending={isUsdtAllowancePending || isKrwoAllowancePending}
+              isApproved={isApproved}
+              setIsApproved={setIsApproved}
+            />
+          ) : (
+            <p className="p1 w-full">You Add</p>
+          )}
+          <TotalAdd
+            mode={mode}
+            KRWOAmount={reviewInfo?.amount1 || '0'}
+            USDTAmount={reviewInfo?.amount0 || '0'}
+            totalAmount={addLiquidity}
+            userInputTokenAmount={{
+              KRWO: formatNumber(tokens[0].amount, 2),
+              USDT: formatNumber(tokens[1].amount, 2),
+            }}
+            title="Add Liquidity"
           />
-        ) : (
-          <p className="p1 w-full">You Add</p>
-        )}
-        <TotalAdd
-          mode={mode}
-          KRWOAmount={reviewInfo?.amount1 || '0'}
-          USDTAmount={reviewInfo?.amount0 || '0'}
-          totalAmount={addLiquidity}
-          userInputTokenAmount={{
-            KRWO: formatNumber(tokens[0].amount, 2),
-            USDT: formatNumber(tokens[1].amount, 2),
-          }}
-          title="Add Liquidity"
-        />
-        <ArrowDownIcon />
-        <section className="px-4 py-3 rounded-lg bg-purple-50 w-full flex flex-row justify-between">
-          <p className="text-purple-500 p1">Total Liquidity</p>
-          <p className="text-purple-500 p1 font-bold">
-            {`₩ ${insertComma(
-              formatNumber(
-                safeCalc.add(totalAmount, addLiquidity).toString(),
-                0,
-              ),
-            )}`}
-          </p>
-        </section>
+          <ArrowDownIcon />
+          <section className="px-4 py-3 rounded-lg bg-purple-50 w-full flex flex-row justify-between">
+            <p className="text-purple-500 p1">Total Liquidity</p>
+            <p className="text-purple-500 p1 font-bold">
+              {`₩ ${insertComma(
+                formatNumber(
+                  safeCalc.add(totalAmount, addLiquidity).toString(),
+                  0,
+                ),
+              )}`}
+            </p>
+          </section>
+        </div>
         <Button
           className="mt-5 mb-3"
           color="primary"

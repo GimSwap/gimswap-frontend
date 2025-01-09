@@ -193,6 +193,7 @@ export default function MyPositionDetail({
       </section>
       <section className="flex flex-row gap-2 absolute bottom-0 py-5 w-full bg-black-1">
         <Button
+          className="z-10"
           color="secondary"
           size="xl"
           onClick={() =>
@@ -233,6 +234,7 @@ export default function MyPositionDetail({
           Remove
         </Button>
         <Button
+          className="z-10"
           color="primary"
           size="xl"
           onClick={() =>

@@ -7,7 +7,6 @@ import { useState } from 'react';
 
 export const useApproveMax = () => {
   const [isPending, setIsPending] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const { writeContractAsync } = useWriteContract();
   const approveMax = async (
     tokenAddress: `0x${string}`,
@@ -25,9 +24,9 @@ export const useApproveMax = () => {
       chainId: 8217,
       hash: tx,
     });
-    if (receipt.status === 'success') setIsSuccess(true);
     setIsPending(false);
+    return receipt;
   };
 
-  return { approveMax, isPending, isSuccess };
+  return { approveMax, isPending };
 };

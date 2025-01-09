@@ -24,23 +24,15 @@ export default function ApproveMax({
   isApproved,
   setIsApproved,
 }: ApproveMaxProps) {
-  const {
-    approveMax: approveUsdt,
-    isPending: isUsdtPending,
-    isSuccess: isUsdtSuccess,
-  } = useApproveMax();
-  const {
-    approveMax: approveKrwo,
-    isPending: isKrwoPending,
-    isSuccess: isKrwoSuccess,
-  } = useApproveMax();
+  const { approveMax: approveUsdt, isPending: isUsdtPending } = useApproveMax();
+  const { approveMax: approveKrwo, isPending: isKrwoPending } = useApproveMax();
 
   if ((isApproved.krwo && isApproved.usdt) || !spenderAddress || isPending)
     return null;
 
   const buttonText = (type: 'USDT' | 'KRWO') => {
     if (type === 'USDT') {
-      return isApproved.usdt || isUsdtSuccess ? (
+      return isApproved.usdt ? (
         'Approved'
       ) : isUsdtPending ? (
         <ButtonLoading />
@@ -48,7 +40,7 @@ export default function ApproveMax({
         'Enable USDT'
       );
     }
-    return isApproved.krwo || isKrwoSuccess ? (
+    return isApproved.krwo ? (
       'Approved'
     ) : isKrwoPending ? (
       <ButtonLoading />
@@ -70,13 +62,14 @@ export default function ApproveMax({
           color="primary"
           size="xl"
           onClick={async () => {
-            await approveUsdt(
+            const { status } = await approveUsdt(
               USDT.contractAddress as `0x${string}`,
               spenderAddress!,
             );
-            setIsApproved((prev) => ({ ...prev, usdt: true }));
+            if (status === 'success')
+              setIsApproved((prev) => ({ ...prev, usdt: true }));
           }}
-          disabled={isApproved.usdt || isUsdtSuccess}
+          disabled={isApproved.usdt}
           className="flex flex-row justify-center items-center"
         >
           {buttonText('USDT')}
@@ -85,14 +78,15 @@ export default function ApproveMax({
           color="primary"
           size="xl"
           onClick={async () => {
-            await approveKrwo(
+            const { status } = await approveKrwo(
               KRWO.contractAddress as `0x${string}`,
               spenderAddress!,
             );
-            setIsApproved((prev) => ({ ...prev, krwo: true }));
+            if (status === 'success')
+              setIsApproved((prev) => ({ ...prev, krwo: true }));
           }}
           className="flex flex-row justify-center items-center"
-          disabled={isApproved.krwo || isKrwoSuccess}
+          disabled={isApproved.krwo}
         >
           {buttonText('KRWO')}
         </Button>

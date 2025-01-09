@@ -42,7 +42,7 @@ export default function MyPositions() {
     {
       data: _positions,
       refetch: refetchPositions,
-      isPending: isPendingPositions,
+      isLoading: isLoadingPositions,
     },
   ] = useQueries({
     queries: [
@@ -125,13 +125,12 @@ export default function MyPositions() {
     _positions,
   ]);
 
-  if (isPendingPositions || positions.some((data) => data.isPending))
+  if (isLoadingPositions || positions.some((data) => data.isPending))
     return (
       <div className="w-full min-h-[150px] grid place-items-center">
         <LoadingSpinner />
       </div>
     );
-
   return (
     <>
       <RefreshIcon refetch={() => refetchPositions()} />

@@ -5,7 +5,7 @@ import { PositionType } from '../../../_mock/liquidityAmount';
 import TotalAdd from './TotalAdd';
 import Button from '@/src/components/Button';
 import { useAccount, useSendTransaction } from 'wagmi';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { fetchGetAllowance } from '@/src/lib/utils/api/liquidity/fetchGetAllowance';
 import { fetchGetAddRecommendLiquidityInfo } from '@/src/lib/utils/api/liquidity/fetchGetAddRecommendLiquidityInfo';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
@@ -41,11 +41,12 @@ export default function AddLiquidityReviewPopup({
   tokenAmount,
   ...position
 }: AddLiquidityInputPopupProps) {
-  const { address } = useAccount();
-  const { sendTransactionAsync, isPending } = useSendTransaction();
   const router = useRouter();
-
+  const { address } = useAccount();
+  const queryClient = useQueryClient();
+  const { sendTransactionAsync, isPending } = useSendTransaction();
   const { openPopup, closePopup } = usePopupStore((state) => state);
+
   const [
     { data: reviewInfo },
     { data: usdtAllowance, isPending: isAllowancePending },
@@ -143,6 +144,7 @@ export default function AddLiquidityReviewPopup({
           txHash: tx,
           closeCallback: () => router.push('/trade/liquidity/my-position'),
         });
+        queryClient.invalidateQueries({ queryKey: ['getBalance'] });
       } else throw new Error('Add Liquidity failed');
     } catch (error) {
       console.error(error);

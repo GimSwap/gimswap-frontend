@@ -1,18 +1,14 @@
 import { http, createConfig, createStorage, cookieStorage } from 'wagmi';
 import { kaia } from 'wagmi/chains';
-import { injected, walletConnect } from 'wagmi/connectors';
+import { injected } from 'wagmi/connectors';
 import { kaikasConnector } from '@/src/lib/utils/wallets/kaiaWallet';
 import { fallback } from 'viem';
-
-const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
-if (!projectId) throw new Error('there is no projectId');
 
 export const STORE_KEY = 'GimSwap';
 
 export const wagmiConfig = createConfig({
   chains: [kaia],
   connectors: [
-    walletConnect({ projectId }),
     kaikasConnector(),
     injected({ target: 'metaMask', shimDisconnect: true }),
   ],

@@ -11,6 +11,10 @@ import { useAccount, useSendTransaction } from 'wagmi';
 import AddLiquidityPendingPopup from '../../../../_components/addLiquidity/AddLiquidtyPendingPopup';
 import TransactionSuccessPopup from '../../../../_components/TransactionSuccessPopup';
 import { useLiquidityStore } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
+import { waitForTransactionReceipt } from '@wagmi/core';
+import { wagmiConfig } from '@/src/lib/utils/wagmi';
+import { useQueryClient } from '@tanstack/react-query';
+import TransactionFailPopup from '@/src/components/popups/TransactionFailPopup';
 
 interface CollectReviewPopupProps {
   totalAmount: string;
@@ -30,6 +34,7 @@ export default function CollectReviewPopup({
   tokenId,
 }: CollectReviewPopupProps) {
   const { address } = useAccount();
+  const queryClient = useQueryClient();
   const { sendTransactionAsync } = useSendTransaction();
   const { setOptimisticPositions, optimisticPositions } = useLiquidityStore(
     (state) => state,
@@ -55,22 +60,31 @@ export default function CollectReviewPopup({
         to: data.contractAddress,
         data: data.data,
       });
-      closePopup(AddLiquidityPendingPopup);
-      openPopup(TransactionSuccessPopup, {
-        title: 'Collect Success',
-        tokens: tokens,
-        totalLiquidity: totalAmount,
-        type: 'collect',
-        txHash: tx,
+
+      const { status } = await waitForTransactionReceipt(wagmiConfig, {
+        chainId: 8217,
+        hash: tx,
       });
-      setOptimisticPositions(
-        optimisticPositions.map((position) =>
-          position.tokenId === tokenId
-            ? { ...position, fee: { usdtFee: '0', krwoFee: '0' } }
-            : position,
-        ),
-      );
+      if (status === 'success') {
+        closePopup(AddLiquidityPendingPopup);
+        openPopup(TransactionSuccessPopup, {
+          title: 'Collect Success',
+          tokens: tokens,
+          totalLiquidity: totalAmount,
+          type: 'collect',
+          txHash: tx,
+        });
+        queryClient.invalidateQueries({ queryKey: ['getBalance'] });
+        setOptimisticPositions(
+          optimisticPositions.map((position) =>
+            position.tokenId === tokenId
+              ? { ...position, fee: { usdtFee: '0', krwoFee: '0' } }
+              : position,
+          ),
+        );
+      }
     } catch (error) {
+      openPopup(TransactionFailPopup);
       fetchSendLog({ name: 'collect', error });
     }
   };

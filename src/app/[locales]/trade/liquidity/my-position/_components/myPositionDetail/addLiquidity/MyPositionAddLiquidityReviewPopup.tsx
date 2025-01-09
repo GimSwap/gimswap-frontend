@@ -20,7 +20,7 @@ import TransactionSuccessPopup from '../../../../_components/TransactionSuccessP
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import { useLiquidityStore } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
-import { useQueries } from '@tanstack/react-query';
+import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { fetchGetAllowance } from '@/src/lib/utils/api/liquidity/fetchGetAllowance';
 import ApproveMax from '../../../../recommend/_components/popup/addLiquidityReviewPopup/ApproveMax';
 import { useEffect, useState } from 'react';
@@ -47,6 +47,7 @@ export default function MyPositionAddLiquidityReviewPopup({
   currentPrice,
 }: MyPositionAddLiquidityReviewPopupProps) {
   const { address } = useAccount();
+  const queryClient = useQueryClient();
   const { sendTransactionAsync } = useSendTransaction();
   const { openPopup, closePopup } = usePopupStore((state) => state);
   const { refetchPositions } = useLiquidityStore((state) => state);
@@ -145,6 +146,7 @@ export default function MyPositionAddLiquidityReviewPopup({
           resultLiquidity: safeCalc.add(totalAmount, addLiquidity).toString(),
           txHash: tx,
         });
+        queryClient.invalidateQueries({ queryKey: ['getBalance'] });
         refetchPositions();
       } else throw new Error('Add Liquidity failed');
     } catch (error) {

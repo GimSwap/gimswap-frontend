@@ -1,6 +1,6 @@
 'use client';
 
-import { LIQUIDTY_CATEGORY } from '@/src/lib/constants/LiquidityCategory';
+import { LIQUIDTY_CATEGORY } from '@/src/lib/constants/category/LiquidityCategory';
 import { Link, usePathname } from '@/src/i18n/routing';
 
 interface LiquidityCategoryProps {

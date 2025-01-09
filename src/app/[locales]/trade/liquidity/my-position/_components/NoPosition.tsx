@@ -9,7 +9,7 @@ export default function NoPosition() {
       <Lottie
         animationData={gimbab}
         loop
-        className="w-40 h-40 mt-[-15px] mb-[-25px] mx-auto"
+        className="w-40 h-[160px] mt-[-15px] mb-[-25px] mx-auto"
       />
       <p className="text-p1 text-black-6 text-center">
         No liquidity provided.

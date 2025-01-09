@@ -6,7 +6,6 @@ import Footer from '../../components/navbar/Footer/Footer';
 import { TopbarStoreProvider } from '@/src/lib/stores/topbarStore/TopbarStoreProvider';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
-import { AppKit } from '@/src/lib/utils/web3modal';
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import { PopupStoreProvider } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import PopupList from '@/src/components/popups/PopupList';
@@ -99,18 +98,16 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <WagmiProvider initialState={wgamiInitialState}>
             <QueryClientProvider>
-              <AppKit>
-                <PopupStoreProvider>
-                  <TopbarStoreProvider>
-                    <LiquidityStoreProvider>
-                      <Topbar />
-                      {children}
-                      <Footer />
-                      <PopupList />
-                    </LiquidityStoreProvider>
-                  </TopbarStoreProvider>
-                </PopupStoreProvider>
-              </AppKit>
+              <PopupStoreProvider>
+                <TopbarStoreProvider>
+                  <LiquidityStoreProvider>
+                    <Topbar />
+                    {children}
+                    <Footer />
+                    <PopupList />
+                  </LiquidityStoreProvider>
+                </TopbarStoreProvider>
+              </PopupStoreProvider>
             </QueryClientProvider>
           </WagmiProvider>
         </NextIntlClientProvider>

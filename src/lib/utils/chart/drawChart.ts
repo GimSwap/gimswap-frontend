@@ -250,7 +250,7 @@ export class DrawChart {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(
-      insertComma(currentPrice.toFixed(0)),
+      insertComma(Math.floor(currentPrice).toString()),
       currentPriceX + 2,
       shapeHeight / 2 + 2,
     );

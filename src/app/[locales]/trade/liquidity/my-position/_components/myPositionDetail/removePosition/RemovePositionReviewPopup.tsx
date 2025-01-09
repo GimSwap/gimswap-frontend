@@ -19,6 +19,7 @@ import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import TransactionFailPopup from '@/src/components/popups/TransactionFailPopup';
 import { revalidateTags } from '@/src/lib/utils/serverAction/revalidateTags';
 import { MY_POSITION_REVALIDATE_TAG } from '@/src/lib/utils/api/liquidity/fetchGetMyPositions';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface RemovePositionReviewPopupProps {
   open: boolean;
@@ -47,6 +48,7 @@ export default function RemovePositionReviewPopup({
   totalAmount,
 }: RemovePositionReviewPopupProps) {
   const { address } = useAccount();
+  const queryClient = useQueryClient();
   const { refetchPositions } = useLiquidityStore((state) => state);
   const { sendTransactionAsync } = useSendTransaction();
   const { openPopup, closePopup, closeAllPopup } = usePopupStore(
@@ -105,6 +107,7 @@ export default function RemovePositionReviewPopup({
           resultLiquidity: remainingAmount,
           harvestTokens: feeAndHarvestTokens,
         });
+        queryClient.invalidateQueries({ queryKey: ['getBalance'] });
       } else throw new Error('Remove failed');
     } catch (error) {
       fetchSendLog({ name: 'removeLiquidity', error });

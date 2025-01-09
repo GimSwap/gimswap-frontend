@@ -8,13 +8,12 @@ import Lottie from 'lottie-react';
 import { useAccount } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import { fetchGetBalance } from '@/src/lib/utils/api/fetchGetBalance';
-
-const CATEGORIES = ['Swap', 'Buy', 'Liquidity'];
+import { TRADE_CATEGORIES } from '@/src/lib/constants/category/TradeCategory';
+import { kaia } from 'viem/chains';
 
 export default function TradeCategory() {
   const pathname = usePathname();
-  const { address } = useAccount();
-
+  const { address, chain } = useAccount();
   const selectedMethod = pathname.split('/')[2];
   const { data } = useQuery({
     queryKey: ['getBalance'],
@@ -38,7 +37,6 @@ export default function TradeCategory() {
       closeTooltip();
     }
   }, [selectedMethod, data, openTooltip, closeTooltip]);
-
   return (
     <section className="flex gap-3">
       <Tooltip
@@ -50,22 +48,30 @@ export default function TradeCategory() {
           <p className="text-black-1 c1">Buy Open Voucher Now!</p>
         </div>
       </Tooltip>
-      {CATEGORIES.map((category) => {
-        const isSelected = selectedMethod === category.toLowerCase();
+      {TRADE_CATEGORIES.map(({ title, key, url }) => {
+        const isSelected = selectedMethod === key;
+        const showNew = key === 'liquidity' && chain === kaia;
         return (
-          <Link
-            key={category}
-            href={`/trade/${category.toLowerCase()}`}
-            className={`flex flex-col pb-2 ${
-              isSelected ? 'border-b-2 border-black-12' : ''
-            }`}
-          >
-            <h5
-              className={`${isSelected ? 'text-black-12' : 'text-black-6'} font-bold`}
+          <div className="flex flex-row gap-[2px]">
+            <Link
+              key={key}
+              href={url}
+              className={`flex flex-col pb-2 ${
+                isSelected ? 'border-b-2 border-black-12' : ''
+              }`}
             >
-              {category}
-            </h5>
-          </Link>
+              <h5
+                className={`${isSelected ? 'text-black-12' : 'text-black-6'} font-bold`}
+              >
+                {title}
+              </h5>
+            </Link>
+            {showNew && (
+              <p className="font-pretendard text-[8px] bg-[#FDEDED] px-[6px] py-[3px] rounded-full text-error h-[fit-content] mt-1 font-medium">
+                NEW
+              </p>
+            )}
+          </div>
         );
       })}
     </section>

@@ -9,11 +9,10 @@ import { useAccount } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import { fetchGetBalance } from '@/src/lib/utils/api/fetchGetBalance';
 import { TRADE_CATEGORIES } from '@/src/lib/constants/category/TradeCategory';
-import { kaia } from 'viem/chains';
 
 export default function TradeCategory() {
   const pathname = usePathname();
-  const { address, chain } = useAccount();
+  const { address } = useAccount();
   const selectedMethod = pathname.split('/')[2];
   const { data } = useQuery({
     queryKey: ['getBalance'],
@@ -50,7 +49,6 @@ export default function TradeCategory() {
       </Tooltip>
       {TRADE_CATEGORIES.map(({ title, key, url }) => {
         const isSelected = selectedMethod === key;
-        const showNew = key === 'liquidity' && chain === kaia;
         return (
           <div className="flex flex-row gap-[2px]" key={key}>
             <Link
@@ -65,7 +63,7 @@ export default function TradeCategory() {
                 {title}
               </h5>
             </Link>
-            {showNew && (
+            {key === 'liquidity' && (
               <p className="font-pretendard text-[8px] bg-[#FDEDED] px-[6px] py-[3px] rounded-full text-error h-[fit-content] mt-1 font-medium">
                 NEW
               </p>

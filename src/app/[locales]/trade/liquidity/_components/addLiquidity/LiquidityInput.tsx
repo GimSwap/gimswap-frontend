@@ -18,6 +18,8 @@ import Accordion from '@/src/components/Accordion';
 import RangeChart from '../RangeChart';
 import { SwapModeDescription } from './SwapDescription';
 import { PositionType } from '@/src/lib/stores/liquidityStore/liquidityStore';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
 
 interface LiquidityInputProps {
   selectedPosition: Omit<PositionType, 'label'>;
@@ -33,21 +35,22 @@ export default function LiquidityInput({
 }: LiquidityInputProps) {
   const [mode, setMode] = useState<'normal' | 'auto'>('auto');
   const [focusedInput, setFocusedInput] = useState<TokenType | null>(null);
+  const { switchChain } = useSwitchNetwork();
 
   const { data: graphInfo } = useFetch(() =>
     fetchGetLiquidityGraphInfo({ chainId: 8217, tokenId: 'usdt' }),
   );
 
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
 
   const isUsdtDisabled = safeCalc.isGreater(
-    selectedPosition.currentPrice,
-    usdtTickToKrw(selectedPosition.upperTick),
+    graphInfo?.currentTick || 0,
+    selectedPosition.upperTick,
   );
 
   const isKrwoDisabled = safeCalc.isGreater(
-    usdtTickToKrw(selectedPosition.lowerTick),
-    selectedPosition.currentPrice,
+    selectedPosition.lowerTick,
+    graphInfo?.currentTick || 0,
   );
 
   const { data: balance } = useQuery({
@@ -56,6 +59,7 @@ export default function LiquidityInput({
     enabled: !!address,
     select: (data) => data.balance,
   });
+
   const [tokenAmount, setTokenAmount] = useState<{
     KRWO: string;
     USDT: string;
@@ -71,6 +75,13 @@ export default function LiquidityInput({
     .toFixed();
 
   const buttonState = () => {
+    if (!checkIsAvailableChain(chainId))
+      return {
+        disabled: false,
+        text: 'Switch Network',
+        onClick: switchChain,
+      };
+
     if (!balance?.krwo || !balance?.usdt)
       return {
         disabled: true,
@@ -102,6 +113,7 @@ export default function LiquidityInput({
       return {
         disabled: !isValid,
         text: isValid ? 'Add' : 'Enter amount',
+        onClick: () => onButtonClick(mode, tokenAmount),
       };
     } else {
       const isValidKrwo =
@@ -113,6 +125,7 @@ export default function LiquidityInput({
       return {
         disabled: !isValid,
         text: isValid ? 'Add' : 'Enter amount',
+        onClick: () => onButtonClick(mode, tokenAmount),
       };
     }
   };
@@ -167,6 +180,7 @@ export default function LiquidityInput({
   useEffect(() => {
     setTokenAmount({ KRWO: '0', USDT: '0' });
   }, [mode, selectedPosition]);
+
   return (
     <>
       <section className="flex flex-col gap-3 my-3 max-lg:max-h-[calc(100dvh_-_210px)] overflow-y-scroll overflow-x-hidden scrollbar-hide">
@@ -229,7 +243,7 @@ export default function LiquidityInput({
         className="w-full rounded-lg text-black-1 text-h4 font-bold py-[14px] px-6 mt-4 mb-5"
         size="xl"
         color="primary"
-        onClick={() => onButtonClick(mode, tokenAmount)}
+        onClick={buttonState().onClick}
         disabled={buttonState().disabled}
       >
         {buttonState().text}

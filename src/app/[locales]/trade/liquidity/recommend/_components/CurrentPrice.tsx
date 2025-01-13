@@ -1,11 +1,12 @@
+'use client';
+
 import USDTIcon from '@/public/svg/token/USDT.svg';
 import KRWOIcon from '@/public/svg/token/KRWO-resizable.svg';
+import { useLiquidityStore } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
 
-interface CurrentPriceProps {
-  currentPrice: number;
-}
+export default function CurrentPrice() {
+  const { currentPrice } = useLiquidityStore((state) => state);
 
-export default function CurrentPrice({ currentPrice }: CurrentPriceProps) {
   return (
     <section>
       <div className="flex-row flex justify-between">

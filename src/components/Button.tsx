@@ -37,7 +37,7 @@ export default function Button({
       ? 'bg-black-5 text-black-1'
       : 'bg-purple-500 text-black-1',
     secondary: disabled
-      ? 'bg-black-4 text-purple-500'
+      ? 'bg-black-4 text-black-7'
       : 'bg-purple-50 text-purple-500',
     black: disabled ? 'bg-black-5 text-black-1' : 'bg-black-1 text-black-1',
   };

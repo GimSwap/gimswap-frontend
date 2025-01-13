@@ -191,11 +191,12 @@ export default function MyPositionDetail({
           </Link>
         </section>
       </section>
-      <section className="flex flex-row gap-2 absolute bottom-0 py-5 w-full bg-black-1">
+      <section className="flex flex-row gap-2 py-5 w-full bg-black-1">
         <Button
           className="z-10"
           color="secondary"
           size="xl"
+          disabled={positionDetailLoading}
           onClick={() =>
             next(RemovePosition, {
               fees: [
@@ -237,6 +238,7 @@ export default function MyPositionDetail({
           className="z-10"
           color="primary"
           size="xl"
+          disabled={positionDetailLoading}
           onClick={() =>
             next(MyPositionAddLiquidityPopup, {
               selectedMyPosition: selectedMyPosition!,

@@ -17,8 +17,6 @@ import AddInfo from '../../../../_components/addLiquidity/AddInfo';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import TransactionFailPopup from '@/src/components/popups/TransactionFailPopup';
-import { revalidateTags } from '@/src/lib/utils/serverAction/revalidateTags';
-import { MY_POSITION_REVALIDATE_TAG } from '@/src/lib/utils/api/liquidity/fetchGetMyPositions';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface RemovePositionReviewPopupProps {
@@ -97,7 +95,6 @@ export default function RemovePositionReviewPopup({
       if (status === 'success') {
         closePopup(AddLiquidityPendingPopup);
         refetchPositions();
-        await revalidateTags(MY_POSITION_REVALIDATE_TAG);
         openPopup(TransactionSuccessPopup, {
           txHash: tx,
           title: 'Remove success',

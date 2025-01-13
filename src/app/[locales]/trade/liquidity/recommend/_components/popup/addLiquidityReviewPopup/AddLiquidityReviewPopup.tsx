@@ -22,8 +22,6 @@ import { formatNumber } from '@/src/lib/utils/formatNumber';
 import { useRouter } from '@/src/i18n/routing';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
-import { revalidateTags } from '@/src/lib/utils/serverAction/revalidateTags';
-import { MY_POSITION_REVALIDATE_TAG } from '@/src/lib/utils/api/liquidity/fetchGetMyPositions';
 interface AddLiquidityInputPopupProps extends PositionType {
   open: boolean;
   onClose: () => void;
@@ -128,7 +126,6 @@ export default function AddLiquidityReviewPopup({
 
       if (status === 'success') {
         closePopup(AddLiquidityPendingPopup);
-        await revalidateTags(MY_POSITION_REVALIDATE_TAG);
         openPopup(StakePopup, {
           tokens: [
             {

@@ -273,7 +273,7 @@ export class DrawChart {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
 
-    const numBars = Math.min(barPositions.length, ticks.length - 1);
+    const numBars = Math.min(barPositions.length, ticks.length - 2);
 
     for (let i = 0; i < numBars; i++) {
       const currentTick = ticks[i];
@@ -284,13 +284,13 @@ export class DrawChart {
         i + 1 < barPositions.length ? barPositions[i + 1].x : currentX;
 
       for (
-        let value = Math.ceil(currentTick / 10) * 10;
+        let value = Math.floor(currentTick / 10) * 10;
         value < nextTick;
         value += LABEL_STEP
       ) {
         const ratio = (value - currentTick) / (nextTick - currentTick);
         const x = currentX + ratio * (nextX - currentX) + BAR_PADDING - 20;
-        ctx.fillText(value.toFixed(0), x, height);
+        ctx.fillText(Math.floor(value).toString(), x, height);
       }
     }
   }

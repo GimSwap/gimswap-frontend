@@ -55,7 +55,6 @@ export default function MyPositions() {
           }),
         refetchInterval: 5000,
         select: (data: GetCurrentTickResponseType) => data.currentTick,
-        initialData: { currentTick: 0 },
       },
       {
         queryKey: ['myPositions', address],
@@ -90,7 +89,6 @@ export default function MyPositions() {
   });
 
   const currentPrice = +usdtTickToKrw(currentTick!);
-
   const positionLength = positions?.length || 0;
 
   const handleMoreButtonClick = () => {
@@ -102,11 +100,12 @@ export default function MyPositions() {
   };
 
   useEffect(() => {
+    !isPendingCurrentTick && setCurrentPrice(currentPrice);
     if (Math.floor(currentPrice / 40) !== Math.floor(previousTick / 40)) {
       setPreviousTick(currentPrice);
       previousTick !== 0 && refetchPositions();
     }
-  }, [currentPrice, isPendingCurrentTick]);
+  }, [currentTick, isPendingCurrentTick]);
 
   useEffect(() => {
     setIndex(Math.min(ITEMS_PER_CLICK, positionLength));
@@ -142,7 +141,6 @@ export default function MyPositions() {
                 key={position.tokenId}
                 onClick={() => {
                   setSelectedMyPosition(position);
-                  setCurrentPrice(currentPrice);
                   openPopup(MyPositionDetailPopup, undefined, true);
                 }}
               >

@@ -2,19 +2,24 @@
 
 import { LIQUIDTY_CATEGORY } from '@/src/lib/constants/category/LiquidityCategory';
 import { Link, usePathname } from '@/src/i18n/routing';
+import { useQuery } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
+import { fetchGetMyPositions } from '@/src/lib/utils/api/liquidity/fetchGetMyPositions';
+import { GetMyPositionsResponseType } from '@/src/lib/types/api/liquidity/GetPositionType';
 
-interface LiquidityCategoryProps {
-  myPositionAmount: number;
-}
-
-export default function LiquidityCategory({
-  myPositionAmount,
-}: LiquidityCategoryProps) {
+export default function LiquidityCategory() {
+  const { address } = useAccount();
   const pathname = usePathname();
+  const { data: positions } = useQuery({
+    queryKey: ['myPositions', address],
+    queryFn: () => fetchGetMyPositions(8217, address!),
+    select: (data: GetMyPositionsResponseType) => data.positions,
+    enabled: !!address,
+  });
 
   const amount = {
     recommend: 4,
-    'my-position': myPositionAmount,
+    'my-position': positions?.length || 0,
   };
 
   return (

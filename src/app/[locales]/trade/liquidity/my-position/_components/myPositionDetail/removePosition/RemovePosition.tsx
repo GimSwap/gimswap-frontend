@@ -15,6 +15,9 @@ import { MyPositionType } from '@/src/lib/types/api/liquidity/GetPositionType';
 import { KRWO, USDT } from '@/src/lib/constants/token';
 import { useLiquidityStore } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
 import { applyDecimals } from '@/src/lib/utils/calcTick';
+import { useAccount } from 'wagmi';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
 
 interface RemovePositionProps {
   prev: () => void;
@@ -38,18 +41,21 @@ export default function RemovePosition({
   fees,
   totalLiquidity,
 }: RemovePositionProps) {
-  const totalFee = fees.reduce(
-    (acc, fee) => safeCalc.add(acc, fee.amount).toString(),
-    '0',
-  );
-  const { currentPrice } = useLiquidityStore((state) => state);
   const [value, setValue] = useState('');
-  const { openPopup } = usePopupStore((state) => state);
-
   const [tokenAmount, setTokenAmount] = useState({
     krwoAmount: '0',
     usdtAmount: '0',
   });
+
+  const { chainId } = useAccount();
+  const { switchChain } = useSwitchNetwork();
+  const { openPopup } = usePopupStore((state) => state);
+  const { currentPrice } = useLiquidityStore((state) => state);
+
+  const totalFee = fees.reduce(
+    (acc, fee) => safeCalc.add(acc, fee.amount).toString(),
+    '0',
+  );
 
   const handleInput = (value: string) => {
     if (isNaN(+value)) return;
@@ -73,7 +79,40 @@ export default function RemovePosition({
     });
   };
 
+  const handleOpenRemovePositionReviewPopup = () => {
+    openPopup(RemovePositionReviewPopup, {
+      tokenId: selectedMyPosition.tokenId,
+      feeAndHarvestTokens: fees,
+      totalAmount,
+      totalRemovingAmount: value,
+      totalLiquidity: safeCalc
+        .multiply(
+          totalLiquidity,
+          safeCalc.divide(value, totalAmount).toString(),
+        )
+        .toString(),
+      removingTokens: [
+        {
+          ...KRWO,
+          amount: formatNumber(tokenAmount.krwoAmount, 0),
+        },
+        {
+          ...USDT,
+          amount: formatNumber(tokenAmount.usdtAmount, 2),
+        },
+      ],
+    });
+  };
+
   const buttonState = () => {
+    if (!checkIsAvailableChain(chainId)) {
+      return {
+        disabled: false,
+        text: 'Switch Network',
+        onClick: async () => await switchChain(),
+      };
+    }
+
     if (!value || value === '0') {
       return {
         disabled: true,
@@ -83,6 +122,7 @@ export default function RemovePosition({
     return {
       disabled: false,
       text: 'Remove',
+      onClick: handleOpenRemovePositionReviewPopup,
     };
   };
 
@@ -209,30 +249,7 @@ export default function RemovePosition({
           size="xl"
           color="primary"
           disabled={buttonState().disabled}
-          onClick={() =>
-            openPopup(RemovePositionReviewPopup, {
-              tokenId: selectedMyPosition.tokenId,
-              feeAndHarvestTokens: fees,
-              totalAmount,
-              totalRemovingAmount: value,
-              totalLiquidity: safeCalc
-                .multiply(
-                  totalLiquidity,
-                  safeCalc.divide(value, totalAmount).toString(),
-                )
-                .toString(),
-              removingTokens: [
-                {
-                  ...KRWO,
-                  amount: formatNumber(tokenAmount.krwoAmount, 0),
-                },
-                {
-                  ...USDT,
-                  amount: formatNumber(tokenAmount.usdtAmount, 2),
-                },
-              ],
-            })
-          }
+          onClick={buttonState().onClick}
         >
           {buttonState().text}
         </Button>

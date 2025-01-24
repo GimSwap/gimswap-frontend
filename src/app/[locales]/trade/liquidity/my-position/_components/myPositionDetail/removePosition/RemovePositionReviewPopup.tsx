@@ -18,6 +18,9 @@ import { waitForTransactionReceipt } from '@wagmi/core';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import TransactionFailPopup from '@/src/components/popups/TransactionFailPopup';
 import { useQueryClient } from '@tanstack/react-query';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
+import MyPositionDetailPopup from '../../MyPositionDetailPopup';
+import { useEffect } from 'react';
 
 interface RemovePositionReviewPopupProps {
   open: boolean;
@@ -45,7 +48,7 @@ export default function RemovePositionReviewPopup({
   totalLiquidity,
   totalAmount,
 }: RemovePositionReviewPopupProps) {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const queryClient = useQueryClient();
   const { refetchPositions } = useLiquidityStore((state) => state);
   const { sendTransactionAsync } = useSendTransaction();
@@ -67,7 +70,7 @@ export default function RemovePositionReviewPopup({
 
   const { data: removeLiquidityInfo } = useFetch(() =>
     fetchGetDecreaseLiquidityInfo({
-      chainId: 8217,
+      chainId: chainId!,
       tokenId: tokenId,
       liquidity: formatNumber(totalLiquidity, 0),
       walletAddress: address!,
@@ -89,7 +92,7 @@ export default function RemovePositionReviewPopup({
         data: removeLiquidityInfo.data,
       });
       const { status } = await waitForTransactionReceipt(wagmiConfig, {
-        chainId: 8217,
+        chainId: chainId! as ChainIdType,
         hash: tx,
       });
       if (status === 'success') {
@@ -113,6 +116,10 @@ export default function RemovePositionReviewPopup({
       });
     }
   };
+
+  useEffect(() => {
+    if (!chainId || !address) closePopup(MyPositionDetailPopup);
+  }, [chainId, address]);
 
   return (
     <PopupTemplate

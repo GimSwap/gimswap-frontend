@@ -1,6 +1,6 @@
 export interface GetLiquidityGraphInfoRequestType {
   chainId: number;
-  tokenId: 'usdt';
+  token: 'usdt';
 }
 
 export interface GetLiquidityGraphInfoResponseType {

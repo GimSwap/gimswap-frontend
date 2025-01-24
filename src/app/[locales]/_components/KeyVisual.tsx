@@ -29,8 +29,9 @@ export default function KeyVisual() {
         />
       </section>
       <section className="bottom-[60px] flex flex-col -translate-y-[70px] items-center justify-center pb-10">
-        <h1 className="text-black-1 text-center mb-2 font-bold max-w-[200px] lg:whitespace-nowrap lg:max-w-[1000px]">
-          Stable Tokens from Stable Assets
+        <h1 className="text-black-1 text-center mb-2 font-bold max-w-[200px] lg:whitespace-nowrap lg:max-w-[1000px] whitespace-nowrap">
+          Stable Tokens <br />
+          from Stable Assets
         </h1>
         <p className="p1 text-black-1 text-center mb-6 max-w-[170px] lg:max-w-[300px]">
           The Platform for Tokenized Fiat-backed Assets.

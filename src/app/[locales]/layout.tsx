@@ -18,6 +18,7 @@ import { locales } from '@/src/i18n';
 import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
 import { LiquidityStoreProvider } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
+import Head from 'next/head';
 
 export const generateStaticParams = () => {
   return locales.map((locale) => ({ locales: locale }));
@@ -74,6 +75,7 @@ export default async function RootLayout({
   params: { locales: string };
 }) {
   const header = headers();
+  const isDev = process.env.NEXT_PUBLIC_ENV_MODE !== 'production';
 
   if (!routing.locales.includes(locales as any)) {
     notFound();
@@ -94,6 +96,12 @@ export default async function RootLayout({
     <html lang={locales} className={pretendard.variable}>
       <GoogleAnalytics gaId={GA_ID} />
       <GoogleTagManager gtmId="GTM-NV635GKQ" />
+      <Head>
+        <meta
+          name="robots"
+          content={isDev ? 'noindex,nofollow' : 'index,follow'}
+        />
+      </Head>
       <body>
         <NextIntlClientProvider messages={messages}>
           <WagmiProvider initialState={wgamiInitialState}>

@@ -3,12 +3,7 @@ import { useLiquidityStore } from '@/src/lib/stores/liquidityStore/LiquidityStor
 import PositionInfo from './PositionInfo';
 import BarChartAndInfo from './BarChartAndInfo';
 import Harvest from './harvest/Harvest';
-import {
-  KLAYTN,
-  KRWO,
-  POSITION_TOKEN_DECIMAL,
-  USDT,
-} from '@/src/lib/constants/token';
+import { defaultChain, KRWO, TOKEN_MAP, USDT } from '@/src/lib/constants/token';
 import Button from '@/src/components/Button';
 import Link from 'next/link';
 import ChevronRightIcon from '@/public/svg/chevron/right.svg';
@@ -18,13 +13,18 @@ import RemovePosition from './removePosition/RemovePosition';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
 import {
   applyDecimals,
-  calcTotalLiquidity,
+  calcKrwPrice,
   usdtTickToKrw,
 } from '@/src/lib/utils/calcTick';
 import { fetchGetMyPositionDetail } from '@/src/lib/utils/api/liquidity/fetchGetPositionDetail';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import StakePopup from '../../../_components/addLiquidity/StakePopup';
 import { useQuery } from '@tanstack/react-query';
+import { useAccount } from 'wagmi';
+import MyPositionDetailPopup from '../MyPositionDetailPopup';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { SWAP_SERVICE_LINK } from '@/src/lib/constants/swapServiceLink';
 
 interface MyPositionDetailProps {
   next: PaginationPushType;
@@ -38,7 +38,8 @@ export default function MyPositionDetail({
   const { selectedMyPosition, currentPrice } = useLiquidityStore(
     (state) => state,
   );
-  const { openPopup } = usePopupStore((state) => state);
+  const { chainId } = useAccount();
+  const { openPopup, closePopup } = usePopupStore((state) => state);
   const {
     data: positionDetail,
     isPending: positionDetailLoading,
@@ -47,58 +48,57 @@ export default function MyPositionDetail({
     queryKey: ['positionDetail', selectedMyPosition?.tokenId!],
     queryFn: () =>
       fetchGetMyPositionDetail({
-        chainId: 8217,
+        chainId: chainId!,
         tokenId: selectedMyPosition?.tokenId!,
       }),
-  });
-
-  const totalAmount = calcTotalLiquidity({
-    currentPrice,
-    usdtAmount: positionDetail?.liquidity.token0.value || '0',
-    krwAmount: positionDetail?.liquidity.token1.value || '0',
+    enabled: !!chainId,
   });
 
   const usdtAmount = safeCalc
     .multiply(
-      safeCalc
-        .divide(
-          positionDetail?.liquidity.token0.value || '0',
-          10 ** POSITION_TOKEN_DECIMAL,
-        )
-        .toFixed(),
+      applyDecimals(
+        positionDetail?.liquidity.token0.value || '0',
+        USDT.decimal[
+          checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+        ],
+        10,
+      ),
       currentPrice,
     )
-    .toFixed();
+    .toString();
 
-  const krwoAmount = safeCalc
-    .divide(
-      positionDetail?.liquidity.token1.value || '0',
-      10 ** POSITION_TOKEN_DECIMAL,
-    )
-    .toFixed();
+  const krwoAmount = applyDecimals(
+    positionDetail?.liquidity.token1.value || '0',
+    KRWO.decimal,
+    10,
+  );
 
-  const kaiaFee = safeCalc
-    .divide(
-      safeCalc
-        .multiply(
-          usdtTickToKrw(positionDetail?.harvest.tickKrwo || 0),
-          positionDetail?.harvest.value || '0',
-        )
-        .toFixed(),
-      10 ** POSITION_TOKEN_DECIMAL,
-    )
-    .toFixed();
+  const totalAmount = safeCalc.add(usdtAmount, krwoAmount).toString();
+
+  const nativeFee = calcKrwPrice(
+    chainId,
+    positionDetail?.harvest.tickKrwo || 0,
+    positionDetail?.harvest.value || '0',
+    TOKEN_MAP[checkIsAvailableChain(chainId) ? chainId : defaultChain.id].native
+      .decimal,
+    TOKEN_MAP[checkIsAvailableChain(chainId) ? chainId : defaultChain.id].native
+      .symbol,
+  );
 
   const krwoFee = applyDecimals(
     positionDetail?.fee.token1.value || '0',
     KRWO.decimal,
     10,
   );
-  const usdtFee = safeCalc
-    .multiply(
-      applyDecimals(positionDetail?.fee.token0.value || '0', USDT.decimal, 10),
-      currentPrice,
-    )
+
+  const usdtFee = applyDecimals(
+    positionDetail?.fee.token0.value || '0',
+    USDT.decimal[checkIsAvailableChain(chainId) ? chainId : defaultChain.id],
+    10,
+  );
+
+  const usdtFeeInKRWO = safeCalc
+    .multiply(usdtFee, currentPrice)
     .floor()
     .toString();
 
@@ -110,19 +110,31 @@ export default function MyPositionDetail({
   }, [selectedMyPosition]);
 
   useEffect(() => {
-    if (!selectedMyPosition?.farming && !positionDetailLoading)
+    if (!chainId) closePopup(MyPositionDetailPopup);
+  }, [chainId]);
+
+  useEffect(() => {
+    if (
+      !selectedMyPosition?.farming &&
+      !positionDetailLoading &&
+      chainId === 8217
+    )
       openPopup(StakePopup, {
         tokens: [
           {
             ...KRWO,
             amount: applyDecimals(
               positionDetail?.liquidity.token1.value || '0',
+              KRWO.decimal,
             ),
           },
           {
             ...USDT,
             amount: applyDecimals(
               positionDetail?.liquidity.token0.value || '0',
+              USDT.decimal[
+                checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+              ],
             ),
           },
         ],
@@ -130,6 +142,35 @@ export default function MyPositionDetail({
         tokenId: selectedMyPosition?.tokenId!,
       });
   }, [selectedMyPosition?.farming, positionDetailLoading]);
+
+  const defaultFees = [
+    {
+      ...KRWO,
+      amount: krwoFee,
+      value: positionDetail?.fee.token1.value || '0',
+    },
+    {
+      ...USDT,
+      amount: usdtFeeInKRWO,
+      value: positionDetail?.fee.token0.value || '0',
+    },
+  ];
+
+  const fees = TOKEN_MAP[
+    checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+  ].native.supportFarming
+    ? [
+        ...defaultFees,
+        {
+          ...TOKEN_MAP[
+            checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+          ].reward,
+          amount: nativeFee,
+          value: positionDetail?.harvest.value || '0',
+        },
+      ]
+    : defaultFees;
+
   return (
     <section className="max-lg:h-[95dvh] relative overflow-y-scroll scrollbar-hide">
       <h3 className="h3 font-bold w-fit">Liquidity</h3>
@@ -140,26 +181,35 @@ export default function MyPositionDetail({
             isFarming={!!selectedMyPosition?.farming}
             apr={selectedMyPosition?.apr!}
             minTick={Math.floor(
-              +usdtTickToKrw(selectedMyPosition?.liquidity.lowerTick || 0),
+              +usdtTickToKrw(
+                selectedMyPosition?.liquidity.lowerTick || 0,
+                chainId,
+              ),
             )}
             maxTick={Math.floor(
-              +usdtTickToKrw(selectedMyPosition?.liquidity.upperTick || 0),
+              +usdtTickToKrw(
+                selectedMyPosition?.liquidity.upperTick || 0,
+                chainId,
+              ),
             )}
             currentPrice={currentPrice}
           />
           <BarChartAndInfo
             title="Liquidity"
-            totalAmount={totalAmount}
             tokens={[
               {
                 ...KRWO,
                 value: positionDetail?.liquidity.token1.value || '0',
                 amount: krwoAmount,
+                icon: KRWO.icon[chainId as ChainIdType],
+                color: KRWO.color[chainId as ChainIdType],
               },
               {
                 ...USDT,
                 value: positionDetail?.liquidity.token0.value || '0',
                 amount: usdtAmount,
+                icon: USDT.icon,
+                color: USDT.color,
               },
             ]}
           />
@@ -167,25 +217,27 @@ export default function MyPositionDetail({
             tokenId={selectedMyPosition?.tokenId!}
             usdt={{
               value: positionDetail?.fee.token0.value || '0',
-              amount: usdtFee,
+              amount: usdtFeeInKRWO,
             }}
             krwo={{
               value: positionDetail?.fee.token1.value || '0',
               amount: krwoFee,
             }}
-            kaia={{
+            native={{
               value: positionDetail?.harvest.value || '0',
-              amount: kaiaFee,
+              amount: nativeFee,
             }}
           />
           <Link
             className="flex flex-row items-center justify-center gap-1"
-            href={'https://dgswap.io/liquidity/' + selectedMyPosition?.tokenId}
+            href={`${SWAP_SERVICE_LINK[checkIsAvailableChain(chainId) ? chainId : defaultChain.id].link}/${selectedMyPosition?.tokenId}`}
             target="_blank"
             rel="noopener noreferrer"
           >
             <p className="font-bold text-purple-500 p1">
-              View History in DragonSwap
+              {SWAP_SERVICE_LINK[
+                checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+              ].title || ''}
             </p>
             <ChevronRightIcon className="w-5 h-5 stroke-purple-500" />
           </Link>
@@ -199,23 +251,7 @@ export default function MyPositionDetail({
           disabled={positionDetailLoading}
           onClick={() =>
             next(RemovePosition, {
-              fees: [
-                {
-                  ...KRWO,
-                  amount: krwoFee,
-                  value: positionDetail?.fee.token1.value || '0',
-                },
-                {
-                  ...USDT,
-                  amount: usdtFee,
-                  value: positionDetail?.fee.token0.value || '0',
-                },
-                {
-                  ...KLAYTN,
-                  amount: kaiaFee,
-                  value: positionDetail?.harvest.value || '0',
-                },
-              ],
+              fees: fees,
               tokens: [
                 {
                   ...KRWO,

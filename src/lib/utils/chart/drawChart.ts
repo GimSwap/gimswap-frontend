@@ -27,6 +27,7 @@ interface DrawChartProps {
   disableBarColor?: string;
   activeBarColor?: string;
   currentPriceColor?: string;
+  chainId: number;
 }
 
 export class DrawChart {
@@ -34,6 +35,7 @@ export class DrawChart {
   private activeBarColor: string;
   private currentPriceColor: string;
   private ticks: number[];
+  private chainId: number;
 
   constructor({
     liquidities,
@@ -47,12 +49,19 @@ export class DrawChart {
     disableBarColor = '#D9D9D9',
     activeBarColor = '#CDBBFF',
     currentPriceColor = '#926CFF',
+    chainId,
   }: DrawChartProps) {
     this.disableBarColor = disableBarColor;
     this.activeBarColor = activeBarColor;
     this.currentPriceColor = currentPriceColor;
+    this.chainId = chainId;
 
-    this.ticks = calculateTicks(minTick, tickSpacing, liquidities.length);
+    this.ticks = calculateTicks(
+      minTick,
+      tickSpacing,
+      liquidities.length,
+      this.chainId,
+    );
 
     this.resizeCanvas(canvas, parent);
 
@@ -64,7 +73,6 @@ export class DrawChart {
       selectedMinTick,
       selectedMaxTick,
       currentPrice,
-
       liquidities,
       this.ticks,
     );
@@ -90,7 +98,6 @@ export class DrawChart {
   ) {
     const minLiquidity = safeCalc.min(liquidities).toFixed();
     const maxLiquidity = safeCalc.max(liquidities).toFixed();
-
     const { width, height } = ctx.canvas;
 
     const { barPositions, activeMinX, activeMaxX } = calculateBarPositions(
@@ -99,11 +106,12 @@ export class DrawChart {
       minLiquidity,
       maxLiquidity,
       height - BOTTOM_GAP,
-      usdtTickToKrw(selectedMinTick),
-      usdtTickToKrw(selectedMaxTick),
+      usdtTickToKrw(selectedMinTick, this.chainId),
+      usdtTickToKrw(selectedMaxTick, this.chainId),
       ticks,
       this.activeBarColor,
       this.disableBarColor,
+      this.chainId,
     );
 
     ctx.save();
@@ -179,27 +187,29 @@ export class DrawChart {
 
     const actvieMinXIndex = ticks.findIndex(
       (tick) =>
-        Math.floor(tick) === Math.floor(+usdtTickToKrw(selectedMinTick)),
+        Math.floor(tick) ===
+        Math.floor(+usdtTickToKrw(selectedMinTick, this.chainId)),
     );
 
     const actvieMaxXIndex = ticks.findIndex(
       (tick) =>
-        Math.floor(tick) === Math.floor(+usdtTickToKrw(selectedMaxTick)),
+        Math.floor(tick) ===
+        Math.floor(+usdtTickToKrw(selectedMaxTick, this.chainId)),
     );
 
     const isCurrentPriceInFirstBar =
-      currentPrice >= +usdtTickToKrw(selectedMinTick) &&
+      currentPrice >= +usdtTickToKrw(selectedMinTick, this.chainId) &&
       currentPrice <= ticks[actvieMinXIndex + 1];
     const isCurrentPriceInLastBar =
       currentPrice >= ticks[actvieMaxXIndex - 1] &&
-      currentPrice <= +usdtTickToKrw(selectedMaxTick);
+      currentPrice <= +usdtTickToKrw(selectedMaxTick, this.chainId);
 
     const CORRECTION_X = 15;
 
     const getCurrentPriceX = () => {
       if (isCurrentPriceInFirstBar) {
         const difference = Math.min(
-          currentPrice - +usdtTickToKrw(selectedMinTick),
+          currentPrice - +usdtTickToKrw(selectedMinTick, this.chainId),
           6.1,
         );
         const _correction = (CORRECTION_X / 6) * difference;
@@ -208,7 +218,7 @@ export class DrawChart {
 
       if (isCurrentPriceInLastBar) {
         const difference = Math.min(
-          +usdtTickToKrw(selectedMaxTick) - currentPrice,
+          +usdtTickToKrw(selectedMaxTick, this.chainId) - currentPrice,
           6.1,
         );
         const _correction = CORRECTION_X - (CORRECTION_X / 6) * difference;
@@ -272,9 +282,7 @@ export class DrawChart {
     ctx.fillStyle = this.disableBarColor;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
-
     const numBars = Math.min(barPositions.length, ticks.length - 2);
-
     for (let i = 0; i < numBars; i++) {
       const currentTick = ticks[i];
       const nextTick = ticks[i + 1];
@@ -282,7 +290,6 @@ export class DrawChart {
       const currentX = barPositions[i].x;
       const nextX =
         i + 1 < barPositions.length ? barPositions[i + 1].x : currentX;
-
       for (
         let value = Math.floor(currentTick / 10) * 10;
         value < nextTick;

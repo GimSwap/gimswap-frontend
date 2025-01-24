@@ -12,12 +12,13 @@ import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import RemovePositionReviewPopup from './RemovePositionReviewPopup';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
 import { MyPositionType } from '@/src/lib/types/api/liquidity/GetPositionType';
-import { KRWO, USDT } from '@/src/lib/constants/token';
+import { defaultChain, KRWO, TOKEN_MAP, USDT } from '@/src/lib/constants/token';
 import { useLiquidityStore } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
 import { applyDecimals } from '@/src/lib/utils/calcTick';
 import { useAccount } from 'wagmi';
 import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
-import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
+import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
 
 interface RemovePositionProps {
   prev: () => void;
@@ -48,7 +49,6 @@ export default function RemovePosition({
   });
 
   const { chainId } = useAccount();
-  const { switchChain } = useSwitchNetwork();
   const { openPopup } = usePopupStore((state) => state);
   const { currentPrice } = useLiquidityStore((state) => state);
 
@@ -72,9 +72,13 @@ export default function RemovePosition({
     setTokenAmount({
       krwoAmount: applyDecimals(
         safeCalc.multiply(tokens[0].amount, +percentage).toString(),
+        KRWO.decimal,
       ),
       usdtAmount: applyDecimals(
         safeCalc.multiply(tokens[1].amount, +percentage).toString(),
+        USDT.decimal[
+          checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+        ],
       ),
     });
   };
@@ -109,14 +113,14 @@ export default function RemovePosition({
       return {
         disabled: false,
         text: 'Switch Network',
-        onClick: async () => await switchChain(),
+        onClick: async () => openPopup(SelectChainPopup),
       };
     }
 
     if (!value || value === '0') {
       return {
         disabled: true,
-        text: 'Enter an amount',
+        text: 'Enter amount',
       };
     }
     return {
@@ -146,9 +150,12 @@ export default function RemovePosition({
                 {
                   symbol: 'KRWO',
                   percentage: safeCalc
-                    .divide(applyDecimals(tokens[0].amount, 6, 10), totalAmount)
+                    .divide(
+                      applyDecimals(tokens[0].amount, KRWO.decimal, 10),
+                      totalAmount,
+                    )
                     .toNumber(),
-                  color: '#BFF009',
+                  color: KRWO.color[chainId as ChainIdType],
                 },
                 {
                   symbol: 'USDT',
@@ -157,7 +164,15 @@ export default function RemovePosition({
                       safeCalc
                         .multiply(
                           currentPrice,
-                          applyDecimals(tokens[1].amount, 6, 10),
+                          applyDecimals(
+                            tokens[1].amount,
+                            USDT.decimal[
+                              checkIsAvailableChain(chainId)
+                                ? chainId
+                                : defaultChain.id
+                            ],
+                            10,
+                          ),
                         )
                         .toString(),
                       totalAmount,
@@ -170,7 +185,7 @@ export default function RemovePosition({
           </section>
         </section>
         <p className="p1">Enter Amount</p>
-        <section className="rounded-lg black-3 p-4 pb-6 flex flex-col bg-black-3">
+        <section className="rounded-lg black-3 p-4 pb-6 flex flex-col bg-black-3 mt-3">
           <p className="c1 font-medium pb-4">You remove</p>
           <input
             type="text"
@@ -180,19 +195,28 @@ export default function RemovePosition({
             placeholder="Enter an amount"
           />
           <section className="flex flex-col gap-2 mb-4">
-            {tokens.map((token) => (
-              <div className="flex flex-row justify-between" key={token.symbol}>
-                <div className="flex flex-row gap-1">
-                  <token.icon className="w-5 h-5" />
-                  <p className="p1 text-black-8">{token.symbol}</p>
+            {tokens.map((token) => {
+              const Icon =
+                typeof token.icon === 'object'
+                  ? token.icon[chainId as ChainIdType]
+                  : token.icon;
+              return (
+                <div
+                  className="flex flex-row justify-between"
+                  key={token.symbol}
+                >
+                  <div className="flex flex-row gap-1">
+                    <Icon className="w-5 h-5" />
+                    <p className="p1 text-black-8">{token.symbol}</p>
+                  </div>
+                  <p className="c1">
+                    {token.symbol === 'KRWO'
+                      ? insertComma(formatNumber(tokenAmount.krwoAmount, 2))
+                      : insertComma(formatNumber(tokenAmount.usdtAmount, 2))}
+                  </p>
                 </div>
-                <p className="c1">
-                  {token.symbol === 'KRWO'
-                    ? insertComma(formatNumber(tokenAmount.krwoAmount, 2))
-                    : insertComma(formatNumber(tokenAmount.usdtAmount, 2))}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </section>
           <RemoveSlider
             value={value}
@@ -217,7 +241,12 @@ export default function RemovePosition({
             </p>
           </div>
           <div className="flex flex-row justify-between pl-2">
-            <p className="c1 text-black-8">Fee & Harvest</p>
+            <p className="c1 text-black-8">{TOKEN_MAP[
+                checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+              ].native.supportFarming
+              ? 'Fee & Harvest'
+              : 'Fee'}
+            </p>
             <p className="c1 font-medium">
               ₩ {insertComma(formatNumber(totalFee, 0))}
             </p>
@@ -242,7 +271,13 @@ export default function RemovePosition({
             className="w-[26px] h-[26px]"
           />
           <h5 className="font-medium text-purple-500">
-            Removing will receive Fee & Harvest
+            {`Removing will receive ${
+              TOKEN_MAP[
+                checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+              ].native.supportFarming
+                ? 'Fee & Harvest'
+                : 'Fee'
+            }`}
           </h5>
         </div>
         <Button

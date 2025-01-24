@@ -31,7 +31,7 @@ export function kaikasConnector() {
       icon: 'https://www.gimswap.com/svg/wallet/kaia.svg',
 
       async setup() {
-        if (typeof window === 'undefined' || window.klaytn === undefined) {
+        if (typeof window !== 'undefined' && window.klaytn === undefined) {
           console.error('Kaia is not installed in this browser.');
         }
       },
@@ -179,7 +179,8 @@ export function kaikasConnector() {
               throw new Error(error as string);
             }
           } else {
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            const errorMessage =
+              error instanceof Error ? error.message : 'Unknown error';
             fetchSendLog({ name: 'switchChain', error: errorMessage });
             throw error;
           }

@@ -5,7 +5,7 @@ import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import useSign from '@/src/lib/hook/useSign';
 import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
 import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
-import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
+import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
 
 interface BuyButtonProps {
   amount: string;
@@ -14,7 +14,6 @@ interface BuyButtonProps {
 export default function BuyButton({ amount }: BuyButtonProps) {
   const { address, isConnected, chainId } = useAccount();
   const { openPopup } = usePopupStore((state) => state);
-  const { switchChain } = useSwitchNetwork();
   const { sign } = useSign();
 
   const handleOpenVoucherPayment = (url: string) => {
@@ -59,7 +58,7 @@ export default function BuyButton({ amount }: BuyButtonProps) {
       return {
         title: 'Switch Network',
         disabled: false,
-        onClick: async () => await switchChain(),
+        onClick: () => openPopup(SelectChainPopup),
       };
     if (+amount <= 0)
       return {

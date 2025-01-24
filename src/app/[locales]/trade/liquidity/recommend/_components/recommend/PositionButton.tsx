@@ -6,8 +6,8 @@ import { useAccount } from 'wagmi';
 import { PositionType } from '../../_mock/liquidityAmount';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
-import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
 import AddRecommendLiquidityPopup from '../popup/AddRecommendLiquidityPopup';
+import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
 
 interface PositionButtonProps {
   selectedPosition: PositionType | null;
@@ -17,7 +17,6 @@ export default function PositionButton({
   selectedPosition,
 }: PositionButtonProps) {
   const { isConnected, chainId } = useAccount();
-  const { switchChain } = useSwitchNetwork();
   const { openPopup } = usePopupStore((state) => state);
 
   const buttonState = () => {
@@ -32,7 +31,7 @@ export default function PositionButton({
       return {
         title: 'Switch Network',
         disabled: false,
-        onClick: switchChain,
+        onClick: () => openPopup(SelectChainPopup),
       };
 
     if (!selectedPosition) {

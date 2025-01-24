@@ -13,10 +13,10 @@ import { fetchSendLog } from '../utils/api/fetchSendLog';
 export const useAuth = () => {
   const { connectAsync, connectors } = useConnect();
   const { disconnectAsync } = useDisconnect({ config: wagmiConfig });
-  const { chainId, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const currentUrl = `${window.location.hostname}${window.location.pathname}`;
   const connect = useCallback(
-    async (wallet: (typeof WALLETS)[0], reload?: boolean) => {
+    async (wallet: (typeof WALLETS)[0], reload?: boolean, chainId?: number) => {
       const findConnector = connectors.find((c) => c.id === wallet.connectorId);
       try {
         if (!wallet.installed && wallet.deepLink) {
@@ -43,7 +43,7 @@ export const useAuth = () => {
         }
       }
     },
-    [connectors, connectAsync, chainId],
+    [connectors, connectAsync],
   );
 
   const disconnect = useCallback(

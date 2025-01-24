@@ -1,14 +1,21 @@
+import { KRWO, USDT } from '@/src/lib/constants/token';
 import { safeCalc } from '../../safeCalc';
 import { BAR_PADDING, BAR_WIDTH } from '../_constants/chartConstants';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
 
 export const calculateTicks = (
   minTick: number,
   tickSpacing: number,
   liquidityLength: number,
+  chainId: number,
 ) => {
   const ticks: number[] = [];
+  const decimal = USDT.decimal[chainId as ChainIdType] - KRWO.decimal;
   for (let i = 0; i < liquidityLength + 1; i++) {
-    const price = safeCalc.pow(1.0001, tickSpacing * i + minTick).toFixed(16);
+    const price = safeCalc.multiply(
+      safeCalc.pow(1.0001, tickSpacing * i + minTick).toString(),
+      10 ** decimal,
+    );
     ticks.push(+price);
   }
   return ticks;
@@ -20,6 +27,9 @@ export const calculateBarHeight = (
   maxTick: string,
   graphHeight: number,
 ) => {
+  const difference = safeCalc.subtract(maxTick, minTick).toString();
+  if (difference === '0') return graphHeight.toString();
+
   const height = safeCalc
     .multiply(
       safeCalc
@@ -57,13 +67,8 @@ export const calculateBarPositions = (
   ticks: number[],
   activeBarColor: string,
   disabledBarColor: string,
+  chainId: number,
 ) => {
-  if (ticks.length !== liquidities.length + 1) {
-    throw new Error(
-      'The length of ticks must be liquidities.length + 1 for correct matching.',
-    );
-  }
-
   const barSpacing =
     (graphWidth - BAR_WIDTH * liquidities.length - BAR_PADDING * 2) /
     (liquidities.length - 1);
@@ -75,9 +80,14 @@ export const calculateBarPositions = (
     barPositions: liquidities.map((liquidity, index) => {
       const tickStart = Math.floor(ticks[index]);
       const tickEnd = Math.floor(ticks[index + 1]);
+
       const isActive =
-        tickStart >= Math.floor(+selectedMinTick) &&
-        tickEnd <= Math.floor(+selectedMaxTick);
+        chainId === 8217
+          ? tickEnd <= Math.floor(+selectedMaxTick) &&
+            tickStart >= Math.floor(+selectedMinTick)
+          : tickEnd >= Math.floor(+selectedMinTick) &&
+            tickStart <= Math.floor(+selectedMaxTick);
+
       const x = index * (barSpacing + BAR_WIDTH) + BAR_PADDING;
 
       if (isActive) {

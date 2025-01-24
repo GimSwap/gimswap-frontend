@@ -4,6 +4,10 @@ import AddInfo from './AddInfo';
 import ArrowDownIcon from '@/public/svg/arrow/arrow-narrow-down.svg';
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
+import { useAccount } from 'wagmi';
+import { defaultChain } from '@/src/lib/constants/token';
+import { TOKEN_MAP } from '@/src/lib/constants/token';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 
 interface PendingPopupProps {
   open: boolean;
@@ -12,17 +16,11 @@ interface PendingPopupProps {
   totalLiquidity: string;
   totalLiquidityWithOriginal?: string;
   type: 'add' | 'increase' | 'remove' | 'collect';
-  feeAndHarvestTokens?: (Pick<TokenType, 'icon' | 'symbol'> & {
+  feeAndHarvestTokens?: (Pick<TokenType, 'icon' | 'symbol' | 'decimal'> & {
     amount: string;
+    value: string;
   })[];
 }
-
-const titleMap = {
-  add: 'Total Liquidity',
-  increase: 'Add Liquidity',
-  remove: 'Removing Liquidity',
-  collect: 'Fee & Harvest',
-} as const;
 
 const resultTitleMap = {
   add: 'Total Liquidity',
@@ -40,6 +38,19 @@ export default function AddLiquidityPendingPopup({
   type,
   feeAndHarvestTokens,
 }: PendingPopupProps) {
+  const { chainId } = useAccount();
+
+  const titleMap = {
+    add: 'Total Liquidity',
+    increase: 'Add Liquidity',
+    remove: 'Removing Liquidity',
+    collect: TOKEN_MAP[
+      checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+    ].native.supportFarming
+      ? 'Fee & Harvest'
+      : 'Fee',
+  } as const;
+
   return (
     <PopupTemplate
       open={open}

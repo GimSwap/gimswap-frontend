@@ -23,7 +23,7 @@ export default function RemoveSlider({
           safeCalc.divide(numerator, denominator).toString(),
           percentage,
         )
-        .toFixed(18),
+        .toString(),
       18,
     );
   };

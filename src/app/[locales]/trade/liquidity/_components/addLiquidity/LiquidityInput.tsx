@@ -1,5 +1,4 @@
-import { KRWO, USDT } from '@/src/lib/constants/token';
-import { TokenType } from '@/src/lib/types/TokenType';
+import { defaultChain, KRWO, USDT } from '@/src/lib/constants/token';
 import { applyDecimals, calculateTokens } from '@/src/lib/utils/calcTick';
 import { usdtTickToKrw } from '@/src/lib/utils/calcTick';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
@@ -18,8 +17,10 @@ import Accordion from '@/src/components/Accordion';
 import RangeChart from '../RangeChart';
 import { SwapModeDescription } from './SwapDescription';
 import { PositionType } from '@/src/lib/stores/liquidityStore/liquidityStore';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
 import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
-import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
+import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
+import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 
 interface LiquidityInputProps {
   selectedPosition: Omit<PositionType, 'label'>;
@@ -34,11 +35,11 @@ export default function LiquidityInput({
   onButtonClick,
 }: LiquidityInputProps) {
   const [mode, setMode] = useState<'normal' | 'auto'>('auto');
-  const [focusedInput, setFocusedInput] = useState<TokenType | null>(null);
-  const { switchChain } = useSwitchNetwork();
+  const [focusedInput, setFocusedInput] = useState<string | null>(null);
+  const { openPopup } = usePopupStore((state) => state);
 
   const { data: graphInfo } = useFetch(() =>
-    fetchGetLiquidityGraphInfo({ chainId: 8217, tokenId: 'usdt' }),
+    fetchGetLiquidityGraphInfo({ chainId: chainId!, token: 'usdt' }),
   );
 
   const { address, chainId } = useAccount();
@@ -55,8 +56,12 @@ export default function LiquidityInput({
 
   const { data: balance } = useQuery({
     queryKey: ['getBalance'],
-    queryFn: () => fetchGetBalance({ walletAddress: address! }),
-    enabled: !!address,
+    queryFn: () =>
+      fetchGetBalance({
+        walletAddress: address!,
+        chainId: chainId! as ChainIdType,
+      }),
+    enabled: !!(address && chainId),
     select: (data) => data.balance,
   });
 
@@ -69,17 +74,20 @@ export default function LiquidityInput({
     .add(
       tokenAmount.KRWO,
       safeCalc
-        .multiply(tokenAmount.USDT, usdtTickToKrw(graphInfo?.currentTick || 0))
-        .toFixed(),
+        .multiply(
+          tokenAmount.USDT,
+          usdtTickToKrw(graphInfo?.currentTick || 0, chainId),
+        )
+        .toString(),
     )
-    .toFixed();
+    .toString();
 
   const buttonState = () => {
     if (!checkIsAvailableChain(chainId))
       return {
         disabled: false,
         text: 'Switch Network',
-        onClick: switchChain,
+        onClick: () => openPopup(SelectChainPopup),
       };
 
     if (!balance?.krwo || !balance?.usdt)
@@ -91,11 +99,17 @@ export default function LiquidityInput({
     if (
       safeCalc.isGreater(
         tokenAmount.KRWO,
-        applyDecimals(balance.krwo, KRWO.decimal, 16),
+        applyDecimals(balance.krwo, KRWO.decimal, 18),
       ) ||
       safeCalc.isGreater(
         tokenAmount.USDT,
-        applyDecimals(balance.usdt, USDT.decimal, 16),
+        applyDecimals(
+          balance.usdt,
+          USDT.decimal[
+            checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+          ],
+          18,
+        ),
       )
     ) {
       return {
@@ -108,7 +122,7 @@ export default function LiquidityInput({
       const isValidKrwo =
         tokenAmount.KRWO && formatNumber(tokenAmount.KRWO) !== '0';
       const isValidUsdt =
-        tokenAmount.USDT && formatNumber(tokenAmount.USDT) !== '0';
+        tokenAmount.USDT && formatNumber(tokenAmount.USDT, USDT.decimal[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]) !== '0';
       const isValid = isValidKrwo || isValidUsdt;
       return {
         disabled: !isValid,
@@ -130,11 +144,10 @@ export default function LiquidityInput({
     }
   };
 
-  const handleTokenAmount = (token: 'KRWO' | 'USDT', value: string) => {
+  const handleTokenAmount = (token: string, value: string) => {
     if (isNaN(+value)) return;
     if (!graphInfo || !selectedPosition) return;
-    if (value.includes('.') && value.split('.')[1].length > 6) return;
-
+    if (value.includes('.') && value.split('.')[1].length > 18) return;
     const sanitizedValue = value.replace(/^0+(?=\d)/, '').replace(/^\./, '0.');
 
     const isUsdtInput = token === 'USDT';
@@ -165,6 +178,7 @@ export default function LiquidityInput({
         graphInfo?.currentTick,
         selectedPosition!.lowerTick,
         selectedPosition!.upperTick,
+        chainId,
       );
       setTokenAmount({
         KRWO: isUsdtInput
@@ -198,7 +212,12 @@ export default function LiquidityInput({
           {SwapModeDescription[mode].description}
         </Accordion>
         <AddLiquidityInput
-          token={KRWO}
+          token={{
+            ...KRWO,
+            icon: KRWO.icon[
+              checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+            ],
+          }}
           value={tokenAmount.KRWO}
           krwValue={tokenAmount.KRWO}
           focusedInput={focusedInput}
@@ -214,9 +233,9 @@ export default function LiquidityInput({
           krwValue={safeCalc
             .multiply(
               tokenAmount.USDT,
-              usdtTickToKrw(graphInfo?.currentTick || 0),
+              usdtTickToKrw(graphInfo?.currentTick || 0, chainId),
             )
-            .toFixed()}
+            .toString()}
           focusedInput={focusedInput}
           setFocusedInput={setFocusedInput}
           balance={balance?.usdt || '0'}

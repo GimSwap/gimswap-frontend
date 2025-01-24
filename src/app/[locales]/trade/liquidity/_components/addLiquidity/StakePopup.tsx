@@ -2,7 +2,7 @@ import PopupTemplate from '@/src/components/PopupTemplate';
 import AddInfo from './AddInfo';
 import { TokenType } from '@/src/lib/types/TokenType';
 import { Link } from '@/src/i18n/routing';
-import { KLAYTN } from '@/src/lib/constants/token';
+import { defaultChain, KLAYTN } from '@/src/lib/constants/token';
 import Button from '@/src/components/Button';
 import { fetchGetStakeInfo } from '@/src/lib/utils/api/liquidity/fetchGetStakeInfo';
 import { useAccount, useSendTransaction } from 'wagmi';
@@ -15,6 +15,7 @@ import TransactionFailPopup from '@/src/components/popups/TransactionFailPopup';
 import { useLiquidityStore } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
 
 interface StakePopupProps {
   open: boolean;
@@ -35,7 +36,7 @@ export default function StakePopup({
   tokenId,
   closeCallback,
 }: StakePopupProps) {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { sendTransactionAsync } = useSendTransaction();
   const [isLoading, setIsLoading] = useState(false);
   const { openPopup, closeAllPopup } = usePopupStore((state) => state);
@@ -47,7 +48,7 @@ export default function StakePopup({
     try {
       setIsLoading(true);
       const { data, contractAddress } = await fetchGetStakeInfo({
-        chainId: 8217,
+        chainId: chainId || defaultChain.id,
         tokenId: tokenId! || (await getTokenId(txHash!))!,
         walletAddress: address!,
       });
@@ -57,7 +58,7 @@ export default function StakePopup({
       });
 
       const { status } = await waitForTransactionReceipt(wagmiConfig, {
-        chainId: 8217,
+        chainId: chainId as ChainIdType,
         hash: tx,
       });
 

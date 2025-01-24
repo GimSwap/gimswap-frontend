@@ -5,6 +5,7 @@ import { CHAIN_ID_TO_BLOCK_EXPLORER } from '@/src/lib/constants/blockExplorer';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { useAccount } from 'wagmi';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
 
 interface SwapProgressPopupProps {
   open: boolean;
@@ -27,7 +28,15 @@ export default function SwapSuccessPopup({
   closePrevPopup,
 }: SwapProgressPopupProps) {
   const { chainId } = useAccount();
+  const PayIcon =
+    typeof tokens.pay.icon === 'object'
+      ? tokens.pay.icon[chainId as ChainIdType]
+      : tokens.pay.icon;
 
+  const ReceiveIcon =
+    typeof tokens.receive.icon === 'object'
+      ? tokens.receive.icon[chainId as ChainIdType]
+      : tokens.receive.icon;
   return (
     <PopupTemplate
       showCloseButton
@@ -42,7 +51,7 @@ export default function SwapSuccessPopup({
         <h3 className="font-bold text-center pb-4">Swap success!</h3>
         <section className="rounded-lg bg-black-3 flex flex-col justify-center items-center p-4 gap-[6px] w-full">
           <div className="flex gap-2 items-center">
-            <tokens.pay.icon />
+            <PayIcon className="w-5 h-5" />
             <h5 className="text-black-8 font-medium">{`${insertComma(
               safeCalc.divide(amount, tokens.pay.unit).toFixed(),
             )}
@@ -50,7 +59,7 @@ export default function SwapSuccessPopup({
           </div>
           <ArrowDownIcon />
           <div className="flex gap-2 items-center">
-            <tokens.receive.icon />
+            <ReceiveIcon className="w-5 h-5" />
             <h5 className="text-black-8 font-medium">{`${insertComma(
               safeCalc.divide(amount, tokens.receive.unit).toFixed(),
             )}

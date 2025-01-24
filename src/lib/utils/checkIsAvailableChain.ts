@@ -1,6 +1,13 @@
-const availableChain = [Number(process.env.NEXT_PUBLIC_KLAYTN_CHAIN_ID)];
+import { inCludes } from './typeSafe/inCludes';
+import { chains } from './wagmi';
 
-export const checkIsAvailableChain = (chainId: number | undefined) => {
+const chainIds = chains.map(
+  (chain) => chain.id,
+) as (typeof chains)[number]['id'][];
+
+export const checkIsAvailableChain = (
+  chainId: number | undefined,
+): chainId is (typeof chains)[number]['id'] => {
   if (!chainId) return false;
-  return availableChain.includes(+chainId);
+  return inCludes(chainIds, chainId);
 };

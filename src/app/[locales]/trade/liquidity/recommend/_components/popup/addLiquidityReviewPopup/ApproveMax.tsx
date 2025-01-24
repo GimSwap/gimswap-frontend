@@ -2,6 +2,8 @@ import Button from '@/src/components/Button';
 import ButtonLoading from '@/src/components/ButtonLoading';
 import { KRWO, USDT } from '@/src/lib/constants/token';
 import { useApproveMax } from '@/src/lib/hook/useApproveMax';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
+import { useAccount } from 'wagmi';
 
 interface ApproveMaxProps {
   spenderAddress: `0x${string}` | undefined;
@@ -24,6 +26,7 @@ export default function ApproveMax({
   isApproved,
   setIsApproved,
 }: ApproveMaxProps) {
+  const { chainId } = useAccount();
   const { approveMax: approveUsdt, isPending: isUsdtPending } = useApproveMax();
   const { approveMax: approveKrwo, isPending: isKrwoPending } = useApproveMax();
 
@@ -62,15 +65,17 @@ export default function ApproveMax({
           color="primary"
           size="xl"
           onClick={async () => {
+            // TODO add bsc logic
             const { status } = await approveUsdt(
-              USDT.contractAddress as `0x${string}`,
+              chainId as ChainIdType,
+              USDT.contractAddress[chainId as ChainIdType] as `0x${string}`,
               spenderAddress!,
             );
             if (status === 'success')
               setIsApproved((prev) => ({ ...prev, usdt: true }));
           }}
           disabled={isApproved.usdt}
-          className="flex flex-row justify-center items-center"
+          className="flex flex-row justify-center items-center whitespace-nowrap"
         >
           {buttonText('USDT')}
         </Button>
@@ -79,13 +84,14 @@ export default function ApproveMax({
           size="xl"
           onClick={async () => {
             const { status } = await approveKrwo(
-              KRWO.contractAddress as `0x${string}`,
+              chainId as ChainIdType,
+              KRWO.contractAddress[chainId as ChainIdType] as `0x${string}`,
               spenderAddress!,
             );
             if (status === 'success')
               setIsApproved((prev) => ({ ...prev, krwo: true }));
           }}
-          className="flex flex-row justify-center items-center"
+          className="flex flex-row justify-center items-center whitespace-nowrap"
           disabled={isApproved.krwo}
         >
           {buttonText('KRWO')}

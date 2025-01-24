@@ -1,18 +1,22 @@
 'use client';
 
-import { OPEN_VOUCHER, KRWO } from '@/src/lib/constants/token';
 import { useEffect } from 'react';
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
 import { useAccount } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import { fetchGetBalance } from '@/src/lib/utils/api/fetchGetBalance';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { TokenType } from '@/src/lib/types/TokenType';
+import { defaultChain } from '@/src/lib/constants/token';
+import BalanceIcon from '@/public/svg/balance.svg';
 
 interface TokenProps {
   type: 'pay' | 'receive';
   amount: string;
   setAmount?: React.Dispatch<React.SetStateAction<string>>;
-  token: typeof OPEN_VOUCHER | typeof KRWO;
+  token: TokenType;
   isWritable: boolean;
   setIsEnoughBalance?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -25,7 +29,7 @@ export default function Token({
   isWritable,
   setIsEnoughBalance,
 }: TokenProps) {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!setAmount) return;
     const value = e.target.value;
@@ -40,16 +44,25 @@ export default function Token({
   };
 
   const { data } = useQuery({
-    queryKey: ['getBalance'],
-    queryFn: () => fetchGetBalance({ walletAddress: address! }),
-    enabled: !!address,
+    queryKey: ['getBalance', address, token.symbol],
+    queryFn: () =>
+      fetchGetBalance({
+        walletAddress: address!,
+        chainId: chainId as ChainIdType,
+      }),
+    enabled: !!(address && chainId),
     select: (data) => data.balance,
   });
 
   const symbol = token.symbol.toLowerCase() as 'ov' | 'krwo';
-  const balance = data
-    ? safeCalc.divide(data[symbol], 10 ** token.decimal).toString()
-    : 0;
+  const decimal = token.multiDecimal
+    ? token?.decimal[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]
+    : token?.decimal;
+
+  const balance =
+    data && chainId
+      ? safeCalc.divide(data[symbol], 10 ** decimal).toString()
+      : 0;
   const handleMaxButton = () => {
     if (!balance || !setAmount) return;
 
@@ -60,6 +73,11 @@ export default function Token({
 
     setAmount(safeCalc.multiply(truncatedAmount, 10000).toFixed());
   };
+
+  const Icon =
+    typeof token.icon === 'object'
+      ? token.icon[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]
+      : token.icon;
 
   useEffect(() => {
     if (type === 'pay' && setIsEnoughBalance && balance)
@@ -84,25 +102,10 @@ export default function Token({
           {type === 'pay' ? 'You pay' : 'You receive'}
         </p>
         <div className="py-[6px] px-2 bg-black-1 rounded-full shadow-[0px_0px_5px_0px_rgba(0,0,0,0.08)] flex gap-1 items-center">
-          <token.icon />
+          <Icon className="w-5 h-5" />
           <p className="c1 font-medium">{token.name}</p>
         </div>
       </section>
-      <p className="c0 text-end text-black-8">
-        Balance:
-        {` ${Number(balance).toLocaleString('ko-kr', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 14,
-        })}` || '0.0'}
-        {type === 'pay' && (
-          <span
-            className="c0 font-medium cursor-pointer text-purple-500 ml-1"
-            onClick={handleMaxButton}
-          >
-            MAX
-          </span>
-        )}
-      </p>
       <div className="mb-[2px]">
         {isWritable ? (
           <input
@@ -110,7 +113,7 @@ export default function Token({
             inputMode="numeric"
             value={
               amount !== '0'
-                ? safeCalc.divide(amount, token.unit).toFixed()
+                ? safeCalc.divide(amount, token.unit).toString()
                 : ''
             }
             placeholder="0"
@@ -121,9 +124,28 @@ export default function Token({
           <h2 className="font-bold text-black-6 overflow-hidden">{amount}</h2>
         )}
       </div>
-      <p className={`c1 ${!isWritable && 'text-black-6'}`}>
-        ₩ {insertComma(amount)}
-      </p>
+      <div className="flex flex-row justify-between">
+        <p className={`c1 ${!isWritable && 'text-black-6'}`}>
+          ₩ {insertComma(amount)}
+        </p>
+        <div className="flex flex-row items-center">
+          <BalanceIcon className="w-4 h-4 mr-[2px]" />
+          <p className="c0 text-black-8">
+            {` ${Number(balance).toLocaleString('ko-kr', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 14,
+            })}` || '0.0'}
+          </p>
+          {type === 'pay' && (
+            <span
+              className="c0 font-medium cursor-pointer text-purple-500 ml-1"
+              onClick={handleMaxButton}
+            >
+              MAX
+            </span>
+          )}
+        </div>
+      </div>
     </section>
   );
 }

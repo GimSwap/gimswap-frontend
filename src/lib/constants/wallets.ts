@@ -1,6 +1,7 @@
 import MetaMaskIcon from '@/public/svg/wallet/metamask.svg';
 import KaiaWalletIcon from '@/public/svg/wallet/Kaia.svg';
 import { checkIsMobileBrowser } from '@/src/lib/utils/checkIsMobileBrowser';
+import { bsc, bscTestnet } from 'wagmi/chains';
 
 export const CONNECTOR_NAMES = {
   metamask: 'metaMask',
@@ -26,7 +27,19 @@ export const isKaiaWalletInstalled = () => {
   else return !!window.klaytn;
 };
 
-export const WALLETS = [
+export interface WalletType {
+  id: string;
+  title: string;
+  icon: React.ElementType;
+  connectorId: string;
+  get installed(): boolean;
+  get isMobile(): boolean;
+  get transport(): any;
+  deepLink: string;
+  unsupportedChainIds: number[];
+}
+
+export const WALLETS: WalletType[] = [
   {
     id: 'metaMask',
     title: 'MetaMask',
@@ -42,6 +55,7 @@ export const WALLETS = [
       return window?.ethereum;
     },
     deepLink: 'https://metamask.app.link/dapp/',
+    unsupportedChainIds: [],
   },
   {
     id: 'Kaia',
@@ -58,5 +72,6 @@ export const WALLETS = [
       return this.isMobile ? window.ethereum : window.klaytn;
     },
     deepLink: 'https://app.kaiawallet.io/u/',
+    unsupportedChainIds: [bsc.id, bscTestnet.id],
   },
 ];

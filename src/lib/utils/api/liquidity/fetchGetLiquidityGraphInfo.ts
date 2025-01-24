@@ -6,7 +6,7 @@ import { Fetch } from '../fetchClient';
 
 export const fetchGetLiquidityGraphInfo = async ({
   chainId,
-  tokenId,
+  token,
 }: GetLiquidityGraphInfoRequestType): Promise<GetLiquidityGraphInfoResponseType> => {
-  return await Fetch(`/liquidity/graph?chain_id=${chainId}&token=${tokenId}`);
+  return await Fetch(`/liquidity/graph?chain_id=${chainId}&token=${token}`);
 };

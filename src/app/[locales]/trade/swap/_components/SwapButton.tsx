@@ -2,10 +2,10 @@ import Button from '@/src/components/Button';
 import SwapConfirmPopup from '@/src/components/popups/SwapConfirmPoup';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import { TokenType } from '@/src/lib/types/TokenType';
-import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
 import { useAccount, useConfig } from 'wagmi';
 import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
 import { useCallback } from 'react';
+import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
 
 interface SwapButtonProps {
   tokens: { pay: TokenType; receive: TokenType };
@@ -27,7 +27,6 @@ export const SwapButton = ({
   const { openPopup } = usePopupStore((state) => state);
   const { isConnected, chain } = useAccount();
   const { chains } = useConfig();
-  const { switchChain } = useSwitchNetwork();
   const isWrongNetwork = chains.every(
     (availableChain) => availableChain.id !== chain?.id,
   );
@@ -39,7 +38,7 @@ export const SwapButton = ({
     }
 
     if (isWrongNetwork) {
-      await switchChain();
+      openPopup(SelectChainPopup);
       return;
     }
 

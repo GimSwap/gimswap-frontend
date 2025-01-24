@@ -1,13 +1,15 @@
 import { http, createConfig, createStorage, cookieStorage } from 'wagmi';
-import { kaia } from 'wagmi/chains';
+import { bsc, kaia } from 'wagmi/chains';
 import { injected } from 'wagmi/connectors';
 import { kaikasConnector } from '@/src/lib/utils/wallets/kaiaWallet';
 import { fallback } from 'viem';
 
 export const STORE_KEY = 'GimSwap';
 
+export const chains = [bsc, kaia] as const;
+
 export const wagmiConfig = createConfig({
-  chains: [kaia],
+  chains,
   connectors: [
     kaikasConnector(),
     injected({ target: 'metaMask', shimDisconnect: true }),
@@ -20,11 +22,16 @@ export const wagmiConfig = createConfig({
       http('https://go.getblock.io/d7094dbd80ab474ba7042603fe912332'),
       http('https://1rpc.io/klay'),
     ]),
-    // [kairos.id]: fallback([
-    //   http('https://responsive-green-emerald.kaia-kairos.quiknode.pro'),
-    //   http('https://rpc.ankr.com/klaytn_testnet'),
-    //   http('https://public-en.kairos.node.kaia.io'),
-    // ]),
+    [bsc.id]: fallback([
+      http('https://bsc-pokt.nodies.app'),
+      http('https://bscrpc.com'),
+      http('https://endpoints.omniatech.io/v1/bsc/mainnet/public'),
+      http('https://go.getblock.io/cc778cdbdf5c4b028ec9456e0e6c0cf3'),
+      http('https://bsc-rpc.publicnode.com'),
+      http('https://bsc.meowrpc.com'),
+      http('https://bsc.blockrazor.xyz'),
+      http('https://rpc.ankr.com/bsc'),
+    ]),
   },
   ssr: true,
   storage: createStorage({

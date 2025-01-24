@@ -1,6 +1,6 @@
 'use client';
 
-import { LIQUIDTY_CATEGORY } from '@/src/lib/constants/category/LiquidityCategory';
+import { LIQUIDTY_CATEGORY } from '@/src/lib/constants/LiquidityCategory';
 import { Link, usePathname } from '@/src/i18n/routing';
 import { useQuery } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
@@ -8,13 +8,13 @@ import { fetchGetMyPositions } from '@/src/lib/utils/api/liquidity/fetchGetMyPos
 import { GetMyPositionsResponseType } from '@/src/lib/types/api/liquidity/GetPositionType';
 
 export default function LiquidityCategory() {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const pathname = usePathname();
   const { data: positions } = useQuery({
-    queryKey: ['myPositions', address],
-    queryFn: () => fetchGetMyPositions(8217, address!),
+    queryKey: ['myPositions', address, chainId!],
+    queryFn: () => fetchGetMyPositions(chainId!, address!),
     select: (data: GetMyPositionsResponseType) => data.positions,
-    enabled: !!address,
+    enabled: !!address && !!chainId,
   });
 
   const amount = {

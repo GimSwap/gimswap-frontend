@@ -2,7 +2,7 @@
 
 import LogoIcon from '@/public/svg/logo.svg';
 import MenuIcon from '@/public/svg/menu.svg';
-import WalletConnectButton from '../WalletConnectButton';
+import WalletConnectButton from '../connectWallet/WalletConnectButton';
 import { useTopbarStore } from '@/src/lib/stores/topbarStore/TopbarStoreProvider';
 import { Link, usePathname } from '@/src/i18n/routing';
 import { MENUS } from '@/src/lib/constants/menus';

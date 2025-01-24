@@ -1,11 +1,14 @@
 import Image from 'next/image';
 import { MyPositionType } from '@/src/lib/types/api/liquidity/GetPositionType';
-import DGIcon from '@/src/assets/icons/dg-swap.png';
 import Chip from '@/src/components/Chip';
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { calcTotalLiquidity, usdtTickToKrw } from '@/src/lib/utils/calcTick';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { defaultChain, USDT } from '@/src/lib/constants/token';
+import { useAccount } from 'wagmi';
+import { DEX_ICON_MAP } from '@/src/lib/constants/dex';
 
 interface MyPositionProps {
   position: MyPositionType;
@@ -18,10 +21,13 @@ export default function MyPosition({
   isSelected,
   currentPrice,
 }: MyPositionProps) {
+  const { chainId } = useAccount();
   const totalLiquidity = calcTotalLiquidity({
     currentPrice,
     usdtAmount: position.liquidity.token0.value,
     krwAmount: position.liquidity.token1.value,
+    usdtDecimal:
+      USDT.decimal[checkIsAvailableChain(chainId) ? chainId : defaultChain.id],
   });
 
   const totalFee = safeCalc.add(position.fee.usdtFee, position.fee.krwoFee);
@@ -33,16 +39,25 @@ export default function MyPosition({
       }`}
     >
       <section className="flex flex-row items-center gap-1">
-        <Image src={DGIcon} width={24} height={24} alt="DG Icon" />
+        <Image
+          src={
+            DEX_ICON_MAP[
+              checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+            ]
+          }
+          width={24}
+          height={24}
+          alt="DG Icon"
+        />
         <Chip color={position.active ? 'black' : 'gray'}>
           {position.active ? 'Active' : 'Inactive'}
         </Chip>
         {position.farming && <Chip color="blackOutline">Farming</Chip>}
       </section>
       <p className="p1 font-bold">{`₩ ${insertComma(
-        formatNumber(usdtTickToKrw(position.liquidity.lowerTick), 0),
+        formatNumber(usdtTickToKrw(position.liquidity.lowerTick, chainId), 0),
       )} ⇌ ₩ ${insertComma(
-        formatNumber(usdtTickToKrw(position.liquidity.upperTick), 0),
+        formatNumber(usdtTickToKrw(position.liquidity.upperTick, chainId), 0),
       )}`}</p>
       <section className="flex flex-row">
         <div className="flex-1 px-2 flex flex-col gap-1">

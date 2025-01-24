@@ -9,7 +9,7 @@ import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { fetchGetAllowance } from '@/src/lib/utils/api/liquidity/fetchGetAllowance';
 import { fetchGetAddRecommendLiquidityInfo } from '@/src/lib/utils/api/liquidity/fetchGetAddRecommendLiquidityInfo';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
-import { KRWO, USDT } from '@/src/lib/constants/token';
+import { defaultChain, KRWO, USDT } from '@/src/lib/constants/token';
 import ButtonLoading from '@/src/components/ButtonLoading';
 import { useEffect, useState } from 'react';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
@@ -22,6 +22,10 @@ import { formatNumber } from '@/src/lib/utils/formatNumber';
 import { useRouter } from '@/src/i18n/routing';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import TransactionSuccessPopup from '../../../../_components/TransactionSuccessPopup';
+
 interface AddLiquidityInputPopupProps extends PositionType {
   open: boolean;
   onClose: () => void;
@@ -40,7 +44,7 @@ export default function AddLiquidityReviewPopup({
   ...position
 }: AddLiquidityInputPopupProps) {
   const router = useRouter();
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const queryClient = useQueryClient();
   const { sendTransactionAsync, isPending } = useSendTransaction();
   const { openPopup, closePopup } = usePopupStore((state) => state);
@@ -56,13 +60,19 @@ export default function AddLiquidityReviewPopup({
         queryFn: () =>
           fetchGetAddRecommendLiquidityInfo({
             amount0: safeCalc
-              .multiply(tokenAmount.USDT, 10 ** USDT.decimal)
+              .multiply(
+                tokenAmount.USDT,
+                10 **
+                  USDT.decimal[
+                    checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+                  ],
+              )
               .toString(),
             amount1: safeCalc
               .multiply(tokenAmount.KRWO, 10 ** KRWO.decimal)
               .toString(),
             autoSwap: mode === 'auto' ? true : false,
-            chainId: 8217,
+            chainId: chainId!,
             lowerTick: position.lowerTick,
             upperTick: position.upperTick,
           }),
@@ -71,7 +81,7 @@ export default function AddLiquidityReviewPopup({
         queryKey: ['allowance', 'usdt', address],
         queryFn: () =>
           fetchGetAllowance({
-            chainId: 8217,
+            chainId: chainId!,
             token: 'usdt',
             walletAddress: address!,
           }),
@@ -81,7 +91,7 @@ export default function AddLiquidityReviewPopup({
         queryKey: ['allowance', 'krwo', address],
         queryFn: () =>
           fetchGetAllowance({
-            chainId: 8217,
+            chainId: chainId!,
             token: 'krwo',
             walletAddress: address!,
           }),
@@ -102,13 +112,26 @@ export default function AddLiquidityReviewPopup({
     currentPrice: position.currentPrice,
     usdtAmount: reviewInfo?.amount0 || '0',
     krwAmount: reviewInfo?.amount1 || '0',
+    usdtDecimal:
+      USDT.decimal[checkIsAvailableChain(chainId) ? chainId : defaultChain.id],
   });
 
   const handleAddLiquidity = async () => {
     openPopup(AddLiquidityPendingPopup, {
       tokens: [
-        { ...KRWO, amount: applyDecimals(reviewInfo?.amount1 || '0') },
-        { ...USDT, amount: applyDecimals(reviewInfo?.amount0 || '0') },
+        {
+          ...KRWO,
+          amount: applyDecimals(reviewInfo?.amount1 || '0', KRWO.decimal),
+        },
+        {
+          ...USDT,
+          amount: applyDecimals(
+            reviewInfo?.amount0 || '0',
+            USDT.decimal[
+              checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+            ],
+          ),
+        },
       ],
       totalLiquidity: totalAmount,
       type: 'add',
@@ -120,28 +143,58 @@ export default function AddLiquidityReviewPopup({
       });
 
       const { status } = await waitForTransactionReceipt(wagmiConfig, {
-        chainId: 8217,
+        chainId: chainId as ChainIdType,
         hash: tx,
       });
 
+      queryClient.invalidateQueries({ queryKey: ['getBalance'] });
+
       if (status === 'success') {
         closePopup(AddLiquidityPendingPopup);
-        openPopup(StakePopup, {
-          tokens: [
-            {
-              ...KRWO,
-              amount: applyDecimals(reviewInfo?.amount1 || '0'),
-            },
-            {
-              ...USDT,
-              amount: applyDecimals(reviewInfo?.amount0 || '0'),
-            },
-          ],
-          totalLiquidity: totalAmount,
-          txHash: tx,
-          closeCallback: () => router.push('/trade/liquidity/my-position'),
-        });
-        queryClient.invalidateQueries({ queryKey: ['getBalance'] });
+        if (chainId === 8217) {
+          openPopup(StakePopup, {
+            tokens: [
+              {
+                ...KRWO,
+                amount: applyDecimals(reviewInfo?.amount1 || '0', KRWO.decimal),
+              },
+              {
+                ...USDT,
+                amount: applyDecimals(
+                  reviewInfo?.amount0 || '0',
+                  USDT.decimal[
+                    checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+                  ],
+                ),
+              },
+            ],
+            totalLiquidity: totalAmount,
+            txHash: tx,
+            closeCallback: () => router.push('/trade/liquidity/my-position'),
+          });
+        } else {
+          openPopup(TransactionSuccessPopup, {
+            title: 'Add success!',
+            type: 'increase',
+            totalLiquidity: totalAmount,
+            txHash: tx,
+            tokens: [
+              {
+                ...KRWO,
+                amount: applyDecimals(reviewInfo?.amount1 || '0', KRWO.decimal),
+              },
+              {
+                ...USDT,
+                amount: applyDecimals(
+                  reviewInfo?.amount0 || '0',
+                  USDT.decimal[
+                    checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+                  ],
+                ),
+              },
+            ],
+          });
+        }
       } else throw new Error('Add Liquidity failed');
     } catch (error) {
       console.error(error);

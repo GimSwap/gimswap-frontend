@@ -1,6 +1,6 @@
 export interface GetCurrentTickRequestType {
   chainId: number;
-  token: 'usdt';
+  token: string;
 }
 
 export interface GetCurrentTickResponseType {

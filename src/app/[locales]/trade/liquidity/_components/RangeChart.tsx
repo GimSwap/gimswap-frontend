@@ -5,6 +5,13 @@ import { GetLiquidityGraphInfoResponseType } from '@/src/lib/types/api/liquidity
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { PositionType } from '@/src/lib/stores/liquidityStore/liquidityStore';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
+import { useAccount } from 'wagmi';
+import { defaultChain } from '@/src/lib/constants/token';
+import { safeCalc } from '@/src/lib/utils/safeCalc';
+import { TOKEN_MAP } from '@/src/lib/constants/token';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { useToolTip } from '@/src/lib/hook/useToolTip';
+import QuestionMarkIcon from '@/public/svg/circle-question-purple-small.svg';
 
 interface RangeChartProps {
   selectedPosition: Omit<PositionType, 'label'>;
@@ -15,37 +22,63 @@ export default function RangeChart({
   selectedPosition,
   graphInfo,
 }: RangeChartProps) {
+  const { chainId } = useAccount();
   const parentRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstanceRef = useRef<DrawChart | null>(null);
+  const { openTooltip, Tooltip } = useToolTip();
+
+  const calcPrice = (tick: number | string) => {
+    if (!chainId || !tick) return '-';
+    return insertComma(formatNumber(usdtTickToKrw(tick, chainId), 0));
+  };
 
   useEffect(() => {
-    if (!chartRef.current || !parentRef.current || !graphInfo) return;
+    if (!chainId || !chartRef.current || !parentRef.current || !graphInfo)
+      return;
 
     const ctx = chartRef.current.getContext('2d');
     if (!ctx) return;
+
+    const _liquidities =
+      TOKEN_MAP[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]
+        .native.fee === 0.2
+        ? graphInfo.liquidity
+        : (() => {
+            const newLiquidities = [];
+            for (let i = 0; i < graphInfo.liquidity.length; i += 40) {
+              const chunk = graphInfo.liquidity.slice(i, i + 40);
+              const sum = chunk.reduce(
+                (acc, liquidity) => safeCalc.add(acc, liquidity).toString(),
+                '0',
+              );
+              newLiquidities.push(sum);
+            }
+            return newLiquidities;
+          })();
 
     if (chartInstanceRef.current) {
       chartInstanceRef.current.updateChart(
         ctx,
         selectedPosition.lowerTick,
         selectedPosition.upperTick,
-        +usdtTickToKrw(graphInfo?.currentTick!),
-        graphInfo?.liquidity,
+        +usdtTickToKrw(graphInfo?.currentTick!, chainId),
+        _liquidities,
       );
     } else {
       chartInstanceRef.current = new DrawChart({
-        liquidities: graphInfo?.liquidity,
+        liquidities: _liquidities,
         canvas: chartRef.current,
         parent: parentRef.current,
         selectedMinTick: selectedPosition.lowerTick,
         selectedMaxTick: selectedPosition.upperTick,
         minTick: graphInfo.minTick,
-        currentPrice: +usdtTickToKrw(graphInfo?.currentTick!),
-        tickSpacing: graphInfo.tickSpacing,
+        currentPrice: +usdtTickToKrw(graphInfo?.currentTick!, chainId),
+        tickSpacing: 40,
+        chainId,
       });
     }
-  }, [selectedPosition, graphInfo]);
+  }, [selectedPosition, graphInfo, chainId]);
 
   return (
     <>
@@ -56,10 +89,8 @@ export default function RangeChart({
             <p className="c1 text-black-8">
               Range
               <span className="font-bold">
-                {` ₩ ${insertComma(
-                  formatNumber(usdtTickToKrw(selectedPosition.lowerTick), 0),
-                )} ~ ₩ ${insertComma(
-                  formatNumber(usdtTickToKrw(selectedPosition.upperTick), 0),
+                {` ₩ ${calcPrice(selectedPosition.lowerTick)} ~ ₩ ${calcPrice(
+                  selectedPosition.upperTick,
                 )}`}
               </span>
             </p>
@@ -69,16 +100,26 @@ export default function RangeChart({
             <p className="c1 text-black-8">
               Current Price
               <span className="font-bold">
-                {` ₩ ${insertComma(
-                  formatNumber(usdtTickToKrw(graphInfo?.currentTick!), 0),
-                )}`}
+                {` ₩ ${calcPrice(graphInfo?.currentTick!)}`}
               </span>
             </p>
           </div>
         </div>
-        <p className="c1 font-medium px-2 py-1 rounded-full border border-purple-500 w-fit text-purple-500 h-[fit-content]">
-          APR ≈ {Math.floor(selectedPosition.apr * 100)}%
-        </p>
+        <div
+          className="inline-flex justify-center items-center gap-[2px] c1 font-medium px-2 py-1 rounded-full border border-purple-500 w-fit text-purple-500 h-[fit-content]"
+          onClick={openTooltip}
+        >
+          <QuestionMarkIcon />
+          <Tooltip className="whitespace-nowrap bg-[rgba(0,0,0,0.5)] rounded-lg px-3 py-[6px] text-black-1 c1 after:left-[58.5%] -translate-x-[50px] translate-y-[75px]">
+            This figure is based on the last <br />
+            24 hours' trading volume and <br />
+            may change due to factors like <br />
+            total liquidity and additional <br />
+            liquidity. It does not guarantee <br />
+            returns and is for reference only.
+          </Tooltip>
+          <p>APR ≈ {Math.floor(selectedPosition.apr * 100)}%</p>
+        </div>
       </section>
       <div ref={parentRef} className="w-full aspect-[5/1]">
         <canvas ref={chartRef} style={{ width: '0', height: '0' }} />

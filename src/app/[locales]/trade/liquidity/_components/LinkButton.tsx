@@ -20,7 +20,7 @@ export default function LinkButton({
     <Link
       target="_blank"
       href={href}
-      className="px-4 py-3 rounded-lg border border-black-4 flex flex-row justify-between w-full items-center"
+      className="px-4 py-3 rounded-lg border border-black-4 flex flex-row w-full items-center"
     >
       <div className="flex flex-row gap-3 ">
         <div className="w-11 h-11 relative rounded-full grid place-items-center">
@@ -30,9 +30,6 @@ export default function LinkButton({
           <h5 className="font-bold text-black-8">{title}</h5>
           <p className="p1 text-black-7">{subtitle}</p>
         </div>
-      </div>
-      <div className="c1 font-medium text-purple-500 px-2 py-1 rounded-full bg-purple-50">
-        Visit
       </div>
     </Link>
   );

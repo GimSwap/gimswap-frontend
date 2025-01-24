@@ -1,7 +1,7 @@
 import LogoIcon from '@/public/svg/logo.svg';
 import { MENUS } from '@/src/lib/constants/menus';
 import { Link, usePathname } from '@/src/i18n/routing';
-import WalletConnectButton from '../WalletConnectButton';
+import WalletConnectButton from '../connectWallet/WalletConnectButton';
 import Socials from './Footer/Socials';
 
 interface LeftSidebarProps {
@@ -51,7 +51,9 @@ export default function LeftSidebar({ show, setShow }: LeftSidebarProps) {
           })}
         </section>
         <section className="absolute bottom-8 px-6 flex flex-col w-full justify-center">
-          <WalletConnectButton size="large" />
+          <div onClick={() => setShow(false)} className="w-full">
+            <WalletConnectButton size="large" />
+          </div>
           <hr className="text-black-4 my-6" />
           <section className="flex flex-row justify-center">
             <Socials />

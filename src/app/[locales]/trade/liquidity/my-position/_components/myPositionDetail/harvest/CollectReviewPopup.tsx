@@ -15,6 +15,9 @@ import { waitForTransactionReceipt } from '@wagmi/core';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import { useQueryClient } from '@tanstack/react-query';
 import TransactionFailPopup from '@/src/components/popups/TransactionFailPopup';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
+import { defaultChain, TOKEN_MAP } from '@/src/lib/constants/token';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 
 interface CollectReviewPopupProps {
   totalAmount: string;
@@ -33,7 +36,7 @@ export default function CollectReviewPopup({
   tokens,
   tokenId,
 }: CollectReviewPopupProps) {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const queryClient = useQueryClient();
   const { sendTransactionAsync } = useSendTransaction();
   const { setOptimisticPositions, optimisticPositions } = useLiquidityStore(
@@ -42,7 +45,7 @@ export default function CollectReviewPopup({
   const { openPopup, closePopup } = usePopupStore((state) => state);
   const { data, loading } = useFetch(() =>
     fetchGetCollectInfo({
-      chainId: 8217,
+      chainId: chainId!,
       tokenId,
       walletAddress: address!,
     }),
@@ -62,7 +65,7 @@ export default function CollectReviewPopup({
       });
 
       const { status } = await waitForTransactionReceipt(wagmiConfig, {
-        chainId: 8217,
+        chainId: chainId! as ChainIdType,
         hash: tx,
       });
       if (status === 'success') {
@@ -102,26 +105,38 @@ export default function CollectReviewPopup({
         <p className="p1">You receive</p>
         <section className="py-3 px-4 bg-black-3">
           <div className="flex flex-row justify-between mb-2">
-            <p className="p1">Fee & Harvest</p>
+            <p className="p1">
+              {TOKEN_MAP[
+                checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+              ].native.supportFarming
+                ? 'Fee & Harvest'
+                : 'Fee'}
+            </p>
             <h5 className="font-bold">
               ₩ {insertComma(formatNumber(totalAmount, 0))}
             </h5>
           </div>
           <div className="flex flex-col gap-3">
-            {tokens.map((token) => (
-              <div
-                className="flex flex-row justify-between items-center"
-                key={token.symbol}
-              >
-                <div className="flex flex-row gap-1">
-                  <token.icon className="w-5 h-5 min-w-5" />
-                  <p className="p1">{token.symbol}</p>
+            {tokens.map((token) => {
+              const Icon =
+                typeof token.icon === 'object'
+                  ? token.icon[chainId as ChainIdType]
+                  : token.icon;
+              return (
+                <div
+                  className="flex flex-row justify-between items-center"
+                  key={token.symbol}
+                >
+                  <div className="flex flex-row gap-1">
+                    <Icon className="w-5 h-5 min-w-5" />
+                    <p className="p1">{token.symbol}</p>
+                  </div>
+                  <p className="p1">
+                    {insertComma(formatNumber(token.amount, 2))}
+                  </p>
                 </div>
-                <p className="p1">
-                  {insertComma(formatNumber(token.amount, 2))}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
         <Button

@@ -19,6 +19,9 @@ import { safeCalc } from '@/src/lib/utils/safeCalc';
 import LoadingSpinner from '@/src/components/LoadingSpinner';
 import { GetFeeResponseType } from '@/src/lib/types/api/liquidity/GetFeeType';
 import RefreshIcon from './RefreshIcon';
+import { defaultChain, KRWO } from '@/src/lib/constants/token';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { USDT } from '@/src/lib/constants/token';
 
 const ITEMS_PER_CLICK = 3;
 
@@ -26,7 +29,7 @@ export default function MyPositions() {
   const [index, setIndex] = useState(0);
   const [previousTick, setPreviousTick] = useState(0);
 
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { openPopup } = usePopupStore((state) => state);
   const {
     selectedMyPosition,
@@ -47,20 +50,20 @@ export default function MyPositions() {
   ] = useQueries({
     queries: [
       {
-        queryKey: ['currentTick'],
+        queryKey: ['currentTick', chainId || defaultChain.id],
         queryFn: () =>
           fetchGetCurrentTick({
-            chainId: 8217,
+            chainId: chainId || defaultChain.id,
             token: 'usdt',
           }),
         refetchInterval: 5000,
         select: (data: GetCurrentTickResponseType) => data.currentTick,
       },
       {
-        queryKey: ['myPositions', address],
-        queryFn: () => fetchGetMyPositions(8217, address!),
+        queryKey: ['myPositions', address, chainId],
+        queryFn: () => fetchGetMyPositions(chainId!, address!),
         select: (data: GetMyPositionsResponseType) => data.positions,
-        enabled: !!address,
+        enabled: !!address && !!chainId,
       },
     ],
   });
@@ -70,25 +73,34 @@ export default function MyPositions() {
       _positions?.map((position) => ({
         queryKey: ['fee', position.tokenId],
         queryFn: () =>
-          fetchGetFee({ chainId: 8217, tokenId: position.tokenId }),
-        enabled: !!_positions,
+          fetchGetFee({
+            chainId: chainId || defaultChain.id,
+            tokenId: position.tokenId,
+          }),
+        enabled: !!(_positions && chainId),
         refetchInterval: 5000,
         select: (data: GetFeeResponseType) => ({
           ...position,
           fee: {
             usdtFee: safeCalc
               .multiply(
-                +usdtTickToKrw(currentTick || 0),
-                applyDecimals(data.amount0 || 0, 6, 10),
+                +usdtTickToKrw(currentTick || 0, chainId),
+                applyDecimals(
+                  data.amount0 || 0,
+                  USDT.decimal[
+                    checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+                  ],
+                  10,
+                ),
               )
-              .toFixed(),
-            krwoFee: applyDecimals(data.amount1 || 0, 6, 10),
+              .toString(),
+            krwoFee: applyDecimals(data.amount1 || 0, KRWO.decimal, 10),
           },
         }),
       })) || [],
   });
 
-  const currentPrice = +usdtTickToKrw(currentTick!);
+  const currentPrice = +usdtTickToKrw(currentTick!, chainId);
   const positionLength = positions?.length || 0;
 
   const handleMoreButtonClick = () => {

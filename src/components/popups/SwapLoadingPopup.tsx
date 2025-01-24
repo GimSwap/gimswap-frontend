@@ -1,8 +1,10 @@
-import { TokenType } from "@/src/lib/types/TokenType";
-import PopupTemplate from "../PopupTemplate";
-import ArrowDownIcon from "@/public/svg/arrow/arrow-narrow-down.svg";
-import { safeCalc } from "@/src/lib/utils/safeCalc";
-import { insertComma } from "@/src/lib/utils/insertComma";
+import { TokenType } from '@/src/lib/types/TokenType';
+import PopupTemplate from '../PopupTemplate';
+import ArrowDownIcon from '@/public/svg/arrow/arrow-narrow-down.svg';
+import { safeCalc } from '@/src/lib/utils/safeCalc';
+import { insertComma } from '@/src/lib/utils/insertComma';
+import { useAccount } from 'wagmi';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
 
 interface SwapLoadingPopupProps {
   open: boolean;
@@ -22,23 +24,37 @@ export default function SwapLoadingPopup({
   amount,
   closePrevPopup,
 }: SwapLoadingPopupProps) {
+  const { chainId } = useAccount();
+  const PayIcon =
+    typeof tokens.pay.icon === 'object'
+      ? tokens.pay.icon[chainId as ChainIdType]
+      : tokens.pay.icon;
+  const ReceiveIcon =
+    typeof tokens.receive.icon === 'object'
+      ? tokens.receive.icon[chainId as ChainIdType]
+      : tokens.receive.icon;
   return (
-    <PopupTemplate showCloseButton open={open} onClose={() => {
-      closePrevPopup();
-      onClose();
-    }} icon="loading">
+    <PopupTemplate
+      showCloseButton
+      open={open}
+      onClose={() => {
+        closePrevPopup();
+        onClose();
+      }}
+      icon="loading"
+    >
       <section className="px-6">
         <h3 className="font-bold text-center py-4">Confirming swap</h3>
         <section className="rounded-lg bg-black-3 flex flex-col justify-center items-center p-4 gap-[6px]">
           <div className="flex gap-2 items-center">
-            <tokens.pay.icon />
+            <PayIcon className="w-5 h-5" />
             <h5 className="text-black-8 font-medium">{`${insertComma(
               safeCalc.divide(amount, tokens.pay.unit).toFixed(),
             )} ${tokens.pay.name}`}</h5>
           </div>
           <ArrowDownIcon />
           <div className="flex gap-2 items-center">
-            <tokens.receive.icon />
+            <ReceiveIcon className="w-5 h-5" />
             <h5 className="text-black-8 font-medium">{`${insertComma(
               safeCalc.divide(amount, tokens.receive.unit).toFixed(),
             )} ${tokens.receive.name}`}</h5>

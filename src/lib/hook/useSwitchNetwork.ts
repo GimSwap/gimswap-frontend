@@ -1,23 +1,32 @@
 import { useSwitchChain } from 'wagmi';
-import { kaia } from 'wagmi/chains';
+import { chains } from '../utils/wagmi';
+import { usePopupStore } from '../stores/popupStore/PopupStoreProvider';
 
 export default function useSwitchNetwork() {
   const { switchChain } = useSwitchChain();
-  const network = kaia;
-  const handleSwitch = async () => {
+  const { closeAllPopup } = usePopupStore((state) => state);
+
+  const handleSwitch = async (targetChainId: number) => {
+    const targetChain = chains.find((chain) => chain.id === targetChainId);
+    if (!targetChain) {
+      console.error('No target chain found');
+      return;
+    }
+    if (!targetChain.blockExplorers) console.error('No block explorers found');
     switchChain({
-      chainId: network.id,
+      chainId: targetChain.id,
       addEthereumChainParameter: {
         nativeCurrency: {
-          name: 'KAIA',
+          name: targetChain.name,
           symbol: 'KAIA',
           decimals: 18,
         },
-        chainName: network.name,
-        rpcUrls: network.rpcUrls.default.http,
-        blockExplorerUrls: [network.blockExplorers.default.url],
+        chainName: targetChain.name,
+        rpcUrls: targetChain.rpcUrls.default.http,
+        blockExplorerUrls: [targetChain.blockExplorers!.default.url!],
       },
     });
+    closeAllPopup();
   };
   return { switchChain: handleSwitch };
 }

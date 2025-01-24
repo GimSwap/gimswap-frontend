@@ -4,29 +4,27 @@ import AddInfo from './addLiquidity/AddInfo';
 import { TokenType } from '@/src/lib/types/TokenType';
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
-import { KLAYTN } from '@/src/lib/constants/token';
+import { defaultChain, TOKEN_MAP } from '@/src/lib/constants/token';
 import { Link } from '@/src/i18n/routing';
 import Button from '@/src/components/Button';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
+import { useAccount } from 'wagmi';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { CHAIN_ID_TO_BLOCK_EXPLORER } from '@/src/lib/constants/blockExplorer';
 
 interface TransactionSuccessPopupProps {
   open: boolean;
   title: string;
   tokens: (Pick<TokenType, 'symbol' | 'color' | 'icon'> & { amount: string })[];
   totalLiquidity: string;
-  harvestTokens?: (Pick<TokenType, 'symbol' | 'color' | 'icon'> & {
+  harvestTokens?: (Pick<TokenType, 'symbol' | 'color' | 'icon' | 'decimal'> & {
     amount: string;
+    value: string;
   })[];
   type: 'increase' | 'remove' | 'collect';
   resultLiquidity?: string;
   txHash: string;
 }
-
-const titleMap = {
-  increase: 'Liquidity Added',
-  remove: 'Liquidity Removed',
-  collect: 'Fee & Harvest',
-} as const;
 
 const resultTitleMap = {
   remove: 'remaining Liquidity',
@@ -44,7 +42,19 @@ export default function TransactionSuccessPopup({
   txHash,
   harvestTokens,
 }: TransactionSuccessPopupProps) {
+  const { chainId } = useAccount();
   const { closeAllPopup } = usePopupStore((state) => state);
+
+  const titleMap = {
+    increase: 'Liquidity Added',
+    remove: 'Liquidity Removed',
+    collect: TOKEN_MAP[
+      checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+    ].native.supportFarming
+      ? 'Fee & Harvest'
+      : 'Fee',
+  } as const;
+
   return (
     <PopupTemplate
       open={open}
@@ -74,7 +84,12 @@ export default function TransactionSuccessPopup({
           )}
           <Link
             className="text-h5 text-purple-500 font-medium pt-5 underline underline-offset-[2.5px]"
-            href={`${KLAYTN.blockExplorerUrl}/tx/${txHash}`}
+            href={`${
+              CHAIN_ID_TO_BLOCK_EXPLORER[
+                checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+              ]
+            }/${txHash}`}
+            target="_blank"
           >
             View on Explorer
           </Link>

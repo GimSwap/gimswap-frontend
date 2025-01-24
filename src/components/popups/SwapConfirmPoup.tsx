@@ -37,6 +37,7 @@ export default function SwapConfirmPopup({
     tokens.pay,
     amount,
   );
+
   const { openPopup, closePopup } = usePopupStore((state) => state);
 
   useEffect(() => {

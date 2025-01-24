@@ -1,5 +1,5 @@
 import BackgroundGlasses from './_components/BackgroundGlasses';
-import BalanceCard from './_components/BalanceCard';
+import BalanceCard from './_components/balanceCard/BalanceCard';
 import InnerPopups from './_components/InnerPopups';
 import NavbarColorChanger from './swap/_components/NavbarColorChanger';
 

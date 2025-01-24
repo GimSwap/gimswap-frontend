@@ -5,15 +5,18 @@ import { safeCalc } from '@/src/lib/utils/safeCalc';
 import BalanceIcon from '@/public/svg/balance.svg';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
 import LockedIcon from '@/public/svg/locked.svg';
+import { useAccount } from 'wagmi';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { defaultChain } from '@/src/lib/constants/token';
 
 interface AddLiquidityInputProps {
-  token: Omit<TokenType, 'symbol'> & { symbol: 'KRWO' | 'USDT' };
+  token: Omit<TokenType, 'icon'> & { icon: React.ElementType };
   value: string;
   krwValue: string;
-  focusedInput: TokenType | null;
-  setFocusedInput: (token: TokenType | null) => void;
+  focusedInput: string | null;
+  setFocusedInput: (token: string | null) => void;
   balance: string;
-  onChange: (token: 'KRWO' | 'USDT', value: string) => void;
+  onChange: (token: string, value: string) => void;
   disabled: boolean;
   disablePlaceHolder: string;
 }
@@ -29,17 +32,26 @@ export default function AddLiquidityInput({
   disabled,
   disablePlaceHolder,
 }: AddLiquidityInputProps) {
+  const { chainId } = useAccount();
+  const decimal =
+    typeof token.decimal === 'object'
+      ? token.decimal[
+          checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+        ]
+      : token.decimal;
+
   const handleMaxButton = () => {
     !disabled &&
       onChange(
         token.symbol,
-        safeCalc.divide(balance, 10 ** token.decimal).toString(),
+        safeCalc.divide(balance, 10 ** decimal).toString(),
       );
   };
+
   return (
     <section
-      className={`w-full bg-black-3 rounded-lg p-4 flex flex-col border ${focusedInput === token ? 'border border-purple-500' : 'border-black-3'} z-10`}
-      onClick={() => setFocusedInput(token)}
+      className={`w-full bg-black-3 rounded-lg p-4 flex flex-col border ${focusedInput === token.symbol ? 'border border-purple-500' : 'border-black-3'} z-10`}
+      onClick={() => setFocusedInput(token.symbol)}
     >
       <div className="flex flex-row justify-between">
         <p className="c1 font-medium">You add</p>
@@ -58,7 +70,7 @@ export default function AddLiquidityInput({
               <BalanceIcon className="w-[14px] h-[14px]" />
               {insertComma(
                 formatNumber(
-                  safeCalc.divide(balance, 10 ** token.decimal).toString(),
+                  safeCalc.divide(balance, 10 ** decimal).toString(),
                   2,
                 ),
               )}

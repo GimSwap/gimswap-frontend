@@ -5,6 +5,7 @@ import IntroduceKRWO from './_components/IntroduceKRWO';
 import KeyVisual from './_components/KeyVisual';
 import BlocksAmount from '@/src/app/[locales]/_components/BlocksAmount';
 import { setRequestLocale } from 'next-intl/server';
+import { chains } from '@/src/lib/utils/wagmi';
 
 export default async function Home({
   params: { locales },
@@ -13,11 +14,14 @@ export default async function Home({
 }) {
   setRequestLocale(locales);
 
-  const { locked } = await fetchGetBlockAmount();
+  const [...lockedAmounts] = await Promise.all(
+    chains.map((chain) => fetchGetBlockAmount(chain.id)),
+  );
+
   return (
-    <main className="flex flex-col items-center pb-[280px]">
+    <main className="flex flex-col items-center pb-[360px]">
       <KeyVisual />
-      <BlocksAmount locked={locked} />
+      <BlocksAmount lockedAmounts={lockedAmounts} />
       <section className="px-4 max-w-[1008px] inset-x-0">
         <Description />
         <IntroduceKRWO />

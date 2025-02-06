@@ -9,12 +9,16 @@ import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 import { ChainIdType } from '@/src/lib/types/ChainIdType';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
+import { WALLETS } from '@/src/lib/constants/wallets';
 
 export default function AddTokens() {
   const { addToken } = useAddToken();
   const { openPopup } = usePopupStore((state) => state);
-  const { isConnected, chainId } = useAccount();
+  const { isConnected, chainId, connector } = useAccount();
   const _chainId = checkIsAvailableChain(chainId) ? chainId : defaultChain.id;
+  const currentWallet =
+    connector && WALLETS.find((wallet) => wallet.id === connector?.id);
+
   const handleAddToken = async () => {
     if (!checkIsAvailableChain(chainId)) {
       openPopup(SelectChainPopup);
@@ -34,7 +38,8 @@ export default function AddTokens() {
     });
   };
 
-  if (!isConnected) return <></>;
+  if (!isConnected || !currentWallet || !currentWallet.supportAddToken)
+    return <></>;
 
   const Icon = (KRWO.icon as { [key in ChainIdType]: React.ElementType })[
     _chainId

@@ -11,6 +11,8 @@ import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 import { TokenType } from '@/src/lib/types/TokenType';
 import { defaultChain } from '@/src/lib/constants/token';
 import BalanceIcon from '@/public/svg/balance.svg';
+import Copy from '@/public/svg/copy.svg';
+import { copyToClipboard } from '@/src/lib/utils/copyToClipboard';
 
 interface TokenProps {
   type: 'pay' | 'receive';
@@ -101,9 +103,21 @@ export default function Token({
         <p className="c1 font-medium">
           {type === 'pay' ? 'You pay' : 'You receive'}
         </p>
-        <div className="py-[6px] px-2 bg-black-1 rounded-full shadow-[0px_0px_5px_0px_rgba(0,0,0,0.08)] flex gap-1 items-center">
-          <Icon className="w-5 h-5" />
-          <p className="c1 font-medium">{token.name}</p>
+        <div className="flex flex-row gap-1 items-center">
+          <div className="py-[6px] px-2 bg-black-1 rounded-full shadow-[0px_0px_5px_0px_rgba(0,0,0,0.08)] flex gap-1 items-center">
+            <Icon className="w-5 h-5" />
+            <p className="c1 font-medium whitespace-nowrap">{token.name}</p>
+          </div>
+          <Copy
+            className="stroke-black-8 w-4 h-4"
+            onClick={async () =>
+              await copyToClipboard(
+                token.contractAddress[
+                  checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+                ],
+              )
+            }
+          />
         </div>
       </section>
       <div className="mb-[2px]">

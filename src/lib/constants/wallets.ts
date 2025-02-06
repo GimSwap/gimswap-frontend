@@ -39,6 +39,7 @@ export interface WalletType {
   get transport(): any;
   deepLink?: string;
   unsupportedChainIds: number[];
+  supportAddToken: boolean;
 }
 
 export const WALLETS: WalletType[] = [
@@ -58,6 +59,7 @@ export const WALLETS: WalletType[] = [
     },
     deepLink: 'https://metamask.app.link/dapp/',
     unsupportedChainIds: [],
+    supportAddToken: true,
   },
   {
     id: 'Kaia',
@@ -75,6 +77,7 @@ export const WALLETS: WalletType[] = [
     },
     deepLink: 'https://app.kaiawallet.io/u/',
     unsupportedChainIds: [bsc.id, bscTestnet.id],
+    supportAddToken: true,
   },
   {
     id: 'wallet.binance.com',
@@ -91,5 +94,6 @@ export const WALLETS: WalletType[] = [
       return window?.ethereum;
     },
     unsupportedChainIds: [kaia.id, kairos.id],
+    supportAddToken: false,
   },
 ];

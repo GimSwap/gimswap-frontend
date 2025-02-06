@@ -1,6 +1,7 @@
+import { getWagmiConnectorV2 } from '@binance/w3w-wagmi-connector-v2';
 import { http, createConfig, createStorage, cookieStorage } from 'wagmi';
 import { bsc, kaia } from 'wagmi/chains';
-import { injected } from 'wagmi/connectors';
+import { metaMask } from 'wagmi/connectors';
 import { kaikasConnector } from '@/src/lib/utils/wallets/kaiaWallet';
 import { fallback } from 'viem';
 
@@ -8,11 +9,14 @@ export const STORE_KEY = 'GimSwap';
 
 export const chains = [bsc, kaia] as const;
 
+const binanceConnector = getWagmiConnectorV2();
+
 export const wagmiConfig = createConfig({
   chains,
   connectors: [
     kaikasConnector(),
-    injected({ target: 'metaMask', shimDisconnect: true }),
+    metaMask(),
+    binanceConnector({ showQrCodeModal: true }),
   ],
   transports: {
     [kaia.id]: fallback([

@@ -57,12 +57,11 @@ export default function SelectWalletPopup({
               <button
                 onClick={async () => {
                   if (!selectedChain) return;
-                  await connect(wallet, reloadOnConnect, selectedChain.id).then(
-                    () => onClose(),
-                  );
+                  await connect(wallet, reloadOnConnect, selectedChain.id);
+                  onClose();
                 }}
                 className={`bg-black-2 rounded-lg py-3 px-4 flex flex-row gap-3 items-center ${isCurrentWallet && 'border border-purple-500'}`}
-                key={wallet.id}
+                key={wallet.id[0]}
               >
                 <wallet.icon className="w-10 h-10" />
                 <div className="flex flex-col">

@@ -6,10 +6,7 @@ import { insertComma } from '@/src/lib/utils/insertComma';
 import { PositionType } from '@/src/lib/stores/liquidityStore/liquidityStore';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
 import { useAccount } from 'wagmi';
-import { defaultChain } from '@/src/lib/constants/token';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
-import { TOKEN_MAP } from '@/src/lib/constants/token';
-import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 import { useToolTip } from '@/src/lib/hook/useToolTip';
 import QuestionMarkIcon from '@/public/svg/circle-question-purple-small.svg';
 
@@ -17,6 +14,8 @@ interface RangeChartProps {
   selectedPosition: Omit<PositionType, 'label'>;
   graphInfo: GetLiquidityGraphInfoResponseType | undefined;
 }
+
+const BAR_AMOUNT = 17;
 
 export default function RangeChart({
   selectedPosition,
@@ -40,22 +39,22 @@ export default function RangeChart({
     const ctx = chartRef.current.getContext('2d');
     if (!ctx) return;
 
-    const _liquidities =
-      TOKEN_MAP[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]
-        .native.fee === 0.2
-        ? graphInfo.liquidity
-        : (() => {
-            const newLiquidities = [];
-            for (let i = 0; i < graphInfo.liquidity.length; i += 40) {
-              const chunk = graphInfo.liquidity.slice(i, i + 40);
-              const sum = chunk.reduce(
-                (acc, liquidity) => safeCalc.add(acc, liquidity).toString(),
-                '0',
-              );
-              newLiquidities.push(sum);
-            }
-            return newLiquidities;
-          })();
+    const _liquidities = (() => {
+      const newLiquidities = [];
+      for (
+        let i = 0;
+        i < graphInfo.liquidity.length;
+        i += graphInfo.liquidity.length / BAR_AMOUNT
+      ) {
+        const chunk = graphInfo.liquidity.slice(i, i + BAR_AMOUNT);
+        const sum = chunk.reduce(
+          (acc, liquidity) => safeCalc.add(acc, liquidity).toString(),
+          '0',
+        );
+        newLiquidities.push(sum);
+      }
+      return newLiquidities;
+    })();
 
     if (chartInstanceRef.current) {
       chartInstanceRef.current.updateChart(
@@ -74,8 +73,9 @@ export default function RangeChart({
         selectedMaxTick: selectedPosition.upperTick,
         minTick: graphInfo.minTick,
         currentPrice: +usdtTickToKrw(graphInfo?.currentTick!, chainId),
-        tickSpacing: 40,
+        tickSpacing: 40 * graphInfo.scale,
         chainId,
+        scale: graphInfo.scale,
       });
     }
   }, [selectedPosition, graphInfo, chainId]);

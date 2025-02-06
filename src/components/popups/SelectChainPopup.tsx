@@ -21,9 +21,9 @@ export default function SelectChainPopup({ open, onClose }: SelectChainPopup) {
     onClose();
   };
 
-  const currentWallet = WALLETS.find(
-    (wallet) => wallet.connectorId === connector?.id,
-  );
+  const currentWallet =
+    connector &&
+    WALLETS.find((wallet) => wallet.connectorId.includes(connector.id));
 
   return (
     <PopupTemplate

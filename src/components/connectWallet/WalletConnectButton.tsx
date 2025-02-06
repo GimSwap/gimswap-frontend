@@ -1,4 +1,3 @@
-// WalletConnectButton.tsx
 import React, { memo } from 'react';
 import { shortenAddress } from '../../lib/utils/shortenAddress';
 import { useAccount } from 'wagmi';

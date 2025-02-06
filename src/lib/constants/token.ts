@@ -4,6 +4,8 @@ import KRWOIconBsc from '@/public/svg/token/KRWO-bsc.svg';
 import USDTIcon from '@/public/svg/token/USDT.svg';
 import KaiaIcon from '@/public/svg/token/Kaia.svg';
 import BNBIcon from '@/public/svg/token/bnb.svg';
+import KaiaScannerIcon from '@/public/svg/scanner/kaia-scanner.svg';
+import BscScannerIcon from '@/public/svg/scanner/bsc-scanner.svg';
 import { kaia, bsc } from 'wagmi/chains';
 import { createToken } from '../utils/factory/token';
 
@@ -128,7 +130,7 @@ export const CAKE = {
 export const RKAIA = {
   ...KLAYTN,
   symbol: 'RKAIA',
-  color:'#8C8C8C',
+  color: '#8C8C8C',
 };
 
 export const MAX_ALLOWANCE =
@@ -139,6 +141,17 @@ export const POSITION_TOKEN_DECIMAL = 6;
 export const CHAIN_ICONS: Record<number, React.ElementType> = {
   [kaia.id]: KLAYTN.icon,
   [bsc.id]: BSC.icon,
+};
+
+export const SCANNER_MAP = {
+  [kaia.id]: {
+    icon: KaiaScannerIcon,
+    link: process.env.NEXT_PUBLIC_SCANNER_URL_KAIA!,
+  },
+  [bsc.id]: {
+    icon: BscScannerIcon,
+    link: process.env.NEXT_PUBLIC_SCANNER_URL_BSC!,
+  },
 };
 
 export const TOKEN_MAP = {

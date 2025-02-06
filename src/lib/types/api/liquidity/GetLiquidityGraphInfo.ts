@@ -8,4 +8,5 @@ export interface GetLiquidityGraphInfoResponseType {
   currentTick: number;
   liquidity: string[];
   tickSpacing: number;
+  scale: number;
 }

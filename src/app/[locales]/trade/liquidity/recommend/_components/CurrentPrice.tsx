@@ -23,7 +23,7 @@ export default function CurrentPrice() {
     select: (data: GetCurrentTickResponseType) => data.currentTick,
   });
 
-  const currentPrice = +usdtTickToKrw(currentTick!, chainId);
+  const currentPrice = +usdtTickToKrw(currentTick!, chainIdParam);
   const KRWOIcon = KRWO.icon[chainIdParam];
   const fee =
     TOKEN_MAP[checkIsAvailableChain(chainId) ? chainId : defaultChain.id].native

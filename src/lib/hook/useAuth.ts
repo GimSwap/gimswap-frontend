@@ -17,10 +17,12 @@ export const useAuth = () => {
   const currentUrl = `${window.location.hostname}${window.location.pathname}`;
   const connect = useCallback(
     async (wallet: (typeof WALLETS)[0], reload?: boolean, chainId?: number) => {
-      const findConnector = connectors.find((c) => c.id === wallet.connectorId);
+      const findConnector = connectors.find((connector) =>
+        wallet.connectorId.includes(connector.id),
+      );
       try {
         if (!wallet.installed && wallet.deepLink) {
-          if (wallet.id === 'metaMask') {
+          if (wallet.id === 'metaMaskSDK') {
             openMetamaskUrl(`${wallet.deepLink}${currentUrl}`);
             return;
           }
@@ -29,10 +31,11 @@ export const useAuth = () => {
         }
 
         if (isConnected) await disconnectAsync();
-        await connectAsync({
+        const res = await connectAsync({
           connector: findConnector!,
           chainId,
         });
+        console.log(res);
         reload && window.location.reload();
       } catch (error) {
         const errorMessage =

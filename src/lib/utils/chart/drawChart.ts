@@ -28,6 +28,7 @@ interface DrawChartProps {
   activeBarColor?: string;
   currentPriceColor?: string;
   chainId: number;
+  scale: number;
 }
 
 export class DrawChart {
@@ -36,7 +37,7 @@ export class DrawChart {
   private currentPriceColor: string;
   private ticks: number[];
   private chainId: number;
-
+  private scale: number;
   constructor({
     liquidities,
     minTick,
@@ -50,11 +51,13 @@ export class DrawChart {
     activeBarColor = '#CDBBFF',
     currentPriceColor = '#926CFF',
     chainId,
+    scale,
   }: DrawChartProps) {
     this.disableBarColor = disableBarColor;
     this.activeBarColor = activeBarColor;
     this.currentPriceColor = currentPriceColor;
     this.chainId = chainId;
+    this.scale = scale;
 
     this.ticks = calculateTicks(
       minTick,
@@ -290,10 +293,13 @@ export class DrawChart {
       const currentX = barPositions[i].x;
       const nextX =
         i + 1 < barPositions.length ? barPositions[i + 1].x : currentX;
+
+      const step = LABEL_STEP * this.scale;
+
       for (
-        let value = Math.floor(currentTick / 10) * 10;
+        let value = Math.floor(currentTick / step) * step;
         value < nextTick;
-        value += LABEL_STEP
+        value += LABEL_STEP * this.scale
       ) {
         const ratio = (value - currentTick) / (nextTick - currentTick);
         const x = currentX + ratio * (nextX - currentX) + BAR_PADDING - 20;

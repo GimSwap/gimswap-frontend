@@ -1,12 +1,14 @@
 import MetaMaskIcon from '@/public/svg/wallet/metamask.svg';
 import KaiaWalletIcon from '@/public/svg/wallet/Kaia.svg';
+import BinanceWalletIcon from '@/public/svg/wallet/binance.svg';
 import { checkIsMobileBrowser } from '@/src/lib/utils/checkIsMobileBrowser';
-import { bsc, bscTestnet } from 'wagmi/chains';
+import { bsc, bscTestnet, kaia, kairos } from 'wagmi/chains';
 
 export const CONNECTOR_NAMES = {
-  metamask: 'metaMask',
-  kaia: 'Kaia',
-} as const;
+  metamask: ['metaMask', 'metaMaskSDK'],
+  kaia: ['Kaia'],
+  binance: ['wallet.binance.com', 'BinanceW3WSDK'],
+};
 
 const isMetamaskInstalled = () => {
   if (typeof window === 'undefined') {
@@ -31,17 +33,17 @@ export interface WalletType {
   id: string;
   title: string;
   icon: React.ElementType;
-  connectorId: string;
+  connectorId: string[];
   get installed(): boolean;
   get isMobile(): boolean;
   get transport(): any;
-  deepLink: string;
+  deepLink?: string;
   unsupportedChainIds: number[];
 }
 
 export const WALLETS: WalletType[] = [
   {
-    id: 'metaMask',
+    id: 'metaMaskSDK',
     title: 'MetaMask',
     icon: MetaMaskIcon,
     connectorId: CONNECTOR_NAMES.metamask,
@@ -73,5 +75,21 @@ export const WALLETS: WalletType[] = [
     },
     deepLink: 'https://app.kaiawallet.io/u/',
     unsupportedChainIds: [bsc.id, bscTestnet.id],
+  },
+  {
+    id: 'wallet.binance.com',
+    title: 'Binance Wallet',
+    icon: BinanceWalletIcon,
+    connectorId: CONNECTOR_NAMES.binance,
+    get installed() {
+      return isMetamaskInstalled();
+    },
+    get isMobile() {
+      return checkIsMobileBrowser('metamask');
+    },
+    get transport() {
+      return window?.ethereum;
+    },
+    unsupportedChainIds: [kaia.id, kairos.id],
   },
 ];

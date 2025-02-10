@@ -174,7 +174,7 @@ export const CHAIN_NAME_MAP: Record<number, string> = {
   [bsc.id]: 'BNB Chain',
 };
 
-export const defaultChain = bsc;
+export const defaultChain = kaia;
 
 interface TokenPairOrderMap {
   [chainId: number]: {

@@ -38,6 +38,7 @@ export class DrawChart {
   private ticks: number[];
   private chainId: number;
   private scale: number;
+
   constructor({
     liquidities,
     minTick,
@@ -114,7 +115,6 @@ export class DrawChart {
       ticks,
       this.activeBarColor,
       this.disableBarColor,
-      this.chainId,
     );
 
     ctx.save();
@@ -285,7 +285,12 @@ export class DrawChart {
     ctx.fillStyle = this.disableBarColor;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
+
     const numBars = Math.min(barPositions.length, ticks.length - 2);
+    const step = LABEL_STEP * this.scale;
+
+    let lastDrawnX = -Infinity;
+
     for (let i = 0; i < numBars; i++) {
       const currentTick = ticks[i];
       const nextTick = ticks[i + 1];
@@ -294,16 +299,18 @@ export class DrawChart {
       const nextX =
         i + 1 < barPositions.length ? barPositions[i + 1].x : currentX;
 
-      const step = LABEL_STEP * this.scale;
-
       for (
         let value = Math.floor(currentTick / step) * step;
         value < nextTick;
-        value += LABEL_STEP * this.scale
+        value += step
       ) {
         const ratio = (value - currentTick) / (nextTick - currentTick);
         const x = currentX + ratio * (nextX - currentX) + BAR_PADDING - 20;
-        ctx.fillText(Math.floor(value).toString(), x, height);
+
+        if (x - lastDrawnX >= BAR_PADDING) {
+          ctx.fillText(value.toString(), x, height);
+          lastDrawnX = x;
+        }
       }
     }
   }

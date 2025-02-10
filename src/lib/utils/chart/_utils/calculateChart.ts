@@ -67,7 +67,6 @@ export const calculateBarPositions = (
   ticks: number[],
   activeBarColor: string,
   disabledBarColor: string,
-  chainId: number,
 ) => {
   const barSpacing =
     (graphWidth - BAR_WIDTH * liquidities.length - BAR_PADDING * 2) /
@@ -82,11 +81,8 @@ export const calculateBarPositions = (
       const tickEnd = Math.floor(ticks[index + 1]);
 
       const isActive =
-        chainId === 8217
-          ? tickEnd <= Math.floor(+selectedMaxTick) &&
-            tickStart >= Math.floor(+selectedMinTick)
-          : tickEnd >= Math.floor(+selectedMinTick) &&
-            tickStart <= Math.floor(+selectedMaxTick);
+        tickEnd >= Math.floor(+selectedMinTick) &&
+        tickStart <= Math.floor(+selectedMaxTick);
 
       const x = index * (barSpacing + BAR_WIDTH) + BAR_PADDING;
 

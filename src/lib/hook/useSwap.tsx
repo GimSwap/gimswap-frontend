@@ -3,7 +3,6 @@ import { TokenType } from '../types/TokenType';
 import { makeSwapArgument } from '../utils/makeSwapArgument';
 import { safeCalc } from '../utils/safeCalc';
 import { useState } from 'react';
-import { createWalletClient, custom } from 'viem';
 import { useAccount } from 'wagmi';
 import { WALLETS } from '@/src/lib/constants/wallets';
 import { fetchSendLog } from '../utils/api/fetchSendLog';
@@ -12,14 +11,16 @@ import { wagmiConfig } from '../utils/wagmi';
 import { ChainIdType } from '../types/ChainIdType';
 import { checkIsAvailableChain } from '../utils/checkIsAvailableChain';
 import { CONTRACT_ADDRESS_MAP, defaultChain } from '../constants/token';
+import { useWriteContract } from 'wagmi';
 
 export const useSwap = (token: TokenType, amount: string) => {
+  const { writeContractAsync } = useWriteContract();
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [hash, setHash] = useState<`0x${string}` | null>(null);
 
-  const { address, connector, chainId, chain } = useAccount();
+  const { address, connector, chainId } = useAccount();
 
   const amountToString = safeCalc.divide(amount, token.unit).toFixed();
   const decimal = token.multiDecimal
@@ -42,11 +43,6 @@ export const useSwap = (token: TokenType, amount: string) => {
     );
 
     try {
-      const walletClient = createWalletClient({
-        chain: checkIsAvailableChain(chainId) ? chain : defaultChain,
-        transport: custom(currentWalletInfo?.transport),
-      });
-
       setIsPending(true);
       const args = makeSwapArgument(
         token.method,
@@ -55,7 +51,7 @@ export const useSwap = (token: TokenType, amount: string) => {
         callee,
       );
 
-      const hash = await walletClient.writeContract({
+      const hash = await writeContractAsync({
         address: token.contractAddress[chainId as ChainIdType] as `0x${string}`,
         abi: swapAbi,
         functionName: token.method,

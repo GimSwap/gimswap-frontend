@@ -28,7 +28,7 @@ export default function QuickDepositButton() {
   const { data: txCount } = useQuery({
     queryKey: ['txCount', chainId],
     queryFn: () => fetchGetTXCount({ chainId: chainId || bsc.id }),
-    select: (data) => data.data.count,
+    select: (data) => data.count,
   });
 
   const buttonState = () => {
@@ -88,7 +88,7 @@ export default function QuickDepositButton() {
         <PeopleIcon className=" stroke-purple-500" />
         <p className="p1">
           {t.rich('button.people', {
-            count: () => <span>{txCount?.data.count || 0}</span>,
+            count: () => <span>{txCount || 0}</span>,
             blue: (text) => <span className="text-purple-500">{text}</span>,
           })}
         </p>

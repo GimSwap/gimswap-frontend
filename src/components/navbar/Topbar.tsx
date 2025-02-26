@@ -8,11 +8,15 @@ import { Link, usePathname } from '@/src/i18n/routing';
 import { MENUS } from '@/src/lib/constants/menus';
 import { useState } from 'react';
 import LeftSidebar from './LeftSidebar';
+import WalletInfoPopup from './WalletInfoPopup';
+import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
+import { useGetCurrentWallet } from '@/src/lib/hook/useGetCurrentWallet';
 
 export default function Topbar() {
   const { invert } = useTopbarStore((state) => state);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
-
+  const { openPopup } = usePopupStore((state) => state);
+  const { data: currentWallet } = useGetCurrentWallet();
   const pathname = usePathname();
 
   const navbarStyle = () => {
@@ -51,21 +55,32 @@ export default function Topbar() {
             } lg:hidden transition-all duration-500`}
             onClick={() => setShowSidebar((prev) => !prev)}
           />
-          {MENUS.map(({ externalLink, title, url }) => (
-            <Link
-              href={url}
-              className={`p1 font-medium ${
-                navbarStyle().menuItems
-              } min-w-[52px] hidden lg:block text-center`}
-              target={externalLink ? '_blank' : '_self'}
-              key={title}
+          {MENUS.map(({ externalLink, title, url }) => {
+            if (title === 'Liquidity' && currentWallet?.id === 'Binance Wallet')
+              return;
+            return (
+              <Link
+                href={url}
+                className={`p1 font-medium ${
+                  navbarStyle().menuItems
+                } min-w-[66px] flex-shrink-0 hidden lg:block text-center whitespace-nowrap`}
+                target={externalLink ? '_blank' : '_self'}
+                key={title}
+              >
+                {title}
+              </Link>
+            );
+          })}
+          {process.env.NEXT_PUBLIC_ENV_MODE !== 'production' && (
+            <h4
+              className="text-black-12 absolute left-1/2 -translate-x-1/2 font-bold"
+              onClick={() => {
+                openPopup(WalletInfoPopup);
+              }}
             >
-              {title}
-            </Link>
-          ))}
-          <h4 className="text-black-12 absolute left-1/2 -translate-x-1/2 font-bold">
-            {process.env.NEXT_PUBLIC_ENV_MODE !== 'production' && 'Testnet'}
-          </h4>
+              Testnet
+            </h4>
+          )}
           <WalletConnectButton size="small" />
         </section>
       </nav>

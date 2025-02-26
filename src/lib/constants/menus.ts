@@ -1,27 +1,32 @@
 export const MENUS = [
   {
-    title: "Home",
-    url: "/",
+    title: 'Home',
+    url: '/',
     externalLink: false,
   },
   {
-    title: "Swap",
-    url: "/trade/swap",
+    title: 'Swap',
+    url: '/trade/swap',
     externalLink: false,
   },
   {
-    title: "Buy OV",
-    url: "/trade/buy",
+    title: 'Buy OV',
+    url: '/trade/buy',
     externalLink: false,
   },
   {
-    title: "Liquidity",
-    url: "/trade/liquidity",
+    title: 'Liquidity',
+    url: '/trade/liquidity',
     externalLink: false,
   },
   {
-    title: "Docs",
-    url: "https://docs.gimswap.com/",
+    title: 'Quick Deposit',
+    url: '/quick-deposit',
+    externalLink: false,
+  },
+  {
+    title: 'Docs',
+    url: 'https://docs.gimswap.com/',
     externalLink: true,
   },
 ];

@@ -14,14 +14,14 @@ import QueryClientProvider from '@/src/components/provider/TanstackQueryProvider
 import { cookieToInitialState } from 'wagmi';
 import { headers } from 'next/headers';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
-import { locales } from '@/src/i18n';
 import { notFound } from 'next/navigation';
 import { routing } from '@/src/i18n/routing';
 import { LiquidityStoreProvider } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
 import Head from 'next/head';
+import Script from 'next/script';
 
 export const generateStaticParams = () => {
-  return locales.map((locale) => ({ locales: locale }));
+  return routing.locales.map((locale) => ({ locales: locale }));
 };
 
 export const metadata: Metadata = {
@@ -74,9 +74,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locales: string };
 }) {
-  const header = headers();
+  const header = await headers();
   const isDev = process.env.NEXT_PUBLIC_ENV_MODE !== 'production';
-
   if (!routing.locales.includes(locales as any)) {
     notFound();
   }
@@ -120,6 +119,7 @@ export default async function RootLayout({
           </WagmiProvider>
         </NextIntlClientProvider>
       </body>
+      <Script src="/script/XTrackingCode.js" strategy="lazyOnload" />
     </html>
   );
 }

@@ -18,8 +18,8 @@ export default function useSwitchNetwork() {
       addEthereumChainParameter: {
         nativeCurrency: {
           name: targetChain.name,
-          symbol: 'KAIA',
-          decimals: 18,
+          symbol: targetChain.nativeCurrency.symbol,
+          decimals: targetChain.nativeCurrency.decimals,
         },
         chainName: targetChain.name,
         rpcUrls: targetChain.rpcUrls.default.http,

@@ -3,22 +3,20 @@ import { TokenType } from '../types/TokenType';
 import { makeSwapArgument } from '../utils/makeSwapArgument';
 import { safeCalc } from '../utils/safeCalc';
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
-import { WALLETS } from '@/src/lib/constants/wallets';
+import { useAccount, useWriteContract } from 'wagmi';
 import { fetchSendLog } from '../utils/api/fetchSendLog';
 import { waitForTransactionReceipt } from '@wagmi/core';
 import { wagmiConfig } from '../utils/wagmi';
 import { ChainIdType } from '../types/ChainIdType';
 import { checkIsAvailableChain } from '../utils/checkIsAvailableChain';
 import { CONTRACT_ADDRESS_MAP, defaultChain } from '../constants/token';
-import { useWriteContract } from 'wagmi';
 
 export const useSwap = (token: TokenType, amount: string) => {
-  const { writeContractAsync } = useWriteContract();
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [hash, setHash] = useState<`0x${string}` | null>(null);
+  const { writeContractAsync } = useWriteContract();
 
   const { address, connector, chainId } = useAccount();
 
@@ -37,10 +35,6 @@ export const useSwap = (token: TokenType, amount: string) => {
       return;
     const to = CONTRACT_ADDRESS_MAP.GIMSWAP[chainId];
     const callee = CONTRACT_ADDRESS_MAP.GIMSWAP[chainId];
-
-    const currentWalletInfo = WALLETS.find(({ id }) =>
-      connector.id.replace(/\s+/g, '').toLowerCase().includes(id.toLowerCase()),
-    );
 
     try {
       setIsPending(true);
@@ -69,7 +63,6 @@ export const useSwap = (token: TokenType, amount: string) => {
       fetchSendLog({
         name: 'swap',
         error: errorMessage,
-        currentWalletInfoId: currentWalletInfo?.id,
         connectorId: connector.id,
       });
       setIsError(true);

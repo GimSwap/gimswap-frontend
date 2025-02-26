@@ -1,17 +1,22 @@
+import { useRef, useCallback } from 'react';
+
 export default function throttle<T extends (...args: any[]) => any>(
   callback: T,
   delay: number = 1000,
 ) {
-  let isThrottled = false;
+  const isThrottled = useRef(false);
 
-  return (...args: Parameters<T>) => {
-    if (isThrottled) return;
+  return useCallback(
+    (...args: Parameters<T>) => {
+      if (isThrottled.current) return;
 
-    callback(...args);
-    isThrottled = true;
+      callback(...args);
+      isThrottled.current = true;
 
-    setTimeout(() => {
-      isThrottled = false;
-    }, delay);
-  };
+      setTimeout(() => {
+        isThrottled.current = false;
+      }, delay);
+    },
+    [callback, delay],
+  );
 }

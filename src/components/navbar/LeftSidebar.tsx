@@ -3,6 +3,7 @@ import { MENUS } from '@/src/lib/constants/menus';
 import { Link, usePathname } from '@/src/i18n/routing';
 import WalletConnectButton from '../connectWallet/WalletConnectButton';
 import Socials from './Footer/Socials';
+import { useGetCurrentWallet } from '@/src/lib/hook/useGetCurrentWallet';
 
 interface LeftSidebarProps {
   show: boolean;
@@ -11,6 +12,7 @@ interface LeftSidebarProps {
 
 export default function LeftSidebar({ show, setShow }: LeftSidebarProps) {
   const pathname = usePathname();
+  const { data: currentWallet } = useGetCurrentWallet();
   return (
     <>
       <section
@@ -29,6 +31,8 @@ export default function LeftSidebar({ show, setShow }: LeftSidebarProps) {
         </div>
         <section className="flex flex-col">
           {MENUS.map(({ externalLink, title, url }) => {
+            if (title === 'Liquidity' && currentWallet?.id === 'Binance Wallet')
+              return;
             const isActive = url === pathname;
             return (
               <Link

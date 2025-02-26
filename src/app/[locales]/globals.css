@@ -338,3 +338,18 @@ input:disabled {
     background: #926cff;
   }
 }
+
+.slideUp {
+  animation: slideUp 0.4s forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate3d(-50%, 100%, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+    opacity: 1;
+  }
+}

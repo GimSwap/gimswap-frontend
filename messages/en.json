@@ -1,1 +1,189 @@
-{}
+{
+  "quickDeposit": {
+    "chip": "To use Quick Deposit",
+    "title": "Quick Deposit in 3 Minutes",
+    "subTitle": "Instant deposit<br></br>to your Binance wallet",
+    "cs": "Customer Support",
+    "connecting": "Connecting",
+    "intro": {
+      "step-1": {
+        "title": "Purchase OV via bank transfer",
+        "description": "Seemless KRW on-ramping"
+      },
+      "step-2": {
+        "title": "Exchange OV for USDT",
+        "description": "Simplied steps with blockchain technology"
+      },
+      "step-3": {
+        "title": "Send USDT to your Binance wallet",
+        "description": "Available with the Binance app."
+      }
+    },
+    "button": {
+      "isConnected": "Quick Deposit",
+      "isDisconnected": "Connect Wallet",
+      "people": "<count></count> people deposited in <blue>3 minutes</blue>"
+    },
+    "connectBinancePopup": {
+      "title": "Please connect your Binance wallet",
+      "content": "Quick deposit is only available with a Binance wallet.<br></br>Please disconnect your current wallet<br></br>and connect to a Binance wallet.<br></br>",
+      "close": "Close",
+      "disconnect": "Disconnect"
+    },
+    "howToUse": {
+      "title": "How to Use",
+      "step1": "Connect your Binance wallet.",
+      "step1Help": "How to create Binance wallet?",
+      "step2": "Enter an amount to send to your Binance wallet.",
+      "step3": "Moving to an external service to purchase OV for the entered amount.",
+      "step3Help": "*OV is required to get USDT",
+      "step4": "After purchasing OV, check the final USDT amount and proceed with Quick Deposit.",
+      "step5": "USDT will be deposited into your Binance wallet.",
+      "step5Help": "How to transfer USDT?",
+      "more": "more",
+      "howToCreateBinanceWalletPopup": {
+        "title": "How to create Binance Wallet",
+        "step1": "In Binance Assets menu, click Wallet at the top.",
+        "step2": "Click 'Create Wallet'.",
+        "step3": "Choose QR or cloud backup method.",
+        "step4": "Set security password.",
+        "step5": "Wallet creation complete!"
+      },
+      "howToSwapUSDT": {
+        "title": "How to transfer USDT from wallet",
+        "step1": "In Binance Assets menu, click Wallet at the top.",
+        "step2": "Click 'Send' in the Wallet Assets menu and select the USDT token.",
+        "step3": "Enter USDT amount and select Binance Deposit Address in the 'To' field.",
+        "step4": "Transfer to Spot complete!"
+      }
+    },
+    "warning": {
+      "title": "Notice",
+      "warning1": "If suspected of criminal or fraudulent activity, service usage may be restricted.\n",
+      "warning2": "Once quick deposit is completed, cancellations are not possible.",
+      "warning3": "If USDT price fluctuates rapidly, the exchange may fail. You can retry if it happens.",
+      "warning4": "The amount of USDT deposited may vary based on the price.",
+      "warning5": "USDT sent to your Binance wallet will be on the BNB Chain(BEP20).",
+      "warning6": "Fees deducted for the exchange cannot be refunded or reversed.",
+      "warning7": "This service is only available for Binance wallets, not other wallets.",
+      "warning8": "OV purchases are processed through GimSwap and third-party services. For refunds, please contact OpenVoucher.",
+      "warning9": "Service delays may occur due to blockchain network conditions. If delays persist, contact GimSwap at contact@gimswap.com."
+    },
+    "FAQ": {
+      "faq1": {
+        "title": "How does Quick Deposit work?",
+        "content": "Quick Deposit allows you to easily deposit USDT by converting OV purchased in your personal wallet from KRWO to USDT through wallet signing.<br></br><br></br>To better understand, remember these key concepts:",
+        "description": {
+          "concept1": "OV: A voucher equivalent to 10,000 KRWO",
+          "concept2": "KRWO: A KRW stablecoin that can be exchanged for other cryptocurrencies"
+        }
+      },
+      "faq2": {
+        "title": "Why purchase OV (Open Voucher)?",
+        "content": "Purchasing OV (Open Voucher) is the first essential step before exchanging for USDT. OV is required to issue KRWO, which is then exchanged for USDT."
+      },
+      "faq3": {
+        "title": "Issue with Open Voucher purchase.",
+        "content": "Open Voucher is a third-party service separate from GimSwap. For inquiries regarding the OV purchase process, please contact Open Voucher"
+      },
+      "faq4": {
+        "title": "Received a notice to retry during Quick Deposit.",
+        "content": "If the USDT price fluctuates sharply and the exchange fails, please retry. Please follow the instructions and try again."
+      },
+      "faq5": {
+        "title": "What is the fee for?",
+        "content": "This is the fee for exchanging KRWO to USDT on GimSwap and depositing it into your Binance wallet."
+      },
+      "faq6": {
+        "title": "Can I only use Binance wallet?",
+        "content": "Quick Deposit feature is available only for Binance users, and the service is limited to Binance wallets."
+      },
+      "faq7": {
+        "title": "How do I transfer USDT from Binance wallet?",
+        "content": "1. In Binance's Assets menu, click Wallet at the top.<br></br>2. Click 'Send' in the Wallet Assets menu and select the USDT token.<br></br>3. Enter the USDT amount and select 'Binance Deposit Address' in the 'To' field.<br></br>4. Transfer to Spot completed!"
+      },
+      "faq8": {
+        "title": "USDT not deposited in wallet.",
+        "content": "Transfer may be delayed and take up to 3 minutes. If not received, contact GimSwap at contact@gimswap.com."
+      }
+    },
+    "buyOv": {
+      "disabledPopupBlocker": "Please disable the popup blocker!",
+      "title": "Enter the amount to send<br></br>to your Binance wallet.",
+      "subTitle": "Purchase Open Voucher via bank transfer.",
+      "sendAmount": "Amount",
+      "inputPlaceholder": "Enter",
+      "inputUnit": "Enter in multiples of 10,000.",
+      "buyOv": "OV to purchase",
+      "estimatedDepositAmount": "Deposit amount",
+      "maybe": "Expected",
+      "currentUSDTPrice": "Current USDT price",
+      "usdtAmount": "~ {amount} USDT",
+      "buyOvFAQ": "Why purchase OV (Open Voucher)?",
+      "buyOvButton": "Buy OV",
+      "skipButton": "Skip",
+      "alreadyBought": "Purchased",
+      "FAQ": {
+        "title": "Purchasing OV (Open Voucher) is the first essential step before exchanging for USDT.",
+        "description": "The Quick Deposit feature allows you to easily deposit USDT by converting OV purchased in your personal wallet from KRWO to USDT through wallet signing.",
+        "conceptTitle": "To better understand, remember these key concepts:",
+        "concept1": "OV: A voucher equivalent to 10,000 KRWO",
+        "concept2": "KRWO: A KRW stablecoin that can be exchanged for other cryptocurrencies",
+        "note": "*Open Voucher is a third-party service separate from GimSwap. For any issues during OV purchase, please contact Open Voucher."
+      },
+      "transferSignPopup": {
+        "title": "Sign your wallet",
+        "description": "Wallet sign-in is required before purchasing OV.<br></br>Please move to your Binance wallet.",
+        "confirmButton": "Please sign in"
+      },
+      "transferMoveToOpenVoucherPopup": {
+        "title": "Move to Open Voucher",
+        "subtitle": "Moving to Open Voucher to purchase OV for the entered amount.<br></br>Quick Deposit will proceed after purchasing OV via bank transfer.",
+        "button": "Moving"
+      },
+      "transferSignSuccessPopup": {
+        "title": "Wallet signing completed",
+        "description": "Wallet signing is completed.<br></br>Moving to Open Voucher to purchase OV.",
+        "confirmButton": "Continue"
+      }
+    },
+    "swapAndSend": {
+      "title": "Check the USDT to send<br></br>and proceed with the deposit.",
+      "subTitle": "Quick Deposit is completed after wallet signing.",
+      "inputPlaceholder": "Enter",
+      "fee": "Fee",
+      "estimatedDepositAmount": "Deposit amount",
+      "estimatedAmount": "~ {amount} USDT",
+      "feeDescription1": "A part of the OV amount is used for the fee.",
+      "feeDescription2": "USDT will be exchanged and deposited as follows.",
+      "usdtAmount": "~ {amount} USDT",
+      "feeFAQ": "What is the fee for?",
+      "feeFAQDescription": "This is the fee for exchanging KRWO to USDT on GimSwap and depositing it into your Binance wallet.",
+      "swapAndSendButton": "Quick Deposit",
+      "previousButton": "Back",
+      "swapPendingPopup": {
+        "title": "Confirming",
+        "description": "Sign in Binance wallet.<br></br>USDT will be exchanged and deposited."
+      },
+      "transferSuccessPopup": {
+        "title": "Success",
+        "description": "Sent to your Binance wallet.<br></br>Follow the steps below to transfer USDT!",
+        "howToMoveUSDT": "Transfer Guide",
+        "confirm": "Confirm"
+      },
+      "transferRetryPopup": {
+        "title": "Retry required",
+        "description": "Due to price fluctuations, recalculation is needed.\nPlease retry.",
+        "retry": "Retry"
+      }
+    },
+    "common": {
+      "selectLanguage": "Language",
+      "language": "English",
+      "alertServiceNotResponding": {
+        "title": "Is the service not responding?",
+        "refresh": "Refresh"
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import PopupTemplate from '@/src/components/PopupTemplate';
 import DisconnectIcon from '@/public/svg/disconnect.svg';
-import { WALLETS } from '@/src/lib/constants/wallets';
+import { WALLETS, WalletType } from '@/src/lib/constants/wallets';
 import { useAuth } from '@/src/lib/hook/useAuth';
 import { useAccount } from 'wagmi';
 import { chains } from '@/src/lib/utils/wagmi';
@@ -21,9 +21,11 @@ export default function SelectWalletPopup({
   reloadOnConnect = true,
   reloadOnDisconnect = true,
 }: SelectWalletPopupProps) {
-  const { connect, disconnect } = useAuth();
+  const { connect, disconnect, isConnecting } = useAuth();
   const { connector, isConnected } = useAccount();
+  const [selectedWallet, setSelectedWallet] = useState<WalletType | null>(null);
   const [selectedChain, setSelectedChain] = useState<Chain>(chains[0]);
+
   return (
     <PopupTemplate
       onClose={onClose}
@@ -56,7 +58,8 @@ export default function SelectWalletPopup({
             return (
               <button
                 onClick={async () => {
-                  if (!selectedChain) return;
+                  if (!selectedChain || isConnecting) return;
+                  setSelectedWallet(wallet);
                   await connect(wallet, reloadOnConnect, selectedChain.id);
                   onClose();
                 }}
@@ -66,7 +69,9 @@ export default function SelectWalletPopup({
                 <wallet.icon className="w-10 h-10" />
                 <div className="flex flex-col">
                   <h5 className="font-bold text-black-12 text-start">
-                    {wallet.title}
+                    {isConnecting && selectedWallet === wallet
+                      ? 'Connecting...'
+                      : wallet.title}
                   </h5>
                   <h5 className="font-medium text-black-7 text-start">
                     {wallet.installed ? 'Available' : 'Install required'}

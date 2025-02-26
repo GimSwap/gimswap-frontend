@@ -7,3 +7,9 @@ export const WALLET_ICONS: Record<string, React.ElementType> = {
   Kaia: KaiaWalletIcon,
   'Binance Wallet': BinanceWalletIcon,
 };
+
+export const WALLET_ICONS_URL: Record<string, string> = {
+  MetaMask: `${process.env.NEXT_PUBLIC_IMAGE_URL}/wallet/metamask.svg`,
+  Kaia: `${process.env.NEXT_PUBLIC_IMAGE_URL}/wallet/Kaia.svg`,
+  'Binance Wallet': `${process.env.NEXT_PUBLIC_IMAGE_URL}/wallet/binance.svg`,
+};

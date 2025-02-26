@@ -6,32 +6,36 @@ import useSign from '@/src/lib/hook/useSign';
 import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
 import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
+import TransferSignPopup from '../../../quick-deposit/transfer/_components/TransferSignPopup';
+import { useGetCurrentWallet } from '@/src/lib/hook/useGetCurrentWallet';
+import { checkIsMobileDevice } from '@/src/lib/utils/checkIsMobileDevice';
+import TransferSignSuccessPopup from '../../../quick-deposit/transfer/_components/TransferSignSuccessPopup';
 
 interface BuyButtonProps {
   amount: string;
 }
 
 export default function BuyButton({ amount }: BuyButtonProps) {
-  const { address, isConnected, chainId } = useAccount();
-  const { openPopup } = usePopupStore((state) => state);
   const { sign } = useSign();
+  const { address, isConnected, chainId, connector } = useAccount();
+  const { openPopup, closePopup } = usePopupStore((state) => state);
+  const { data: currentWallet } = useGetCurrentWallet();
 
-  const handleOpenVoucherPayment = (url: string) => {
-    window.open(url, 'openvoucherPayment', 'popup=true,width=380,height=780');
-  };
+  const handleOpenVoucherPayment = (
+    signature: string,
+    signMessage: string,
+    method: 'purchase' | 'history',
+  ) => {
+    if (!address || !chainId || !connector || !currentWallet) return;
 
-  const handleBuy = async () => {
-    if (!isConnected) return openPopup(SelectWalletPopup);
-
-    const signMessage = makeSignMessage(address);
-    if (!address || !signMessage || !chainId) return;
-
-    const signature = await sign(address, signMessage);
-    if (!signature) return;
+    const methodUrl = {
+      purchase: 'buy',
+      history: 'transactions',
+    };
 
     const searchParams = new URLSearchParams({
       amount,
-      method: 'purchase',
+      method,
       walletAddress: address,
       redirectOnSuccess: `${window.location.origin}/trade/swap`,
       redirectOnError: window.location.href,
@@ -39,19 +43,54 @@ export default function BuyButton({ amount }: BuyButtonProps) {
       signature,
       signMessage: btoa(signMessage),
       chainId: chainId.toString(),
+      walletId: currentWallet.connectorId[0],
+    });
+    closePopup(TransferSignPopup);
+    const popup = window.open(
+      `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/${methodUrl[method]}?${searchParams.toString()}`,
+      '_blank',
+      'popup=true,width=380,height=780',
+    );
+    if (!popup) alert('Please disable the popup blocker.');
+  };
+
+  const handleBuy = async () => {
+    if (!isConnected) return openPopup(SelectWalletPopup);
+    openPopup(TransferSignPopup);
+    const signMessage = makeSignMessage(address);
+    if (!address || !signMessage || !chainId || !connector || !currentWallet)
+      return;
+
+    const signature = await sign(address, signMessage, currentWallet);
+    closePopup(TransferSignPopup);
+    if (!signature) return;
+
+    openPopup(TransferSignSuccessPopup, {
+      handleOpenOpenVoucher: () =>
+        handleOpenVoucherPayment(signature, signMessage, 'purchase'),
     });
 
-    handleOpenVoucherPayment(
-      `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/buy?${searchParams.toString()}`,
-    );
+    if (!signature) return;
+
+    if (
+      checkIsMobileDevice() &&
+      currentWallet &&
+      !currentWallet.supportInAppBrowser
+    )
+      return;
+
+    handleOpenVoucherPayment(signature, signMessage, 'purchase');
   };
 
   const BuyButtonState = () => {
-    if (!isConnected)
+    if (!isConnected || !currentWallet)
       return {
         title: 'Connect Wallet',
         disabled: false,
-        onClick: () => openPopup(SelectWalletPopup),
+        onClick: () =>
+          openPopup(SelectWalletPopup, {
+            reloadOnConnect: false,
+          }),
       };
 
     if (!checkIsAvailableChain(chainId))
@@ -72,29 +111,17 @@ export default function BuyButton({ amount }: BuyButtonProps) {
       onClick: handleBuy,
     };
   };
+
   const handleHistoryButtonClick = async () => {
     if (!isConnected) return;
     const signMessage = makeSignMessage(address);
-    if (!address || !signMessage) return;
-
-    const signature = await sign(address, signMessage);
+    if (!address || !signMessage || !currentWallet) return;
+    openPopup(TransferSignPopup);
+    const signature = await sign(address, signMessage, currentWallet);
     if (!signature) return;
-
-    const searchParams = new URLSearchParams({
-      method: 'history',
-      walletAddress: address,
-      redirectOnSuccess: `${window.location.origin}/trade/swap`,
-      redirectOnError: window.location.href,
-      redirectOnCancel: window.location.href,
-      signature,
-      signMessage: btoa(signMessage),
-      chainId: process.env.NEXT_PUBLIC_KLAYTN_CHAIN_ID!,
-    });
-
-    handleOpenVoucherPayment(
-      `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/transactions?${searchParams.toString()}`,
-    );
+    handleOpenVoucherPayment(signature, signMessage, 'history');
   };
+
   return (
     <>
       <Button

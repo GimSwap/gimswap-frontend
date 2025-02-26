@@ -7,6 +7,9 @@ interface PaginationComponentType<T extends ComponentType<any>> {
 
 interface PopupPaginationProps<T extends ComponentType<any>> {
   initialComponent: PaginationComponentType<T>;
+  onPush?: () => void;
+  onPop?: () => void;
+  onReset?: () => void;
 }
 
 export type PaginationPushType = <T extends ComponentType<any>>(
@@ -18,6 +21,9 @@ const PAGINATION_TRANSITION_DURATION = 300;
 
 export default function PopupPagination<T extends ComponentType<any>>({
   initialComponent,
+  onPush,
+  onPop,
+  onReset,
 }: PopupPaginationProps<T>) {
   const [history, setHistory] = useState<PaginationComponentType<any>[]>([
     initialComponent,
@@ -31,16 +37,19 @@ export default function PopupPagination<T extends ComponentType<any>>({
         setHistory((prevHistory) => prevHistory.slice(0, -1));
       }, PAGINATION_TRANSITION_DURATION);
     }
+    onPop?.();
   };
 
   const push: PaginationPushType = (component, props) => {
     setHistory((prevHistory) => [...prevHistory, { component, props }]);
     setCurrentIndex((prevIndex) => prevIndex + 1);
+    onPush?.();
   };
 
   const reset = () => {
     setHistory([initialComponent]);
     setCurrentIndex(0);
+    onReset?.();
   };
 
   return (

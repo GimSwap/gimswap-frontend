@@ -5,39 +5,98 @@ import {
   useConnect,
   useDisconnect,
 } from 'wagmi';
-import { WALLETS } from '@/src/lib/constants/wallets';
-import { wagmiConfig } from '@/src/lib/utils/wagmi';
+import { WALLETS, WalletType } from '@/src/lib/constants/wallets';
+import { wagmiConfig, wagmiStorage } from '@/src/lib/utils/wagmi';
 import { openMetamaskUrl } from '@/src/lib/utils/openMetamaskUrl';
 import { fetchSendLog } from '../utils/api/fetchSendLog';
+import { checkIsMobileDevice } from '../utils/checkIsMobileDevice';
+import { defaultChain } from '../constants/token';
+import { usePopupStore } from '../stores/popupStore/PopupStoreProvider';
+import QrCodePopup from '@/src/components/popups/QrCodePopup';
+import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
+
+const shouldProceedInAppBrowser = (wallet: WalletType) =>
+  !wallet.installed &&
+  wallet.deepLink &&
+  checkIsMobileDevice() &&
+  wallet.supportInAppBrowser;
+
+const shouldShowQrCode = (wallet: (typeof WALLETS)[number]) =>
+  wallet.deepLink &&
+  wallet.useWalletConnect &&
+  wallet.qrCode &&
+  !wallet.supportInAppBrowser;
+
+const isMetaMask = (walletId: string) => walletId === 'metaMaskSDK';
 
 export const useAuth = () => {
-  const { connectAsync, connectors } = useConnect();
-  const { disconnectAsync } = useDisconnect({ config: wagmiConfig });
-  const { isConnected } = useAccount();
-  const currentUrl = `${window.location.hostname}${window.location.pathname}`;
+  const { connectAsync, connectors, isPending, reset } = useConnect();
+  const { disconnectAsync, disconnect: _disconnect } = useDisconnect({
+    config: wagmiConfig,
+  });
+  const { isConnected, connector } = useAccount();
+  const { openPopup, closePopup } = usePopupStore((state) => state);
+  const currentUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.hostname}${window.location.pathname}`
+      : '';
+
   const connect = useCallback(
-    async (wallet: (typeof WALLETS)[0], reload?: boolean, chainId?: number) => {
-      const findConnector = connectors.find((connector) =>
-        wallet.connectorId.includes(connector.id),
-      );
+    async (
+      wallet: WalletType,
+      reload?: boolean,
+      chainId: number = defaultChain.id,
+    ) => {
+      let findConnector;
+
+      if (wallet.useWalletConnect) {
+        findConnector = connectors.find(
+          (connector) => connector.id === 'walletConnect',
+        );
+      } else {
+        findConnector = connectors.find((connector) =>
+          wallet.connectorId.includes(connector.id),
+        );
+      }
+      if (!findConnector) throw new Error('Connector not found');
       try {
-        if (!wallet.installed && wallet.deepLink) {
-          if (wallet.id === 'metaMaskSDK') {
+        if (shouldProceedInAppBrowser(wallet)) {
+          if (isMetaMask(wallet.id)) {
             openMetamaskUrl(`${wallet.deepLink}${currentUrl}`);
             return;
+          } else {
+            window.open(`${wallet.deepLink}${currentUrl}`, '_blank');
+            return;
           }
-          window.open(`${wallet.deepLink}${currentUrl}`, '_blank');
-          return;
+        }
+
+        if (shouldShowQrCode(wallet)) {
+          const qrCode = wallet.qrCode;
+          if (checkIsMobileDevice()) {
+            qrCode?.then((uri) => {
+              window.location.href = `${wallet.deepLink}?uri=${encodeURIComponent(uri)}`;
+            });
+          } else {
+            const qrCode = wallet.qrCode;
+            closePopup(SelectWalletPopup);
+            openPopup(QrCodePopup, {
+              wallet,
+              uri: qrCode,
+              reset,
+            });
+          }
         }
 
         if (isConnected) await disconnectAsync();
-        const res = await connectAsync({
+
+        await connectAsync({
           connector: findConnector!,
           chainId,
         });
-        console.log(res);
+        closePopup(QrCodePopup);
         reload && window.location.reload();
       } catch (error) {
+        reset();
         const errorMessage =
           error instanceof Error ? error.message : 'Unknown error';
         fetchSendLog({ name: 'connect', error: errorMessage });
@@ -49,19 +108,18 @@ export const useAuth = () => {
     [connectors, connectAsync],
   );
 
-  const disconnect = useCallback(
-    async (reload?: boolean) => {
-      try {
-        await disconnectAsync();
-        reload && window.location.reload();
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Unknown error';
-        fetchSendLog({ name: 'disconnect', error: errorMessage });
-      }
-    },
-    [disconnectAsync],
-  );
+  const disconnect = async (reload?: boolean) => {
+    try {
+      await disconnectAsync();
+      reload && window.location.reload();
+      connector && (await wagmiStorage.setItem('disconnect', connector.id));
+    } catch (error) {
+      console.log(error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      fetchSendLog({ name: 'disconnect', error: errorMessage });
+    }
+  };
 
-  return { connect, disconnect };
+  return { connect, disconnect, isConnecting: isPending, reset };
 };

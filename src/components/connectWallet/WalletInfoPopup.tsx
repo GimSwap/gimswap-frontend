@@ -11,6 +11,7 @@ import { copyToClipboard } from '@/src/lib/utils/copyToClipboard';
 import { useAuth } from '@/src/lib/hook/useAuth';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import SelectChainPopup from '../popups/SelectChainPopup';
+import { useGetCurrentWallet } from '@/src/lib/hook/useGetCurrentWallet';
 
 interface WalletInfoPopupProps {
   open: boolean;
@@ -22,9 +23,12 @@ export default function WalletInfoPopup({
   onClose,
 }: WalletInfoPopupProps) {
   const { disconnect } = useAuth();
-  const { address, connector, chainId } = useAccount();
+  const { address, chainId } = useAccount();
   const { openPopup } = usePopupStore((state) => state);
-  const WalletIcon = connector ? WALLET_ICONS[connector.name] : null;
+
+  const { data: walletInfo } = useGetCurrentWallet();
+
+  const WalletIcon = walletInfo ? WALLET_ICONS[walletInfo.title] : null;
   const _chainIcon = chainId ? CHAIN_ICONS[chainId] : null;
   const chainIcon = _chainIcon ? (
     <_chainIcon className="w-4 h-4 rounded-full" />
@@ -57,7 +61,7 @@ export default function WalletInfoPopup({
           <div className="flex flex-row gap-3">
             {WalletIcon && <WalletIcon className="w-10 h-10 rounded-full" />}
             <div className="flex flex-col">
-              <h5 className="text-h5 font-bold">{connector?.name}</h5>
+              <h5 className="text-h5 font-bold">{walletInfo?.title}</h5>
               <p className="p1 text-black-7">
                 {address && shortenAddress(address)}
               </p>

@@ -50,18 +50,26 @@ export default function PopupTemplate({
   open: boolean;
 }) {
   const { unmountPopup } = usePopupStore((state) => state);
+  const handleAnimationEnd = ({ animationName }: { animationName: string }) => {
+    if (animationName === 'slideOut' && !open) {
+      unmountPopup();
+    }
+  };
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    document.addEventListener('animationend', ({ animationName }) => {
-      if (animationName === 'slideOut' && !open) {
-        unmountPopup();
-      }
-    });
+    document.addEventListener('animationend', handleAnimationEnd);
     return () => {
       document.body.style.overflow = 'auto';
-      document.removeEventListener('animationend', () => {});
+      document.removeEventListener('animationend', handleAnimationEnd);
     };
   }, [open]);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   return (
     <div
@@ -84,7 +92,7 @@ export default function PopupTemplate({
           <div className={`${!useTemplate && 'mt-9'}`}>
             {showCloseButton && (
               <CloseIcon
-                className={`absolute right-6 top-6 ${closeButtonStyle}`}
+                className={`absolute right-6 top-6 ${closeButtonStyle} cursor-pointer`}
                 onClick={onClose}
               />
             )}

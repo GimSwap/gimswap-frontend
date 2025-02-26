@@ -1,14 +1,12 @@
 import createMiddleware from 'next-intl/middleware';
-import { locales } from './i18n';
+import { routing } from './i18n/routing';
 
-export default createMiddleware({
-  locales,
-  defaultLocale: 'en',
-});
+export default createMiddleware(routing);
+
 export const config = {
   matcher: [
     '/',
-    '/(en)/:path*',
-    '/((?!api|_next/static|_next/image|images|svg|favicon.ico|sitemap.xml|.*\\.avif$).*)',
+    '/(en|ko)/:path*',
+    '/((?!api|_next/static|_next/image|images|script|svg|favicon.ico|sitemap.xml|.*\\.avif$).*)',
   ],
 };

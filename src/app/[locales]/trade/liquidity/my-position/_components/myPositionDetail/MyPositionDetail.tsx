@@ -19,12 +19,14 @@ import {
 import { fetchGetMyPositionDetail } from '@/src/lib/utils/api/liquidity/fetchGetPositionDetail';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import StakePopup from '../../../_components/addLiquidity/StakePopup';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { useAccount } from 'wagmi';
 import MyPositionDetailPopup from '../MyPositionDetailPopup';
 import { ChainIdType } from '@/src/lib/types/ChainIdType';
 import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 import { SWAP_SERVICE_LINK } from '@/src/lib/constants/swapServiceLink';
+import { fetchGetCurrentTick } from '@/src/lib/utils/api/liquidity/fetchGetCurrentTick';
+import { GetCurrentTickResponseType } from '@/src/lib/types/api/liquidity/GetCurrentTickType';
 
 interface MyPositionDetailProps {
   next: PaginationPushType;
@@ -35,24 +37,37 @@ export default function MyPositionDetail({
   next,
   reset,
 }: MyPositionDetailProps) {
-  const { selectedMyPosition, currentPrice } = useLiquidityStore(
-    (state) => state,
-  );
+  const { selectedMyPosition } = useLiquidityStore((state) => state);
+
   const { chainId } = useAccount();
   const { openPopup, closePopup } = usePopupStore((state) => state);
-  const {
-    data: positionDetail,
-    isPending: positionDetailLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ['positionDetail', selectedMyPosition?.tokenId!],
-    queryFn: () =>
-      fetchGetMyPositionDetail({
-        chainId: chainId!,
-        tokenId: selectedMyPosition?.tokenId!,
-      }),
-    enabled: !!chainId,
+  const [
+    { data: positionDetail, isPending: positionDetailLoading, refetch },
+    { data: currentTick },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ['positionDetail', selectedMyPosition?.tokenId!],
+        queryFn: () =>
+          fetchGetMyPositionDetail({
+            chainId: chainId!,
+            tokenId: selectedMyPosition?.tokenId!,
+          }),
+        enabled: !!chainId,
+      },
+      {
+        queryKey: ['usdtCurrentTick', chainId],
+        queryFn: () =>
+          fetchGetCurrentTick({
+            chainId: checkIsAvailableChain(chainId) ? chainId : defaultChain.id,
+            token: 'usdt',
+          }),
+        select: (data: GetCurrentTickResponseType) => data?.currentTick,
+      },
+    ],
   });
+
+  const currentPrice = currentTick ? +usdtTickToKrw(currentTick, chainId) : 0;
 
   const usdtAmount = safeCalc
     .multiply(

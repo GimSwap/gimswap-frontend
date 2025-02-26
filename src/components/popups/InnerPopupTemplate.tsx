@@ -1,6 +1,7 @@
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import { useEffect } from 'react';
 import CloseIcon from '@/public/svg/close.svg';
+import { checkIsMobileDevice } from '@/src/lib/utils/checkIsMobileDevice';
 
 interface InnerPopupTemplateProps {
   open: boolean;
@@ -16,18 +17,19 @@ export default function InnerPopupTemplate({
   showCloseButton = false,
 }: InnerPopupTemplateProps) {
   const { unmountPopup } = usePopupStore((state) => state);
+  const handleAnimationEnd = ({ animationName }: { animationName: string }) => {
+    if (animationName === 'innerPopupSlideOut' && !open) {
+      unmountPopup(true);
+    }
+  };
   useEffect(() => {
-    if (window.innerWidth < 1024) {
+    if (checkIsMobileDevice()) {
       document.body.style.overflow = 'hidden';
     }
-    document.addEventListener('animationend', ({ animationName }) => {
-      if (animationName === 'innerPopupSlideOut' && !open) {
-        unmountPopup(true);
-      }
-    });
+    document.addEventListener('animationend', handleAnimationEnd);
     return () => {
       document.body.style.overflow = 'auto';
-      document.removeEventListener('animationend', () => {});
+      document.removeEventListener('animationend', handleAnimationEnd);
     };
   }, [open]);
 

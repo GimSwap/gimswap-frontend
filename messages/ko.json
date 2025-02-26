@@ -1,0 +1,189 @@
+{
+  "quickDeposit": {
+    "chip": "간편입금 이용하려면",
+    "title": "3분 간편입금",
+    "subTitle": "바이낸스 지갑으로<br></br>즉시 입금해요",
+    "cs": "고객 문의",
+    "connecting": "지갑 연결",
+    "intro": {
+      "step-1": {
+        "title": "계좌이체로 OV를 구매해요",
+        "description": "쉽고 빠르게 원화 입금"
+      },
+      "step-2": {
+        "title": "OV를 USDT로 교환해요",
+        "description": "블록체인 기술로 복잡한 절차 생략"
+      },
+      "step-3": {
+        "title": "바이낸스 지갑에 USDT를 보내요",
+        "description": "바이낸스 앱만 있다면 바로 가능"
+      }
+    },
+    "button": {
+      "isConnected": "간편 입금하기",
+      "isDisconnected": "지갑 연결하기",
+      "people": "<count></count>명이 <blue>3분만에</blue> 간편입금했어요"
+    },
+    "connectBinancePopup": {
+      "title": "바이낸스 지갑을 연결해주세요",
+      "content": "간편입금을 이용은 바이낸스 지갑만 가능해요.<br></br>현재 지갑 연결을 해지하고<br></br>바이낸스 지갑으로 연결해주세요.<br></br>",
+      "close": "닫기",
+      "disconnect": "연결 해지하기"
+    },
+    "howToUse": {
+      "title": "이용 방법",
+      "step1": "바이낸스 지갑을 연결해요.",
+      "step1Help": "바이낸스 지갑 만드는 방법은?",
+      "step2": "바이낸스 지갑으로 보낼 금액을 입력해요.",
+      "step3": "입력한 금액만큼 OV(오픈바우처)를 구매하러 외부 서비스로 이동해요.",
+      "step3Help": "*USDT로 교환을 위해 OV가 필요해요.",
+      "step4": "OV 구매 후, 최종 입금될 USDT를 확인하고 간편 입금하기를 진행해주세요.",
+      "step5": "내 바이낸스 지갑에 USDT 입금이 완료돼요.",
+      "step5Help": "지갑에서 USDT 이동 방법은?",
+      "more": "더보기",
+      "howToCreateBinanceWalletPopup": {
+        "title": "바이낸스 지갑 생성 방법",
+        "step1": "바이낸스 Assets 메뉴에서 상단 Wallet을 클릭해요.",
+        "step2": "Create Wallet을 클릭해주세요.",
+        "step3": "QR 백업 또는 클라우드 백업 방법 중에 선택해주세요.",
+        "step4": "보안 패스워드를 설정해주세요.",
+        "step5": "지갑 생성 완료!"
+      },
+      "howToSwapUSDT": {
+        "title": "지갑에서 USDT 이동 방법",
+        "step1": "바이낸스 Assets 메뉴에서 상단 Wallet을 클릭해요.",
+        "step2": "지갑 Assets 메뉴에 있는 Send를 클릭 후 USDT 토큰을 선택해주세요.",
+        "step3": "USDT 수량 입력과 To 입력 칸에 Binance Deposit Address를 선택해주세요.",
+        "step4": "Spot으로 이동 완료!"
+      }
+    },
+    "warning": {
+      "title": "유의사항",
+      "warning1": "범죄 및 부정 행위로 의심될 경우, 서비스 이용이 제한돼요.",
+      "warning2": "OV 구매 및 간편 입금이 완료된 경우, 취소할 수 없어요.",
+      "warning3": "USDT 가격이 급격하게 변동될 경우, 교환 실패가 발생할 수 있어요. 실패하더라도 재시도할 수 있어요.",
+      "warning4": "입금될 USDT는 가격에 따라 변동될 수 있어요.",
+      "warning5": "바이낸스 지갑으로 송금하게 되는 USDT는 BNB Chain(BEP20)이에요.",
+      "warning6": "수수료로 교환된 금액은 취소하거나 되돌릴 수 없어요.",
+      "warning7": "바이낸스 지갑 외에 타 지갑으로는 이용할 수 없어요.",
+      "warning8": "OV 구매는 김스왑과 다른 제3자 서비스로, 구매 환불을 원할 시 오픈바우처 페이지에서 문의해주세요.",
+      "warning9": "블록체인 네트워크 상태에 따라 서비스 지연이 발생할 수 있어요. 계속 지연된다면 김스왑 이메일(contact@gimswap.com)로 문의해 주세요."
+    },
+    "FAQ": {
+      "faq1": {
+        "title": "간편 입금은 어떤 방식으로 진행되나요",
+        "content": "간편 입금 기능은 개인지갑으로 직접 구매한 OV를 지갑 서명을 통해 KRWO → USDT로 전환하여 USDT로 간편하게 입금하는 기능이에요.<br></br><br></br>아래 개념을 기억하면 더 이해하기 쉬워요.",
+        "description": {
+          "concept1": "OV: 10,000 KRWO와 동일한 가치의 상품권",
+          "concept2": "KRWO: 타 코인과 교환 가능한 원화 스테이블 코인"
+        }
+      },
+      "faq2": {
+        "title": "OV(오픈바우처)는 왜 구매하나요",
+        "content": "USDT로 교환하기전 OV(오픈바우처) 구매가 첫번째 필수 과정이에요. OV가 있어야 KRWO를 발행 할 수 있어요. 그리고 발행한 KRWO가 USDT로 교환돼요."
+      },
+      "faq3": {
+        "title": "오픈바우처 구매할때 문제가 생겼어요",
+        "content": "오픈바우처는 김스왑과 별개의 제3자 서비스로 OV 구매 과정에서 오류가 발생하면 오픈바우처에 문의해 주세요."
+      },
+      "faq4": {
+        "title": "간편 입금 중 재시도가 필요하다는 안내를 받았어요",
+        "content": "USDT 가격이 급격하게 변동되어 교환에 실패한 경우, 재시도가 필요해요. 안내에 따라 다시 시도해 주세요."
+      },
+      "faq5": {
+        "title": "수수료는 어떤 비용인가요",
+        "content": "김스왑에서 KRWO를 USDT로 교환 후 바이낸스 지갑으로 입금할때 발생하는 비용이에요."
+      },
+      "faq6": {
+        "title": "바이낸스 지갑만 이용 가능한가요",
+        "content": "간편입금은 바이낸스 이용자를 위한 기능으로 이용자들에게 접근성이 높은 바이낸스 지갑으로 한정하여 서비스를 지원하고 있어요."
+      },
+      "faq7": {
+        "title": "바이낸스 지갑에서 USDT를 어떻게 이동하나요",
+        "content": "1. 바이낸스 Assets 메뉴에서 상단 Wallet을 클릭해요.<br></br>2. 지갑 Assets 메뉴에 있는 Send를 클릭 후 USDT 토큰을 선택해주세요.<br></br>3. USDT 수량 입력과 To 입력 칸에 Binance Deposit Address를 선택해주세요.<br></br>4. Spot으로 이동 완료!"
+      },
+      "faq8": {
+        "title": "지갑으로 USDT 입금이 안된 것 같아요",
+        "content": "전송 속도가 지연될 수 있으며, 최대 3분 정도 걸릴 수 있어요. 이후에도 전송되지 않았다면 김스왑 이메일(contact@gimswap.com)로 문의해 주세요."
+      }
+    },
+    "buyOv": {
+      "disabledPopupBlocker": "팝업 차단을 해제 해주세요!",
+      "title": "바이낸스 지갑으로<br></br>보낼 금액을 입력해주세요",
+      "subTitle": "입력 후 오픈바우처를 계좌이체로 구매해요.",
+      "sendAmount": "보낼 금액",
+      "inputPlaceholder": "입력해 주세요",
+      "inputUnit": "10,000 단위로만 입력",
+      "buyOv": "구매할 OV",
+      "estimatedDepositAmount": "입금 금액",
+      "maybe": "예상",
+      "currentUSDTPrice": "현재 USDT 가격",
+      "usdtAmount": "약 {amount} USDT",
+      "buyOvFAQ": "OV(오픈바우처)는 왜 구매하나요",
+      "buyOvButton": "OV 구매하기",
+      "skipButton": "건너뛰기",
+      "alreadyBought": "이미 구매했어요",
+      "FAQ": {
+        "title": "USDT로 교환하기전 OV(오픈바우처) 구매가 첫번째 필수 과정이에요.",
+        "description": "간편 입금 기능은 개인지갑으로 직접 구매한 OV를 지갑 서명을 통해 KRWO → USDT로 전환하여 USDT로 간편하게 입금하는 기능이에요.",
+        "conceptTitle": "아래 개념을 기억하면 더 이해하기 쉬워요.",
+        "concept1": "OV: 10,000 KRWO와 동일한 가치의 상품권",
+        "concept2": "KRWO: 타 코인과 교환 가능한 원화 스테이블 코인",
+        "note": "*오픈바우처는 김스왑과 별개의 제3자 서비스로 OV 구매 과정 관련 문의는 오픈바우처에 문의해 주세요."
+      },
+      "transferSignPopup": {
+        "title": "지갑 서명을 해주세요",
+        "description": "OV를 구매하기전에 지갑 서명이 필요해요.<br></br>바이낸스 지갑으로 이동해주세요.",
+        "confirmButton": "서명을 진행해주세요"
+      },
+      "transferMoveToOpenVoucherPopup": {
+        "title": "오픈바우처로 이동해요",
+        "subtitle": "입력하신 금액만큼 OV를 구매하기 위해서<br></br>오픈바우처로 이동해요.<br></br>계좌이체로 OV 구매 후 간편입금이 진행돼요.",
+        "button": "이동 중이에요"
+      },
+      "transferSignSuccessPopup": {
+        "title": "지갑 서명 완료",
+        "description": "지갑 서명이 완료됐어요.<br></br>OV를 구매하러 오픈바우처로 이동해요.",
+        "confirmButton": "이어서 진행하기"
+      }
+    },
+    "swapAndSend": {
+      "title": "보낼 USDT를 확인 후<br></br>입금을 진행해주세요",
+      "subTitle": "지갑 서명으로 이동 후에 간편입금이 완료돼요.",
+      "inputPlaceholder": "입력해 주세요",
+      "fee": "수수료",
+      "estimatedDepositAmount": "입금 금액",
+      "estimatedAmount": "약 {amount} USDT",
+      "feeDescription1": "OV의 일부 금액은 수수료로 지불돼요.",
+      "feeDescription2": "USDT는 아래 과정으로 교환되어 지갑으로 입금돼요.",
+      "usdtAmount": "약 {amount} USDT",
+      "feeFAQ": "수수료는 어떤 비용인가요",
+      "feeFAQDescription": "김스왑에서 KRWO를 USDT로 교환 후 바이낸스 지갑으로 입금할때 발생하는 비용이에요.",
+      "swapAndSendButton": "간편 입금하기",
+      "previousButton": "이전으로",
+      "swapPendingPopup": {
+        "title": "간편입금 진행 중",
+        "description": "내 바이낸스 지갑에서 서명해 주세요.<br></br>서명 후 USDT로 교환하여 입금이 완료돼요."
+      },
+      "transferSuccessPopup": {
+        "title": "간편입금 성공",
+        "description": "성공적으로 내 바이낸스 지갑에 보냈어요.<br></br>지갑 내 USDT 이동은 아래 방법을 참고하세요!",
+        "howToMoveUSDT": "USDT 이동 방법",
+        "confirm": "확인"
+      },
+      "transferRetryPopup": {
+        "title": "재시도가 필요해요",
+        "description": "USDT 교환 중 급격한 가격 변동으로 인해<br></br>현재 가격 기준으로 다시 계산이 필요해요.<br></br>재시도해 주세요.",
+        "retry": "재시도 하기"
+      }
+    },
+    "common": {
+      "selectLanguage": "언어 설정",
+      "language": "한국어",
+      "alertServiceNotResponding": {
+        "title": "서비스 응답이 없나요?",
+        "refresh": "새로고침"
+      }
+    }
+  }
+}

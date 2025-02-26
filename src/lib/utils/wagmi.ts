@@ -1,7 +1,6 @@
-import { getWagmiConnectorV2 } from '@binance/w3w-wagmi-connector-v2';
 import { http, createConfig, createStorage, cookieStorage } from 'wagmi';
 import { bsc, kaia } from 'wagmi/chains';
-import { metaMask } from 'wagmi/connectors';
+import { metaMask, walletConnect } from 'wagmi/connectors';
 import { kaikasConnector } from '@/src/lib/utils/wallets/kaiaWallet';
 import { fallback } from 'viem';
 
@@ -9,15 +8,24 @@ export const STORE_KEY = 'GimSwap';
 
 export const chains = [bsc, kaia] as const;
 
-const binanceConnector = getWagmiConnectorV2();
+export const wagmiStorage = createStorage({
+  storage: cookieStorage,
+  key: STORE_KEY,
+});
+
+const walletConnectConnector = walletConnect({
+  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID!,
+  showQrModal: false,
+  customStoragePrefix: 'wagmi',
+});
+
+const connectors = () => {
+  return [walletConnectConnector, kaikasConnector(), metaMask()];
+};
 
 export const wagmiConfig = createConfig({
   chains,
-  connectors: [
-    kaikasConnector(),
-    metaMask(),
-    binanceConnector({ showQrCodeModal: true }),
-  ],
+  connectors: connectors(),
   transports: {
     [kaia.id]: fallback([
       http('https://public-en.node.kaia.io'),
@@ -38,9 +46,6 @@ export const wagmiConfig = createConfig({
     ]),
   },
   ssr: true,
-  storage: createStorage({
-    storage: cookieStorage,
-    key: STORE_KEY,
-  }),
+  storage: wagmiStorage,
   syncConnectedChain: true,
 });

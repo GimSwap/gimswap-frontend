@@ -100,7 +100,7 @@ export default function MyPositions() {
       })) || [],
   });
 
-  const currentPrice = +usdtTickToKrw(currentTick!, chainId);
+  const currentPrice = currentTick ? +usdtTickToKrw(currentTick, chainId) : 0;
   const positionLength = positions?.length || 0;
 
   const handleMoreButtonClick = () => {
@@ -110,9 +110,8 @@ export default function MyPositions() {
       setIndex(Math.min(index + ITEMS_PER_CLICK, positionLength));
     }
   };
-
   useEffect(() => {
-    !isPendingCurrentTick && setCurrentPrice(currentPrice);
+    currentPrice && setCurrentPrice(currentPrice);
     if (Math.floor(currentPrice / 40) !== Math.floor(previousTick / 40)) {
       setPreviousTick(currentPrice);
       previousTick !== 0 && refetchPositions();

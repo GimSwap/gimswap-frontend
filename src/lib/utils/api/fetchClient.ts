@@ -12,7 +12,7 @@ if (!serverBaseUrl) {
 
 type InitType = RequestInit & { next: { revalidate: number } };
 
-class FetchError extends Error {
+export class FetchError extends Error {
   status: number;
   response: any;
 

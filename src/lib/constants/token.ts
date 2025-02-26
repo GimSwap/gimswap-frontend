@@ -1,4 +1,4 @@
-import openVoucherIcon from '@/public/svg/token/open-voucher.svg';
+import openVoucherIcon from '@/public/svg/token/open-voucher-resizable.svg';
 import KRWOIcon from '@/public/svg/token/KRWO.svg';
 import KRWOIconBsc from '@/public/svg/token/KRWO-bsc.svg';
 import USDTIcon from '@/public/svg/token/USDT.svg';
@@ -28,6 +28,10 @@ export const CONTRACT_ADDRESS_MAP = {
   GIMSWAP: {
     [kaia.id]: process.env.NEXT_PUBLIC_GIM_SWAP_CONTRACT_ADDRESS_KAIA!,
     [bsc.id]: process.env.NEXT_PUBLIC_GIM_SWAP_CONTRACT_ADDRESS_BSC!,
+  },
+  GIMSWAP_SWIFT_TRANSFER: {
+    [bsc.id]:
+      process.env.NEXT_PUBLIC_GIMSWAP_SWIFT_TRANSFER_CONTRACT_ADDRESS_BSC!,
   },
 };
 

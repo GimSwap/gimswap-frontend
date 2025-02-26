@@ -13,7 +13,11 @@ export default function WagmiProvider({
   initialState,
 }: WagmiProviderProps) {
   return (
-    <_wagmiProvider config={wagmiConfig} initialState={initialState}>
+    <_wagmiProvider
+      config={wagmiConfig}
+      initialState={initialState}
+      reconnectOnMount={true}
+    >
       {children}
     </_wagmiProvider>
   );

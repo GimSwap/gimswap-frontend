@@ -3,11 +3,31 @@ import KaiaWalletIcon from '@/public/svg/wallet/Kaia.svg';
 import BinanceWalletIcon from '@/public/svg/wallet/binance.svg';
 import { checkIsMobileBrowser } from '@/src/lib/utils/checkIsMobileBrowser';
 import { bsc, bscTestnet, kaia, kairos } from 'wagmi/chains';
+import { isInBinance } from '@binance/w3w-utils';
+import { wagmiConfig } from '../utils/wagmi';
 
 export const CONNECTOR_NAMES = {
   metamask: ['metaMask', 'metaMaskSDK'],
   kaia: ['Kaia'],
   binance: ['wallet.binance.com', 'BinanceW3WSDK'],
+};
+
+const createQrCode = async () => {
+  const walletConnectConnector = wagmiConfig.connectors.find(
+    (connector) => connector.id === 'walletConnect',
+  );
+  if (!walletConnectConnector) return Promise.resolve('');
+
+  const provider = await walletConnectConnector.getProvider();
+
+  if (!provider) return Promise.resolve('');
+
+  return new Promise<string>((resolve) => {
+    // @ts-ignore
+    provider.on('display_uri', (uri: string) => {
+      resolve(uri);
+    });
+  });
 };
 
 const isMetamaskInstalled = () => {
@@ -40,6 +60,9 @@ export interface WalletType {
   deepLink?: string;
   unsupportedChainIds: number[];
   supportAddToken: boolean;
+  supportInAppBrowser: boolean;
+  useWalletConnect?: boolean;
+  qrCode?: Promise<string>;
 }
 
 export const WALLETS: WalletType[] = [
@@ -58,8 +81,9 @@ export const WALLETS: WalletType[] = [
       return window?.ethereum;
     },
     deepLink: 'https://metamask.app.link/dapp/',
-    unsupportedChainIds: [],
+    unsupportedChainIds: isInBinance() ? [bsc.id] : [],
     supportAddToken: true,
+    supportInAppBrowser: true,
   },
   {
     id: 'Kaia',
@@ -78,22 +102,27 @@ export const WALLETS: WalletType[] = [
     deepLink: 'https://app.kaiawallet.io/u/',
     unsupportedChainIds: [bsc.id, bscTestnet.id],
     supportAddToken: true,
+    supportInAppBrowser: true,
   },
   {
-    id: 'wallet.binance.com',
+    id: 'Binance Wallet',
     title: 'Binance Wallet',
     icon: BinanceWalletIcon,
     connectorId: CONNECTOR_NAMES.binance,
     get installed() {
-      return isMetamaskInstalled();
+      return window?.ethereum?.isBinance;
     },
     get isMobile() {
-      return checkIsMobileBrowser('metamask');
+      return window?.ethereum?.isBinance;
     },
     get transport() {
       return window?.ethereum;
     },
+    deepLink: 'bnc://app.binance.com/cedefi/wc',
     unsupportedChainIds: [kaia.id, kairos.id],
     supportAddToken: false,
+    supportInAppBrowser: false,
+    useWalletConnect: true,
+    qrCode: createQrCode(),
   },
 ];

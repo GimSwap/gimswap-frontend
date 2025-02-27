@@ -29,7 +29,8 @@
       "title": "바이낸스 지갑을 연결해주세요",
       "content": "간편입금 이용은 바이낸스 지갑만 가능해요.<br></br>바이낸스 지갑으로 연결해주세요.<br></br>지갑이 없다면 지갑 생성 방법을 참고해주세요.",
       "openPopup": "지갑 생성 방법",
-      "connect": "지갑 연결하기"
+      "connect": "지갑 연결하기",
+      "connecting": "연결 중"
     },
     "onlyBinanceWalletPopup": {
       "title": "바이낸스 지갑을 연결해주세요",

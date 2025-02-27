@@ -13,7 +13,7 @@ interface ConnectPopupProps {
 }
 
 export default function ConnectPopup({ open, onClose }: ConnectPopupProps) {
-  const { connect } = useAuth();
+  const { connect, isConnecting } = useAuth();
   const BinanceWalletIcon = WALLET_ICONS['Binance Wallet'];
   const _t = useTranslations('quickDeposit.howToUse');
   const t = useTranslations('quickDeposit.connectBinancePopup');
@@ -29,6 +29,7 @@ export default function ConnectPopup({ open, onClose }: ConnectPopupProps) {
       return;
     }
     await connect(binanceWallet);
+    onClose();
   };
 
   const handleOpenCreateGuidePopup = () => {
@@ -83,9 +84,10 @@ export default function ConnectPopup({ open, onClose }: ConnectPopupProps) {
             color="primary"
             size="xl"
             className="w-full whitespace-nowrap"
+            disabled={isConnecting}
             onClick={handleConnect}
           >
-            {t('connect')}
+            {isConnecting ? t('connecting') : t('connect')}
           </Button>
         </section>
       </section>

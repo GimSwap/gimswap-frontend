@@ -28,7 +28,8 @@
       "title": "Connect your Binance wallet.",
       "content": "Quick deposit is only available with a Binance wallet.<br></br>Please connect with your Binance wallet.<br></br>If you don't have a wallet, please refer to the wallet creation guide.",
       "openPopup": "Creation Guide",
-      "connect": "Connect Wallet"
+      "connect": "Connect Wallet",
+      "connecting": "Connecting"
     },
     "onlyBinanceWalletPopup": {
       "title": "Please connect your Binance wallet",

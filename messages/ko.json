@@ -5,6 +5,7 @@
     "subTitle": "바이낸스 지갑으로<br></br>즉시 입금해요",
     "cs": "고객 문의",
     "connecting": "지갑 연결",
+    "connect": {},
     "intro": {
       "step-1": {
         "title": "계좌이체로 OV를 구매해요",
@@ -25,6 +26,12 @@
       "people": "<count></count>명이 <blue>3분만에</blue> 간편입금했어요"
     },
     "connectBinancePopup": {
+      "title": "바이낸스 지갑을 연결해주세요",
+      "content": "간편입금 이용은 바이낸스 지갑만 가능해요.<br></br>바이낸스 지갑으로 연결해주세요.<br></br>지갑이 없다면 지갑 생성 방법을 참고해주세요.",
+      "openPopup": "지갑 생성 방법",
+      "connect": "지갑 연결하기"
+    },
+    "onlyBinanceWalletPopup": {
       "title": "바이낸스 지갑을 연결해주세요",
       "content": "간편입금을 이용은 바이낸스 지갑만 가능해요.<br></br>현재 지갑 연결을 해지하고<br></br>바이낸스 지갑으로 연결해주세요.<br></br>",
       "close": "닫기",
@@ -182,7 +189,7 @@
       "language": "한국어",
       "alertServiceNotResponding": {
         "title": "서비스 응답이 없나요?",
-        "refresh": "새로고침"
+        "refresh": "재시도"
       }
     }
   }

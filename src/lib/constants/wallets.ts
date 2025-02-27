@@ -123,6 +123,8 @@ export const WALLETS: WalletType[] = [
     supportAddToken: false,
     supportInAppBrowser: false,
     useWalletConnect: true,
-    qrCode: createQrCode(),
+    get qrCode() {
+      return createQrCode();
+    },
   },
 ];

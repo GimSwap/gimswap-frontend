@@ -13,7 +13,7 @@ export default function ConnectBinanceWalletPopup({
   open,
   onClose,
 }: ConnectBinanceWalletPopupProps) {
-  const t = useTranslations('quickDeposit.connectBinancePopup');
+  const t = useTranslations('quickDeposit.onlyBinanceWalletPopup');
   const { disconnect } = useAuth();
   const handleDisconnect = async () => {
     await disconnect();

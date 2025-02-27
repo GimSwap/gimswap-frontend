@@ -77,12 +77,15 @@ export const useAuth = () => {
               window.location.href = `${wallet.deepLink}?uri=${encodeURIComponent(uri)}`;
             });
           } else {
-            const qrCode = wallet.qrCode;
             closePopup(SelectWalletPopup);
             openPopup(QrCodePopup, {
               wallet,
-              uri: qrCode,
               reset,
+              connect: async () =>
+                await connectAsync({
+                  connector: findConnector!,
+                  chainId,
+                }),
             });
           }
         }

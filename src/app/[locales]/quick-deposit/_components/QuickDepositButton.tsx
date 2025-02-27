@@ -2,12 +2,10 @@
 
 import Chip from '@/src/components/Chip';
 import Button from '@/src/components/Button';
-import { WALLETS } from '@/src/lib/constants/wallets';
-import { useAuth } from '@/src/lib/hook/useAuth';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import { useTranslations } from 'next-intl';
 import { useAccount } from 'wagmi';
-import ConnectBinanceWalletPopup from './popups/ConnectBinanceWalletPopup';
+import BinanceOnlyPopup from './popups/BinanceOnlyPopup';
 import { useRouter } from '@/src/i18n/routing';
 import { bsc } from 'viem/chains';
 import useSwitchNetwork from '@/src/lib/hook/useSwitchNetwork';
@@ -15,11 +13,11 @@ import { useGetCurrentWallet } from '@/src/lib/hook/useGetCurrentWallet';
 import PeopleIcon from '@/public/svg/people.svg';
 import { useQuery } from '@tanstack/react-query';
 import { fetchGetTXCount } from '@/src/lib/utils/api/swift/fetchGetTXCount';
+import ConnectPopup from './popups/ConnectPopup';
 
 export default function QuickDepositButton() {
   const t = useTranslations('quickDeposit');
   const router = useRouter();
-  const { connect, isConnecting } = useAuth();
   const { isConnected, chainId } = useAccount();
   const { data: currentWallet } = useGetCurrentWallet();
   const { openPopup } = usePopupStore((state) => state);
@@ -32,24 +30,18 @@ export default function QuickDepositButton() {
   });
 
   const buttonState = () => {
-    const binanceWallet = WALLETS.find((wallet) =>
-      wallet.connectorId.includes('BinanceW3WSDK'),
-    );
-
     if (!isConnected || !currentWallet)
       return {
-        title: t('button.isDisconnected'),
-        onClick: async () => {
-          if (!binanceWallet) return;
-          await connect(binanceWallet);
-          router.push('/quick-deposit/transfer');
+        title: t('button.isConnected'),
+        onClick: () => {
+          openPopup(ConnectPopup);
         },
       };
 
     if (!currentWallet?.id.toLowerCase().includes('binance'))
       return {
         title: t('button.isConnected'),
-        onClick: () => openPopup(ConnectBinanceWalletPopup),
+        onClick: () => openPopup(BinanceOnlyPopup),
       };
 
     return {
@@ -68,15 +60,10 @@ export default function QuickDepositButton() {
       className="absolute bottom-0 pb-5 px-6 w-full bg-black-1"
       style={{ borderRadius: '1px' }}
     >
-      <Button
-        color="primary"
-        size="xl"
-        onClick={buttonState().onClick}
-        disabled={isConnecting}
-      >
-        {isConnecting ? t('connecting') : buttonState().title}
+      <Button color="primary" size="xl" onClick={buttonState().onClick}>
+        {buttonState().title}
       </Button>
-      {(!currentWallet || !isConnected) && !isConnecting && (
+      {(!currentWallet || !isConnected) && (
         <Chip
           color="black"
           className="w-fit absolute top-0 left-10 whitespace-nowrap -translate-y-1/2"

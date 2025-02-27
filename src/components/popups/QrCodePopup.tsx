@@ -13,34 +13,36 @@ interface QrCodePopupProps {
   wallet: (typeof WALLETS)[number];
   onClose: () => void;
   open: boolean;
-  uri: Promise<string> | undefined;
   reset: () => void;
+  connect: () => void;
 }
 
 export default function QrCodePopup({
   onClose,
   open,
-  uri,
   wallet,
   reset,
+  connect,
 }: QrCodePopupProps) {
   const t = useTranslations('quickDeposit.common.alertServiceNotResponding');
   const [qrCodeUri, setQrCodeUri] = useState<string | undefined>(undefined);
   const [isAlertToastOpen, setIsAlertToastOpen] = useState(false);
   const WalletIcon = WALLET_ICONS_URL[wallet.title];
 
-  useEffect(() => {
-    (async () => {
-      const qrUri = await uri;
-      setQrCodeUri(qrUri);
-    })();
-  }, [uri]);
+  const fetchQrCode = async () => {
+    const newUri = await wallet.qrCode;
+    setQrCodeUri(newUri);
+  };
 
   useEffect(() => {
-    setTimeout(() => {
+    fetchQrCode();
+
+    const timer = setTimeout(() => {
       setIsAlertToastOpen(true);
     }, 20000);
-  }, []);
+
+    return () => clearTimeout(timer);
+  }, [qrCodeUri]);
 
   return (
     <PopupTemplate
@@ -93,6 +95,12 @@ export default function QrCodePopup({
         message={t('title')}
         actionText={t('refresh')}
         open={isAlertToastOpen}
+        onClick={async () => {
+          setQrCodeUri(undefined);
+          connect();
+          fetchQrCode();
+          setIsAlertToastOpen(false);
+        }}
       />
     </PopupTemplate>
   );

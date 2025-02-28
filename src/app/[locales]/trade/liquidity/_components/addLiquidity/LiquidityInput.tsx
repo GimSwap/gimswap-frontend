@@ -122,7 +122,13 @@ export default function LiquidityInput({
       const isValidKrwo =
         tokenAmount.KRWO && formatNumber(tokenAmount.KRWO) !== '0';
       const isValidUsdt =
-        tokenAmount.USDT && formatNumber(tokenAmount.USDT, USDT.decimal[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]) !== '0';
+        tokenAmount.USDT &&
+        formatNumber(
+          tokenAmount.USDT,
+          USDT.decimal[
+            checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+          ],
+        ) !== '0';
       const isValid = isValidKrwo || isValidUsdt;
       return {
         disabled: !isValid,
@@ -148,7 +154,11 @@ export default function LiquidityInput({
     if (isNaN(+value)) return;
     if (!graphInfo || !selectedPosition) return;
     if (value.includes('.') && value.split('.')[1].length > 18) return;
-    const sanitizedValue = value.replace(/^0+(?=\d)/, '').replace(/^\./, '0.');
+
+    const sanitizedValue = value
+      .replace(/\s+/g, '')
+      .replace(/^0+(?=\d)/, '')
+      .replace(/^\./, '0.');
 
     const isUsdtInput = token === 'USDT';
 

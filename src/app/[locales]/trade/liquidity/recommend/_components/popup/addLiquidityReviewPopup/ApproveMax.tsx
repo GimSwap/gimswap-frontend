@@ -52,6 +52,26 @@ export default function ApproveMax({
     );
   };
 
+  const handleClickApprove = async (
+    contractAddress: `0x${string}`,
+    token: 'USDT' | 'KRWO',
+  ) => {
+    const isPending = token === 'USDT' ? isUsdtPending : isKrwoPending;
+
+    if (isPending) return;
+
+    const approve = token === 'USDT' ? approveUsdt : approveKrwo;
+
+    const { status } = await approve(
+      chainId as ChainIdType,
+      contractAddress,
+      spenderAddress!,
+    );
+
+    if (status === 'success')
+      setIsApproved((prev) => ({ ...prev, [token]: true }));
+  };
+
   return (
     <>
       <div className="flex flex-row gap-1 pb-4 justify-start w-full">
@@ -65,14 +85,10 @@ export default function ApproveMax({
           color="primary"
           size="xl"
           onClick={async () => {
-            // TODO add bsc logic
-            const { status } = await approveUsdt(
-              chainId as ChainIdType,
+            await handleClickApprove(
               USDT.contractAddress[chainId as ChainIdType] as `0x${string}`,
-              spenderAddress!,
+              'USDT',
             );
-            if (status === 'success')
-              setIsApproved((prev) => ({ ...prev, usdt: true }));
           }}
           disabled={isApproved.usdt}
           className="flex flex-row justify-center items-center whitespace-nowrap"
@@ -83,13 +99,10 @@ export default function ApproveMax({
           color="primary"
           size="xl"
           onClick={async () => {
-            const { status } = await approveKrwo(
-              chainId as ChainIdType,
+            await handleClickApprove(
               KRWO.contractAddress[chainId as ChainIdType] as `0x${string}`,
-              spenderAddress!,
+              'KRWO',
             );
-            if (status === 'success')
-              setIsApproved((prev) => ({ ...prev, krwo: true }));
           }}
           className="flex flex-row justify-center items-center whitespace-nowrap"
           disabled={isApproved.krwo}

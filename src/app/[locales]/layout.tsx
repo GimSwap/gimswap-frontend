@@ -19,7 +19,7 @@ import { routing } from '@/src/i18n/routing';
 import { LiquidityStoreProvider } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
 import Head from 'next/head';
 import Script from 'next/script';
-
+import MixpanelProvider from '@/src/components/provider/MixpanelProvider';
 export const generateStaticParams = () => {
   return routing.locales.map((locale) => ({ locales: locale }));
 };
@@ -91,6 +91,7 @@ export default async function RootLayout({
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
   if (!GA_ID) throw new Error("There's no GA id");
   if (!GTM_ID) throw new Error("There's no GTM id");
+
   return (
     <html lang={locales} className={pretendard.variable}>
       <GoogleAnalytics gaId={GA_ID} />
@@ -102,6 +103,7 @@ export default async function RootLayout({
         />
       </Head>
       <body>
+        <MixpanelProvider>
         <NextIntlClientProvider messages={messages}>
           <WagmiProvider initialState={wgamiInitialState}>
             <QueryClientProvider>
@@ -118,6 +120,7 @@ export default async function RootLayout({
             </QueryClientProvider>
           </WagmiProvider>
         </NextIntlClientProvider>
+        </MixpanelProvider>
       </body>
       <Script src="/script/XTrackingCode.js" strategy="lazyOnload" />
     </html>

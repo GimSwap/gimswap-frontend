@@ -38,3 +38,19 @@ next-env.d.ts
 .idea
 
 .prettierrc
+
+# yarn
+.pnp.cjs
+.pnp.loader.mjs
+.yarn
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+dist/
+.next/
+out/
+coverage/
+*.log
+yarn-error.log

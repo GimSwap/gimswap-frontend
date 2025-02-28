@@ -25,7 +25,7 @@ export default function QuickDepositButton() {
 
   const { data: txCount } = useQuery({
     queryKey: ['txCount', chainId],
-    queryFn: () => fetchGetTXCount({ chainId: chainId || bsc.id }),
+    queryFn: () => fetchGetTXCount({ chainId: bsc.id }),
     select: (data) => data.count,
   });
 

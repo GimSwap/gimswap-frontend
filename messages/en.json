@@ -1,6 +1,6 @@
 {
   "quickDeposit": {
-    "chip": "To use Quick Deposit",
+    "chip": "Binance is all you need",
     "title": "Quick Deposit in 3 Minutes",
     "subTitle": "Instant deposit<br></br>to your Binance wallet",
     "cs": "Customer Support",
@@ -190,6 +190,22 @@
       "alertServiceNotResponding": {
         "title": "Is the service not responding?",
         "refresh": "Retry"
+      }
+    },
+    "event": {
+      "title": "Quick Deposit Aid Event",
+      "subtitle": "Get 4 USDT when you deposit via Quick Deposit!",
+      "content": {
+        "doNotDuplicate": "No multiple entries",
+        "content": "Content",
+        "contentDescription": "Send USDT to your Binance wallet via Quick Deposit to succeed!",
+        "reward": "Reward",
+        "rewardDescription": "Receive <span>4 USDT</span> upon success",
+        "notice": "Notice"
+      },
+      "button": {
+        "fold": "Close event details",
+        "open": "View Event Details"
       }
     }
   }

@@ -5,16 +5,25 @@ import SelectLanguageBar from './_components/SelectLanguageBar';
 import Warning from './_components/Warning';
 import { OFFICIAL_EMAIL } from '@/src/lib/constants/officialInformation';
 import QuickDepositButton from './_components/QuickDepositButton';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
+import Event from './_components/event/Event';
+import {
+  fetchGetEventExpired,
+  fetchGetQuickDepositEventNotice,
+} from '@/src/lib/utils/api/fetchGetQuickDepositEventNotice';
 
 export default async function QuickDeposit() {
   const t = await getTranslations('quickDeposit');
+  const locale = await getLocale();
+  const notices = await fetchGetQuickDepositEventNotice(locale);
+  const eventExpired = await fetchGetEventExpired();
 
   return (
     <main className="mx-auto relative">
       <SelectLanguageBar />
       <div className="max-w-[560px] mx-auto relative">
         <section className="mx-auto min-h-[calc(100dvh-116px)] max-h-[calc(100dvh-116px)] overflow-scroll pb-[116px] scrollbar-hide">
+          <Event notices={notices} eventExpired={eventExpired} />
           <Intro />
           <HowToUse />
           <Warning />

@@ -1,6 +1,6 @@
 {
   "quickDeposit": {
-    "chip": "간편입금 이용하려면",
+    "chip": "바이낸스 있으면 OK",
     "title": "3분 간편입금",
     "subTitle": "바이낸스 지갑으로<br></br>즉시 입금해요",
     "cs": "고객 문의",
@@ -191,6 +191,22 @@
       "alertServiceNotResponding": {
         "title": "서비스 응답이 없나요?",
         "refresh": "재시도"
+      }
+    },
+    "event": {
+      "title": "간편입금 (재난)지원금 이벤트",
+      "subtitle": "간편입금을 통해 입금 시 4 USDT 증정!",
+      "content": {
+        "doNotDuplicate": "중복참여 불가",
+        "content": "내용",
+        "contentDescription": "간편입금을 통해 바이낸스 지갑으로 USDT를 보내면 성공! ",
+        "reward": "보상",
+        "rewardDescription": "성공시 <span>4 USDT</span>를 드려요",
+        "notice": "유의사항"
+      },
+      "button": {
+        "fold": "이벤트 내용 접기",
+        "open": "이벤트 자세히 보기"
       }
     }
   }

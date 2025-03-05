@@ -104,25 +104,26 @@ export default async function RootLayout({
       </Head>
       <body>
         <MixpanelProvider>
-        <NextIntlClientProvider messages={messages}>
-          <WagmiProvider initialState={wgamiInitialState}>
-            <QueryClientProvider>
-              <PopupStoreProvider>
-                <TopbarStoreProvider>
-                  <LiquidityStoreProvider>
-                    <Topbar />
-                    {children}
-                    <Footer />
-                    <PopupList />
-                  </LiquidityStoreProvider>
-                </TopbarStoreProvider>
-              </PopupStoreProvider>
-            </QueryClientProvider>
-          </WagmiProvider>
-        </NextIntlClientProvider>
+          <NextIntlClientProvider messages={messages}>
+            <WagmiProvider initialState={wgamiInitialState}>
+              <QueryClientProvider>
+                <PopupStoreProvider>
+                  <TopbarStoreProvider>
+                    <LiquidityStoreProvider>
+                      <Topbar />
+                      {children}
+                      <Footer />
+                      <PopupList />
+                    </LiquidityStoreProvider>
+                  </TopbarStoreProvider>
+                </PopupStoreProvider>
+              </QueryClientProvider>
+            </WagmiProvider>
+          </NextIntlClientProvider>
         </MixpanelProvider>
       </body>
       <Script src="/script/XTrackingCode.js" strategy="lazyOnload" />
+      <Script src="/script/mixpanel.js" strategy="lazyOnload"></Script>
     </html>
   );
 }

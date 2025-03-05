@@ -34,7 +34,7 @@ export default function Content({ notices }: ContentProps) {
           </p>
         </section>
       </section>
-      <section className="flex flex-col bg-black-3 p-4">
+      <section className="flex flex-col bg-black-3 p-4 rounded-b-lg">
         <p className="p1 font-bold pb-2 text-start">{t('notice')}</p>
         {notices &&
           Object.entries(notices).map(([key, value]) => (

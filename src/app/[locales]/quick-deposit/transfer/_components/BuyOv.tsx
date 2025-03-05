@@ -33,7 +33,7 @@ export default function BuyOv({ next }: BuyOvProps) {
   const t = useTranslations('quickDeposit.buyOv');
   const router = useRouter();
   const [amount, setAmount] = useState<number>(0);
-  const debouncedAmount = useDebounce(amount, 500);
+  const debouncedPrice = useDebounce(amount, 500);
 
   const { data: currentWallet } = useGetCurrentWallet();
   const { address, isConnected } = useAccount();
@@ -50,7 +50,7 @@ export default function BuyOv({ next }: BuyOvProps) {
   const [{ data: quote }, { data: usdtTick }, { data: balance }] = useQueries({
     queries: [
       {
-        queryKey: ['quote', debouncedAmount, address],
+        queryKey: ['quote', debouncedPrice, address],
         queryFn: () =>
           fetchGetQuote({
             chainId: bsc.id,
@@ -58,12 +58,12 @@ export default function BuyOv({ next }: BuyOvProps) {
             recipient: address as `0x${string}`,
             amountIn: safeCalc
               .multiply(
-                Math.ceil(debouncedAmount / 10000) * 10000,
+                Math.ceil(debouncedPrice / 10000) * 10000,
                 10 ** KRWO.decimal,
               )
               .toString(),
           }),
-        enabled: !!address && debouncedAmount >= 10000,
+        enabled: !!address && debouncedPrice >= 10000,
       },
       {
         queryKey: ['getUsdtTick', bsc.id],
@@ -98,6 +98,21 @@ export default function BuyOv({ next }: BuyOvProps) {
       10 ** USDT.decimal[bsc.id],
     )
     .toString();
+
+  const totalUSDTPrice = quote?.amountOut
+    ? applyDecimals(quote.amountOut, USDT.decimal[bsc.id])
+    : 0;
+
+  const estimateUSDTPrice = () => {
+    if (!totalUSDTPrice || !quote)
+      return insertComma(formatNumber(usdtPrice, 0));
+    return insertComma(
+      formatNumber(
+        safeCalc.divide(debouncedPrice, totalUSDTPrice).toString(),
+        0,
+      ),
+    );
+  };
 
   useEffect(() => {
     if (
@@ -158,12 +173,9 @@ export default function BuyOv({ next }: BuyOvProps) {
               </Chip>
             </div>
             <p className="p1 font-medium">
-              {quote?.amountOut
+              {totalUSDTPrice
                 ? t('usdtAmount', {
-                    amount: applyDecimals(
-                      quote.amountOut,
-                      USDT.decimal[bsc.id],
-                    ),
+                    amount: totalUSDTPrice,
                   })
                 : 0}
             </p>
@@ -179,7 +191,7 @@ export default function BuyOv({ next }: BuyOvProps) {
             <div className="flex flex-row gap-1 items-center">
               <USDT.icon className="w-4 h-4" />
               <p className="c1 text-black-8">
-                1 USDT = ₩ {insertComma(formatNumber(usdtPrice, 0))}
+                1 USDT = ₩ {estimateUSDTPrice()}
               </p>
             </div>
           </section>
@@ -200,7 +212,7 @@ export default function BuyOv({ next }: BuyOvProps) {
       </section>
       <TransferButtons
         next={next}
-        amount={ceilAmount(debouncedAmount)}
+        krwPrice={ceilAmount(debouncedPrice)}
         OVBalance={balance?.balance.ov}
         usdtPrice={usdtPrice}
       />

@@ -50,7 +50,7 @@ export default async function HowToUse() {
         {howToUse.map((item, index1) => (
           <div key={item.title} className="flex flex-col gap-2">
             <h5 className="font-medium text-black-8">{`${index1 + 1}. ${item.title}`}</h5>
-            <section className="flex justify-center items-center bg-black-3">
+            <section className="flex justify-center items-center bg-black-3 rounded-lg">
               <Image
                 src={`${IMAGE_URL}/${locale}/transfer/usage/${item.image}.webp`}
                 alt={item.image}

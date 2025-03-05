@@ -20,14 +20,14 @@ import TransferMoveToOpenvoucherPopup from './TransferMoveToOpenvoucherPopup';
 
 interface TransferButtonsProps {
   next: PaginationPushType;
-  amount: number;
+  krwPrice: number;
   OVBalance: string | undefined;
   usdtPrice: string;
 }
 
 export default function TransferButtons({
   next,
-  amount,
+  krwPrice,
   OVBalance,
   usdtPrice,
 }: TransferButtonsProps) {
@@ -49,19 +49,19 @@ export default function TransferButtons({
       if (message.state === 'PAYMENT_SUCCESS') {
         closePopup(TransferSignSuccessPopup);
         next(SwapAndSend, {
-          OVAmount: (amount / 10000).toString(),
+          OVAmount: (krwPrice / 10000).toString(),
           usdtPrice,
         });
       }
     },
-    [closePopup, next, amount, usdtPrice],
+    [closePopup, next, krwPrice, usdtPrice],
   );
 
   const handleOpenOpenVoucher = (signature: string, signMessage: string) => {
     if (!address || !chainId || !connector || !currentWallet) return;
 
     const searchParams = new URLSearchParams({
-      amount: (amount / 10000).toString(),
+      amount: (krwPrice / 10000).toString(),
       method: 'purchase',
       walletAddress: address,
       redirectOnCancel: window.location.href,
@@ -147,7 +147,7 @@ export default function TransferButtons({
         color="primary"
         size="xl"
         className="whitespace-nowrap"
-        disabled={amount / 10000 <= 0 || !isConnected || !currentWallet}
+        disabled={krwPrice / 10000 <= 0 || !isConnected || !currentWallet}
         onClick={handleBuyOvButton}
       >
         {t('buyOvButton')}

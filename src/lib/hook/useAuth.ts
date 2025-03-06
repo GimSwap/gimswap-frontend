@@ -14,6 +14,7 @@ import { defaultChain } from '../constants/token';
 import { usePopupStore } from '../stores/popupStore/PopupStoreProvider';
 import QrCodePopup from '@/src/components/popups/QrCodePopup';
 import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
+import { setMixpanelUser } from '../utils/mixpanel/setMixpanelUser';
 
 const shouldProceedInAppBrowser = (wallet: WalletType) =>
   !wallet.installed &&
@@ -92,10 +93,16 @@ export const useAuth = () => {
 
         if (isConnected) await disconnectAsync();
 
-        await connectAsync({
+        const { accounts, chainId: connectedChainId } = await connectAsync({
           connector: findConnector!,
           chainId,
         });
+
+        setMixpanelUser({
+          walletAddress: accounts[0],
+          chainId: connectedChainId,
+        });
+
         closePopup(QrCodePopup);
         reload && window.location.reload();
       } catch (error) {

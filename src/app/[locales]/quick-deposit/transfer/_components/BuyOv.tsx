@@ -24,6 +24,7 @@ import { useRouter } from '@/src/i18n/routing';
 import { fetchGetBalance } from '@/src/lib/utils/api/fetchGetBalance';
 
 const MAX_AMOUNT = 1000000000000;
+const FEE = 500;
 
 interface BuyOvProps {
   next: PaginationPushType;
@@ -108,7 +109,7 @@ export default function BuyOv({ next }: BuyOvProps) {
       return insertComma(formatNumber(usdtPrice, 0));
     return insertComma(
       formatNumber(
-        safeCalc.divide(debouncedPrice, totalUSDTPrice).toString(),
+        safeCalc.divide(debouncedPrice - FEE, totalUSDTPrice).toString(),
         0,
       ),
     );

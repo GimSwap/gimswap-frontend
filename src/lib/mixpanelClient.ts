@@ -8,5 +8,6 @@ export const initMixpanel = () => {
     return;
   }
 
+  //@ts-ignore
   mixpanel.init(MIXPANEL_TOKEN, { autocapture: true });
-}
+};

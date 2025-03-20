@@ -8,11 +8,11 @@
     "intro": {
       "step-1": {
         "title": "Purchase OV via bank transfer",
-        "description": "Seemless KRW on-ramping"
+        "description": "Seamless KRW on-ramping"
       },
       "step-2": {
         "title": "Exchange OV for USDT",
-        "description": "Simplied steps with blockchain technology"
+        "description": "Simplified steps with blockchain technology"
       },
       "step-3": {
         "title": "Send USDT to your Binance wallet",
@@ -207,6 +207,9 @@
         "fold": "Close event details",
         "open": "View Event Details"
       }
+    },
+    "feeEvent": {
+      "title": "Free Deposit <b>Fee Event</b> for 1 Month"
     }
   }
 }

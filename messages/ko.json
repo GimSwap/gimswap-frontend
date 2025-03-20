@@ -196,6 +196,7 @@
     "event": {
       "title": "간편입금 (재난)지원금 이벤트",
       "subtitle": "간편입금을 통해 입금 시 4 USDT 증정!",
+
       "content": {
         "doNotDuplicate": "중복참여 불가",
         "content": "내용",
@@ -208,6 +209,9 @@
         "fold": "이벤트 내용 접기",
         "open": "이벤트 자세히 보기"
       }
+    },
+    "feeEvent": {
+      "title": "한달간 간편입금 <b>수수료 무료 이벤트중</b>"
     }
   }
 }

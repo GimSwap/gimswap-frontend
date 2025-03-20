@@ -21,15 +21,25 @@ export default async function Intro() {
   ];
 
   return (
-    <section className="pt-8 px-6">
+    <section className="px-6 pt-8">
+      <div className="mb-6 flex flex-row items-center justify-start gap-2 rounded-[50px] border border-purple-500 px-4 py-3">
+        <span className="c1 rounded-[50px] bg-purple-50 px-[6px] py-[3px] text-purple-500">
+          Event
+        </span>
+        <p className="p1 text-black-11">
+          {t.rich('feeEvent.title', {
+            b: (chunks) => <b>{chunks}</b>,
+          })}
+        </p>
+      </div>
       <h5 className="font-medium text-purple-500">{t('title')}</h5>
-      <h1 className="font-bold pt-2">
+      <h1 className="pt-2 font-bold">
         {t.rich('subTitle', {
           br: () => <br />,
         })}
       </h1>
       <ConvertIcon />
-      <section className="rounded-lg bg-black-3 p-4 flex flex-col gap-[2px] pt-6">
+      <section className="flex flex-col gap-[2px] rounded-lg bg-black-3 p-4 pt-6">
         {contents.map((content, index) => (
           <Step
             key={content.title}

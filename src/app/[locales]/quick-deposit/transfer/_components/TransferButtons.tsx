@@ -17,6 +17,7 @@ import { checkIsMobileDevice } from '@/src/lib/utils/checkIsMobileDevice';
 import useSign from '@/src/lib/hook/useSign';
 import { useGetCurrentWallet } from '@/src/lib/hook/useGetCurrentWallet';
 import TransferMoveToOpenvoucherPopup from './TransferMoveToOpenvoucherPopup';
+import { checkIsMobileBrowser } from '@/src/lib/utils/checkIsMobileBrowser';
 
 interface TransferButtonsProps {
   next: PaginationPushType;
@@ -74,12 +75,16 @@ export default function TransferButtons({
 
     openPopup(TransferMoveToOpenvoucherPopup);
 
-    const popup = window.open(
-      `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/buy?${searchParams.toString()}`,
-      '_blank',
-      'popup=true,width=380,height=780',
-    );
-    if (!popup) alert(t('disabledPopupBlocker'));
+    if (checkIsMobileBrowser('metamask')) {
+      window.location.href = `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/buy?${searchParams.toString()}`;
+    } else {
+      const popup = window.open(
+        `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/buy?${searchParams.toString()}`,
+        '_blank',
+        'popup=true,width=380,height=780',
+      );
+      if (!popup) alert(t('disabledPopupBlocker'));
+    }
   };
 
   const handleBuyOvButton = throttle(async () => {

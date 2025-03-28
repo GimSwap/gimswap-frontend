@@ -10,6 +10,7 @@ import TransferSignPopup from '../../../quick-deposit/transfer/_components/Trans
 import { useGetCurrentWallet } from '@/src/lib/hook/useGetCurrentWallet';
 import { checkIsMobileDevice } from '@/src/lib/utils/checkIsMobileDevice';
 import TransferSignSuccessPopup from '../../../quick-deposit/transfer/_components/TransferSignSuccessPopup';
+import { checkIsMobileBrowser } from '@/src/lib/utils/checkIsMobileBrowser';
 
 interface BuyButtonProps {
   amount: string;
@@ -46,12 +47,16 @@ export default function BuyButton({ amount }: BuyButtonProps) {
       walletId: currentWallet.connectorId[0],
     });
     closePopup(TransferSignPopup);
-    const popup = window.open(
-      `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/${methodUrl[method]}?${searchParams.toString()}`,
-      '_blank',
-      'popup=true,width=380,height=780',
-    );
-    if (!popup) alert('Please disable the popup blocker.');
+    if (checkIsMobileBrowser('metamask')) {
+      window.location.href = `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/${methodUrl[method]}?${searchParams.toString()}`;
+    } else {
+      const popup = window.open(
+        `${process.env.NEXT_PUBLIC_OPEN_VOUCHER_URL}/payment/${methodUrl[method]}?${searchParams.toString()}`,
+        '_blank',
+        'popup=true,width=380,height=780',
+      );
+      if (!popup) alert('Please disable the popup blocker.');
+    }
   };
 
   const handleBuy = async () => {

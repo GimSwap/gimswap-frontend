@@ -149,7 +149,7 @@ export default function Token({
       </div>
       <div className="flex flex-row justify-between">
         <p className={`c1 ${!isWritable(token) && 'text-black-6'}`}>
-          ₩ {insertComma(amount)}
+          ₩ {insertComma(getReceiveAmount())}
         </p>
         <div className="flex flex-row items-center">
           <BalanceIcon className="w-4 h-4 mr-[2px]" />

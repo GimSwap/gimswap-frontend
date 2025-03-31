@@ -126,7 +126,7 @@ export const BSC = {
   decimal: 18,
   color: '#141414',
   supportFarming: false,
-  fee: 0.01,
+  fee: 0.05,
   precision: 5,
 } as const;
 

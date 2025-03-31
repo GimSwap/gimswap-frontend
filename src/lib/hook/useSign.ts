@@ -3,17 +3,16 @@ import { custom, useAccount, useSignMessage } from 'wagmi';
 import { checkIsMobileBrowser } from '../utils/checkIsMobileBrowser';
 import { fetchSendLog } from '../utils/api/fetchSendLog';
 import { EthereumProvider } from '@walletconnect/ethereum-provider';
-import { WalletType } from '../constants/wallets';
-import { checkIsMobileDevice } from '../utils/checkIsMobileDevice';
+import { useHandleWalletConnectDeepLink } from './useHandleWalletConnectDeepLink';
 
 export default function useSign() {
   const { connector } = useAccount();
   const { signMessageAsync } = useSignMessage();
+  const { handleWalletConnectDeepLink } = useHandleWalletConnectDeepLink();
 
   const sign = async (
     account: `0x${string}`,
     message: string,
-    currentWallet?: WalletType,
   ): Promise<string | undefined> => {
     if (!connector) return;
     const provider = (await connector.getProvider()) as InstanceType<
@@ -36,14 +35,7 @@ export default function useSign() {
           });
         }
       } else {
-        if (
-          connector.id === 'walletConnect' &&
-          currentWallet?.deepLink &&
-          checkIsMobileDevice()
-        ) {
-          window.location.href = currentWallet.deepLink;
-        }
-
+        handleWalletConnectDeepLink();
         return signMessageAsync({ message });
       }
     } catch (error) {

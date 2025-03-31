@@ -1,24 +1,14 @@
 import { SendTransactionParameters } from '@wagmi/core';
-import { useAccount } from 'wagmi';
-import { useGetCurrentWallet } from './useGetCurrentWallet';
-import { checkIsMobileDevice } from '../utils/checkIsMobileDevice';
 import { useSendTransaction as useSendTransactionWagmi } from 'wagmi';
+import { useHandleWalletConnectDeepLink } from './useHandleWalletConnectDeepLink';
 
 export const useSendTransaction = () => {
   const { sendTransactionAsync: _sendTransactionAsync, ...rest } =
     useSendTransactionWagmi();
-  const { connector } = useAccount();
-  const { data: currentWallet } = useGetCurrentWallet();
+  const { handleWalletConnectDeepLink } = useHandleWalletConnectDeepLink();
 
   const sendTransactionAsync = async (params: SendTransactionParameters) => {
-    if (
-      connector?.id === 'walletConnect' &&
-      currentWallet?.deepLink &&
-      checkIsMobileDevice()
-    ) {
-      window.location.href = currentWallet.deepLink;
-    }
-
+    handleWalletConnectDeepLink();
     return await _sendTransactionAsync({ ...params });
   };
 

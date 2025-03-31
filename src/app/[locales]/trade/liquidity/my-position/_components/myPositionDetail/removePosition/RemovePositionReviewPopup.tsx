@@ -15,13 +15,11 @@ import AddLiquidityPendingPopup from '../../../../_components/addLiquidity/AddLi
 import TransactionSuccessPopup from '../../../../_components/TransactionSuccessPopup';
 import { useLiquidityStore } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
 import AddInfo from '../../../../_components/addLiquidity/AddInfo';
-import { waitForTransactionReceipt } from '@wagmi/core';
-import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import TransactionFailPopup from '@/src/components/popups/TransactionFailPopup';
-import { useQueryClient } from '@tanstack/react-query';
-import { ChainIdType } from '@/src/lib/types/ChainIdType';
+import { useQuery } from '@tanstack/react-query';
 import MyPositionDetailPopup from '../../MyPositionDetailPopup';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { fetchGetTransferReceipt } from '@/src/lib/utils/api/fetchGetReceipt';
 
 interface RemovePositionReviewPopupProps {
   open: boolean;
@@ -50,9 +48,11 @@ export default function RemovePositionReviewPopup({
   totalAmount,
 }: RemovePositionReviewPopupProps) {
   const { address, chainId } = useAccount();
-  const queryClient = useQueryClient();
   const { refetchPositions } = useLiquidityStore((state) => state);
   const { sendTransactionAsync } = useSendTransaction();
+  const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
+  const [shouldPolling, setShouldPolling] = useState(false);
+
   const { openPopup, closePopup, closeAllPopup } = usePopupStore(
     (state) => state,
   );
@@ -78,29 +78,46 @@ export default function RemovePositionReviewPopup({
     }),
   );
 
+  const { data: state } = useQuery({
+    queryKey: ['getTxReceipt', address],
+    queryFn: () =>
+      fetchGetTransferReceipt({ chainId: chainId!, txHash: txHash! }),
+    enabled: !!shouldPolling && !!chainId && !!address,
+    refetchInterval: 1000,
+    select: (data) => data.status,
+  });
+
   const handleRemoveLiquidity = async () => {
     if (!removeLiquidityInfo) return;
+    openPopup(AddLiquidityPendingPopup, {
+      type: 'remove',
+      tokens: removingTokens,
+      totalLiquidity: totalRemovingAmount,
+      totalLiquidityWithOriginal: remainingAmount,
+      feeAndHarvestTokens,
+    });
     try {
-      openPopup(AddLiquidityPendingPopup, {
-        type: 'remove',
-        tokens: removingTokens,
-        totalLiquidity: totalRemovingAmount,
-        totalLiquidityWithOriginal: remainingAmount,
-        feeAndHarvestTokens,
-      });
       const tx = await sendTransactionAsync({
         to: removeLiquidityInfo.contractAddress,
         data: removeLiquidityInfo.data,
       });
-      const { status } = await waitForTransactionReceipt(wagmiConfig, {
-        chainId: chainId! as ChainIdType,
-        hash: tx,
+      setTxHash(tx);
+      setShouldPolling(true);
+    } catch (error) {
+      console.error(error);
+      openPopup(TransactionFailPopup, {
+        onClose: () => closeAllPopup(),
       });
-      if (status === 'success') {
+    }
+  };
+
+  useEffect(() => {
+    switch (state) {
+      case 'SUCCESS':
         closePopup(AddLiquidityPendingPopup);
         refetchPositions();
         openPopup(TransactionSuccessPopup, {
-          txHash: tx,
+          txHash: txHash!,
           title: 'Remove success',
           type: 'remove',
           totalLiquidity: totalRemovingAmount,
@@ -108,15 +125,22 @@ export default function RemovePositionReviewPopup({
           resultLiquidity: remainingAmount,
           harvestTokens: feeAndHarvestTokens,
         });
-        queryClient.invalidateQueries({ queryKey: ['getBalance'] });
-      } else throw new Error('Remove failed');
-    } catch (error) {
-      fetchSendLog({ name: 'removeLiquidity', error });
-      openPopup(TransactionFailPopup, {
-        onClose: () => closeAllPopup(),
-      });
+        setShouldPolling(false);
+        break;
+      case 'FAILED':
+        fetchSendLog({
+          name: 'removeLiquidity',
+          error: new Error('Remove failed'),
+        });
+        openPopup(TransactionFailPopup, {
+          onClose: () => closeAllPopup(),
+        });
+        setShouldPolling(false);
+        break;
+      default:
+        break;
     }
-  };
+  }, [chainId, address, state]);
 
   useEffect(() => {
     if (!chainId || !address) closePopup(MyPositionDetailPopup);

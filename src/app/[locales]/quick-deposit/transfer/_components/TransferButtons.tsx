@@ -95,7 +95,7 @@ export default function TransferButtons({
       if (!signMessage) return;
 
       openPopup(TransferSignPopup);
-      const signature = await sign(address, signMessage, currentWallet);
+      const signature = await sign(address, signMessage);
       closePopup(TransferSignPopup);
       if (!signature) return;
 

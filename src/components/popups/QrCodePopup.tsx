@@ -4,10 +4,15 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import loadingLottie from '@/public/lottie/loading.json';
-import Lottie from 'lottie-react';
 import { WALLET_ICONS_URL } from '@/src/lib/constants/walletIcons';
 import AlertToast from '@/src/components/toast/Toast';
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
+
+const Lottie = dynamic(() => import('lottie-react'), {
+  ssr: false,
+  loading: () => <div className="h-[196px] w-[120px] py-[66px]" />,
+});
 
 interface QrCodePopupProps {
   wallet: (typeof WALLETS)[number];

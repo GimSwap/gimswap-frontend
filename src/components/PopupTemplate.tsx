@@ -1,11 +1,13 @@
 import CloseIcon from '@/public/svg/close.svg';
 import { useEffect } from 'react';
-import Lottie from 'lottie-react';
 import loadingLottie from '@/public/lottie/loading.json';
 import successLottie from '@/public/lottie/success.json';
 import failLottie from '@/public/lottie/fail.json';
 import alertLottie from '@/public/lottie/alert.json';
 import { usePopupStore } from '../lib/stores/popupStore/PopupStoreProvider';
+import dynamic from 'next/dynamic';
+
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 const iconType = {
   loading: <Lottie animationData={loadingLottie} loop className="h-16 w-16" />,

@@ -33,6 +33,11 @@ export const CONTRACT_ADDRESS_MAP = {
     [bsc.id]:
       process.env.NEXT_PUBLIC_GIMSWAP_SWIFT_TRANSFER_CONTRACT_ADDRESS_BSC!,
   },
+  GIMSWAP_SWAP_AGENT: {
+    [bsc.id]: process.env.NEXT_PUBLIC_GIMSWAP_SWAP_AGENT_CONTRACT_ADDRESS_BSC!,
+    [kaia.id]:
+      process.env.NEXT_PUBLIC_GIMSWAP_SWAP_AGENT_CONTRACT_ADDRESS_KAIA!,
+  },
 };
 
 export const OPEN_VOUCHER = createToken({

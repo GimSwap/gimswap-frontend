@@ -29,7 +29,14 @@ export default function LeftSidebar({ show, setShow }: LeftSidebarProps) {
         </div>
         <section className="flex flex-col">
           {MENUS.map(({ externalLink, title, url }) => {
-            const isActive = url === pathname;
+            let isActive = false;
+
+            if (url !== '/') {
+              isActive = pathname.includes(url);
+            } else {
+              isActive = pathname === url;
+            }
+
             return (
               <Link
                 href={url}

@@ -38,7 +38,7 @@ export default function BuyButton({ amount }: BuyButtonProps) {
       amount,
       method,
       walletAddress: address,
-      redirectOnSuccess: `${window.location.origin}/trade/swap`,
+      redirectOnSuccess: `${window.location.origin}/trade/get-krwo`,
       redirectOnError: window.location.href,
       redirectOnCancel: window.location.href,
       signature,
@@ -60,13 +60,13 @@ export default function BuyButton({ amount }: BuyButtonProps) {
   };
 
   const handleBuy = async () => {
-    if (!isConnected) return openPopup(SelectWalletPopup);
+    if (!isConnected || !address) return openPopup(SelectWalletPopup);
     openPopup(TransferSignPopup);
     const signMessage = makeSignMessage(address);
     if (!address || !signMessage || !chainId || !connector || !currentWallet)
       return;
 
-    const signature = await sign(address, signMessage, currentWallet);
+    const signature = await sign(address, signMessage);
     closePopup(TransferSignPopup);
     if (!signature) return;
 
@@ -118,11 +118,11 @@ export default function BuyButton({ amount }: BuyButtonProps) {
   };
 
   const handleHistoryButtonClick = async () => {
-    if (!isConnected) return;
+    if (!isConnected || !address) return;
     const signMessage = makeSignMessage(address);
     if (!address || !signMessage || !currentWallet) return;
     openPopup(TransferSignPopup);
-    const signature = await sign(address, signMessage, currentWallet);
+    const signature = await sign(address, signMessage);
     if (!signature) return;
     handleOpenVoucherPayment(signature, signMessage, 'history');
   };

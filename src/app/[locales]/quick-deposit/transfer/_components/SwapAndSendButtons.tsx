@@ -75,10 +75,14 @@ export default function SwapAndSendButtons({
 
       const signature = await signTypedData({
         address,
-        decimalAppliedOvAmount,
+        decimalAppliedAmount: decimalAppliedOvAmount,
         validAfter,
         validBefore,
         nonce: `0x${nonce}`,
+        to: CONTRACT_ADDRESS_MAP.GIMSWAP_SWIFT_TRANSFER[
+          bsc.id
+        ] as `0x${string}`,
+        chainId: bsc.id,
       });
 
       if (!signature) return;

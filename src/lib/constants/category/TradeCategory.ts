@@ -1,13 +1,13 @@
 export const TRADE_CATEGORIES = [
   {
+    title: 'Get KRWO',
+    key: 'get-krwo',
+    url: '/trade/get-krwo',
+  },
+  {
     title: 'Swap',
     key: 'swap',
     url: '/trade/swap',
-  },
-  {
-    title: 'Buy',
-    key: 'buy',
-    url: '/trade/buy',
   },
   {
     title: 'Liquidity',

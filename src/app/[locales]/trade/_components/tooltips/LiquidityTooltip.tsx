@@ -20,7 +20,7 @@ export default function LiquidityTooltip() {
   }, [selectedMethod, openTooltip, closeTooltip]);
   return (
     <Tooltip
-      className="bg-[rgba(0,0,0,0.5)] rounded-lg -translate-y-[120%] after:left-[50%] left-[10%] "
+      className="bg-[rgba(0,0,0,0.5)] rounded-lg -translate-y-[120%] -translate-x-[18%] after:left-[33%]"
       tailPosition="bottom"
     >
       <Link

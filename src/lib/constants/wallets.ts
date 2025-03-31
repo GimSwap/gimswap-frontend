@@ -83,7 +83,7 @@ export const WALLETS: WalletType[] = [
     deepLink: 'https://metamask.app.link/dapp/',
     unsupportedChainIds: isInBinance() ? [bsc.id] : [],
     supportAddToken: true,
-    supportInAppBrowser: true,
+    supportInAppBrowser: false,
   },
   {
     id: 'Kaia',

@@ -1,5 +1,4 @@
 import DGSwapIcon from '@/src/assets/icons/dg-swap.png';
-import Lottie from 'lottie-react';
 import { broad, downTrend, narrow, upTrend } from '@/public/lottie/position';
 import Image, { StaticImageData } from 'next/image';
 import Chip from '@/src/components/Chip';
@@ -9,6 +8,9 @@ import { usdtTickToKrw } from '@/src/lib/utils/calcTick';
 import { useAccount } from 'wagmi';
 import { insertComma } from '@/src/lib/utils/insertComma';
 import { defaultChain } from '@/src/lib/constants/token';
+import dynamic from 'next/dynamic';
+
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 const positionMap: Record<
   PositionType['label'],

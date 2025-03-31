@@ -4,9 +4,6 @@ import { getLocale, getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import PopupButton from './PopupButton';
 
-const IMAGE_URL =
-  'https://objectstorage.kr-central-2.kakaocloud.com/v1/09a3dddee74c48fc8fffcb1d0240b227/gimswap-dev';
-
 export default async function HowToUse() {
   const t = await getTranslations('quickDeposit');
   const locale = await getLocale();
@@ -52,7 +49,7 @@ export default async function HowToUse() {
             <h5 className="font-medium text-black-8">{`${index1 + 1}. ${item.title}`}</h5>
             <section className="flex justify-center items-center bg-black-3 rounded-lg">
               <Image
-                src={`${IMAGE_URL}/${locale}/transfer/usage/${item.image}.webp`}
+                src={`${process.env.NEXT_PUBLIC_KAKAO_BUCKECT_URL}/${locale}/transfer/usage/${item.image}.webp`}
                 alt={item.image}
                 width={190}
                 height={162}

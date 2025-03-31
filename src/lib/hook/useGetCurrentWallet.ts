@@ -15,13 +15,13 @@ export const useGetCurrentWallet = () => {
     const fetchProvider = async () => {
       if (!connector || connector.name !== 'WalletConnect') {
         setProvider(null);
-        setIsProviderLoaded(true)
+        setIsProviderLoaded(true);
         return;
       }
 
       if (typeof connector.getProvider !== 'function') {
         setProvider(null);
-        setIsProviderLoaded(true)
+        setIsProviderLoaded(true);
         return;
       }
 
@@ -33,7 +33,7 @@ export const useGetCurrentWallet = () => {
       } catch (error) {
         setProvider(null);
       } finally {
-        setIsProviderLoaded(true)
+        setIsProviderLoaded(true);
       }
     };
 

@@ -29,15 +29,15 @@ const WalletConnectButton = memo(({ size }: WalletConnectButtonProps) => {
     switch (size) {
       case 'small':
         return (
-          <div className="flex flex-row gap-1 items-center">
+          <div className="flex flex-row items-center gap-1">
             {isConnected && (
               <ChainIcon
-                className={`w-4 h-4 rounded-full ${
+                className={`h-4 w-4 rounded-full ${
                   checkIsAvailableChain(chainId) ? '' : 'bg-[#FDEDED]'
                 }`}
               />
             )}
-            {WalletIcon && <WalletIcon className="w-4 h-[16px] rounded-full" />}
+            {WalletIcon && <WalletIcon className="h-[16px] w-4 rounded-full" />}
             <p className="c1 font-bold text-black-1">
               {address ? shortenAddress(address) : 'Connect'}
             </p>
@@ -46,15 +46,15 @@ const WalletConnectButton = memo(({ size }: WalletConnectButtonProps) => {
 
       case 'large':
         return (
-          <div className="flex flex-row gap-1 items-center">
+          <div className="flex flex-row items-center gap-1">
             {isConnected && (
               <ChainIcon
-                className={`w-6 h-[24px] rounded-full ${
+                className={`h-[24px] w-6 rounded-full ${
                   checkIsAvailableChain(chainId) ? '' : 'bg-[#FDEDED]'
                 }`}
               />
             )}
-            {WalletIcon && <WalletIcon className="w-6 h-6 rounded-full" />}
+            {WalletIcon && <WalletIcon className="h-6 w-6 rounded-full" />}
             <h5 className="text-h5 font-bold text-black-1">
               {address ? shortenAddress(address) : 'Connect Wallet'}
             </h5>
@@ -72,6 +72,7 @@ const WalletConnectButton = memo(({ size }: WalletConnectButtonProps) => {
       isInBinance() &&
       !isConnected &&
       typeof window !== 'undefined' &&
+      window.ethereum &&
       (disconnectedConnector === 'BinanceW3WSDK' ||
         disconnectedConnector === 'wallet.binance.com')
     ) {
@@ -94,8 +95,8 @@ const WalletConnectButton = memo(({ size }: WalletConnectButtonProps) => {
 
   return (
     <button
-      className={`bg-purple-500 font-medium rounded-lg flex items-center justify-center ${
-        size === 'small' ? 'c1 py-2 px-3 gap-1' : 'py-3 px-4 gap-2'
+      className={`flex items-center justify-center rounded-lg bg-purple-500 font-medium ${
+        size === 'small' ? 'c1 gap-1 px-3 py-2' : 'gap-2 px-4 py-3'
       } w-full`}
       onClick={() =>
         openPopup(isConnected ? WalletInfoPopup : SelectWalletPopup, {

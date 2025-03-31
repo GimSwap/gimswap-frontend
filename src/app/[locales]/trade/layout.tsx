@@ -1,7 +1,7 @@
 import BackgroundGlasses from './_components/BackgroundGlasses';
 import BalanceCard from './_components/balanceCard/BalanceCard';
 import InnerPopups from './_components/InnerPopups';
-import NavbarColorChanger from './swap/_components/NavbarColorChanger';
+import NavbarColorChanger from '@/src/app/[locales]/trade/get-krwo/_components/NavbarColorChanger';
 
 export default function TradeLayout({
   children,

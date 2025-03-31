@@ -12,11 +12,11 @@ export default function TradeCategory() {
   return (
     <section className="flex gap-3 relative">
       <BuyTooltip />
-      <LiquidityTooltip />
       {TRADE_CATEGORIES.map(({ title, key, url }) => {
         const isSelected = selectedMethod === key;
         return (
           <div className="flex flex-row gap-[2px]" key={key}>
+            {(title == 'Liquidity') && <LiquidityTooltip />}
             <Link
               href={url}
               className={`flex flex-col pb-2 ${

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "es2020",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,7 +22,8 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
     "next-env.d.ts",
@@ -30,8 +32,7 @@
     "next.config.ts",
     "messages/index.ts",
     ".next/types/**/*.ts",
-    "src/lib/stores/pinStore/PinStoreProvider.tsㅌ"
+    "src/lib/stores/pinStore/PinStoreProvider.ts"
   ],
-  "exclude": ["node_modules"],
-  "target": "es2020"
+  "exclude": ["node_modules"]
 }

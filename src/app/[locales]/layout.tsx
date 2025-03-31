@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import Topbar from '../../components/navbar/Topbar';
+import Navbar from '@/src/components/navbar/Topbar';
 import Footer from '../../components/navbar/Footer/Footer';
 import { TopbarStoreProvider } from '@/src/lib/stores/topbarStore/TopbarStoreProvider';
 import { NextIntlClientProvider } from 'next-intl';
@@ -110,7 +110,7 @@ export default async function RootLayout({
                 <PopupStoreProvider>
                   <TopbarStoreProvider>
                     <LiquidityStoreProvider>
-                      <Topbar />
+                      <Navbar />
                       {children}
                       <Footer />
                       <PopupList />

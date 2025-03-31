@@ -5,8 +5,7 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const makeSignMessage = (walletAddress: `0x${string}` | undefined) => {
-  if (!walletAddress) return null;
+export const makeSignMessage = (walletAddress: `0x${string}`) => {
   if (!process.env.NEXT_PUBLIC_OV_PAYMENT_SIGN_MESSAGE)
     throw new Error('OV_PAYMENT_SIGN_MESSAGE is not defined');
   return process.env

@@ -56,6 +56,10 @@ async function handleFetch(
     return camelCase(await response.json(), 4);
   } catch (error) {
     console.error('fetch error:', error);
+    fetchSendLog({
+      name: 'fetchClient',
+      error: error,
+    });
 
     throw error;
   }

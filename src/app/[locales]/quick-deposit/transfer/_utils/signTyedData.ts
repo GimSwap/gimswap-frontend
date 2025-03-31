@@ -1,24 +1,28 @@
-import { CONTRACT_ADDRESS_MAP, OPEN_VOUCHER } from '@/src/lib/constants/token';
+import { OPEN_VOUCHER } from '@/src/lib/constants/token';
 import { WALLETS } from '@/src/lib/constants/wallets';
+import { ChainIdType } from '@/src/lib/types/ChainIdType';
 import { checkIsMobileDevice } from '@/src/lib/utils/checkIsMobileDevice';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import { signTypedData as wagmiSignTypedData } from '@wagmi/core';
-import { bsc } from 'wagmi/chains';
 
 interface SignTypedDataProps {
   address: `0x${string}`;
-  decimalAppliedOvAmount: string;
+  decimalAppliedAmount: string;
   validAfter: number;
   validBefore: number;
   nonce: `0x${string}`;
+  to: `0x${string}`;
+  chainId: ChainIdType;
 }
 
 export const signTypedData = async ({
   address,
-  decimalAppliedOvAmount,
+  decimalAppliedAmount,
   validAfter,
   validBefore,
   nonce,
+  to,
+  chainId,
 }: SignTypedDataProps) => {
   const binanceWallet = WALLETS.find((wallet) =>
     wallet.connectorId.includes('wallet.binance.com'),
@@ -32,8 +36,8 @@ export const signTypedData = async ({
     domain: {
       name: 'OpenVoucher',
       version: '1',
-      chainId: bsc.id,
-      verifyingContract: OPEN_VOUCHER.contractAddress[bsc.id] as `0x${string}`,
+      chainId,
+      verifyingContract: OPEN_VOUCHER.contractAddress[chainId] as `0x${string}`,
     },
     primaryType: 'ReceiveWithAuthorization',
     types: {
@@ -48,8 +52,8 @@ export const signTypedData = async ({
     },
     message: {
       from: address as `0x${string}`,
-      to: CONTRACT_ADDRESS_MAP.GIMSWAP_SWIFT_TRANSFER[bsc.id] as `0x${string}`,
-      value: BigInt(decimalAppliedOvAmount),
+      to,
+      value: BigInt(decimalAppliedAmount),
       validAfter: BigInt(validAfter),
       validBefore: BigInt(validBefore),
       nonce,

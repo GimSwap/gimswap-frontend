@@ -15,7 +15,7 @@ export default function BuyTooltip() {
   const { address, chainId } = useAccount();
 
   const { data } = useQuery({
-    queryKey: ['getBalance'],
+    queryKey: ['getBalance', address, chainId],
     queryFn: () =>
       fetchGetBalance({
         walletAddress: address!,
@@ -26,7 +26,7 @@ export default function BuyTooltip() {
   });
 
   const { openTooltip, Tooltip, closeTooltip } = useToolTip<typeof data>({
-    closeOnClick: pathname === '/trade/buy',
+    closeOnClick: pathname === '/trade/get-krwo',
     dependency: data,
   });
 
@@ -43,7 +43,7 @@ export default function BuyTooltip() {
 
   return (
     <Tooltip
-      className="bg-[rgba(0,0,0,0.5)] rounded-lg -translate-y-[120%] after:left-[40%]"
+      className="bg-[rgba(0,0,0,0.5)] rounded-lg -translate-y-[120%] -translate-x-[5%] after:left-[30%]"
       tailPosition="bottom"
     >
       <div className="px-2 py-[6px] flex flex-row gap-1">

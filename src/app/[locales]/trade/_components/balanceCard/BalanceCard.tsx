@@ -26,7 +26,7 @@ export default function BalanceCard() {
     useQueries({
       queries: [
         {
-          queryKey: ['getBalance', chainId, address],
+          queryKey: ['getBalance', address, chainId],
           queryFn: () =>
             fetchGetBalance({
               walletAddress: address!,
@@ -98,11 +98,7 @@ export default function BalanceCard() {
 
   const handleClickAddButton = () => {
     if (!chainId || !checkIsAvailableChain(chainId) || !address) return;
-    if (!balance || balance.ov === '0') {
-      router.push('/trade/buy');
-      return;
-    }
-    router.push('/trade/swap');
+    router.push('/trade/get-krwo');
   };
 
   return (
@@ -126,7 +122,7 @@ export default function BalanceCard() {
           className="p-[5px] bg-black-12 rounded-full cursor-pointer"
           onClick={handleClickAddButton}
         >
-          <PlusIcon className="w-[10px] h-[10px] stroke-white" />
+          <PlusIcon className="w-[10px] h-[10px] stroke-black-1" />
         </div>
       </div>
       {checkIsAvailableChain(chainId) ? (

@@ -117,7 +117,8 @@ input:disabled {
 
 @media (min-width: 1024px) {
   .bg-glass {
-    background-image: url('../../assets/image/glass.webp'),
+    background-image:
+      url('../../assets/image/glass.webp'),
       url('../../assets/image/glass-flipped.webp');
     background-size:
       600px auto,
@@ -352,4 +353,38 @@ input:disabled {
     transform: translate3d(-50%, 0, 0);
     opacity: 1;
   }
+}
+
+@keyframes pulseGradient {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-gradient {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(146, 108, 255, 0.7) 30%,
+    rgba(146, 108, 255, 0) 100%
+  );
+
+  display: inline-block;
+  animation: pulseGradient 1s infinite;
+
+  -webkit-mask: radial-gradient(
+    circle,
+    transparent 35%,
+    rgba(205, 187, 255, 0.5) 50%
+  );
+  mask: radial-gradient(circle, transparent 35%, rgba(205, 187, 255, 0.5) 50%);
 }

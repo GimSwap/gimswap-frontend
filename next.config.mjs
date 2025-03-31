@@ -28,7 +28,6 @@ const nextConfig = {
       },
     ],
   },
-  unoptimized: true, // Next.js가 이미지를 변환하지 않고 원본 유지하도록 설정
   reactStrictMode: false,
 };
 

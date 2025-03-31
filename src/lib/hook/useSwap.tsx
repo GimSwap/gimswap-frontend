@@ -2,37 +2,61 @@ import swapAbi from '@/src/lib/utils/abis/swapAbi.json';
 import { TokenType } from '../types/TokenType';
 import { makeSwapArgument } from '../utils/makeSwapArgument';
 import { safeCalc } from '../utils/safeCalc';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccount, useWriteContract } from 'wagmi';
 import { fetchSendLog } from '../utils/api/fetchSendLog';
-import { waitForTransactionReceipt } from '@wagmi/core';
-import { wagmiConfig } from '../utils/wagmi';
 import { ChainIdType } from '../types/ChainIdType';
 import { checkIsAvailableChain } from '../utils/checkIsAvailableChain';
 import { CONTRACT_ADDRESS_MAP, defaultChain } from '../constants/token';
+import { useQuery } from '@tanstack/react-query';
+import { fetchGetTransferReceipt } from '../utils/api/fetchGetReceipt';
 
-export const useSwap = (token: TokenType, amount: string) => {
+interface SwapProps {
+  token: TokenType;
+  amount: string;
+}
+
+export const useSwap = () => {
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [hash, setHash] = useState<`0x${string}` | null>(null);
+  const [shouldPolling, setShouldPolling] = useState(false);
   const { writeContractAsync } = useWriteContract();
 
   const { address, connector, chainId } = useAccount();
 
-  const amountToString = safeCalc.divide(amount, token.unit).toFixed();
-  const decimal = token.multiDecimal
-    ? token?.decimal[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]
-    : token.decimal;
+  const resetStatus = () => {
+    setIsPending(false);
+    setIsError(false);
+    setIsSuccess(false);
+    setHash(null);
+  };
 
-  const value = safeCalc.multiply(
-    amountToString,
-    safeCalc.pow(10, decimal).toFixed(),
-  );
+  const { data: receiptStatus } = useQuery({
+    queryKey: ['getTransferReceipt', hash, chainId],
+    queryFn: () =>
+      fetchGetTransferReceipt({ txHash: hash!, chainId: chainId! }),
+    enabled: !!shouldPolling && !!chainId && !!address,
+    refetchInterval: 1000,
+    select: (data) => data.status,
+  });
 
-  const swap = async () => {
+  const swap = async ({ token, amount }: SwapProps) => {
     if (!connector || !address || !chainId || !checkIsAvailableChain(chainId))
       return;
+
+    const amountToString = safeCalc.divide(amount, token.unit).toFixed();
+    const decimal = token.multiDecimal
+      ? token?.decimal[
+          checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+        ]
+      : token.decimal;
+
+    const value = safeCalc.multiply(
+      amountToString,
+      safeCalc.pow(10, decimal).toFixed(),
+    );
     const to = CONTRACT_ADDRESS_MAP.GIMSWAP[chainId];
     const callee = CONTRACT_ADDRESS_MAP.GIMSWAP[chainId];
 
@@ -54,9 +78,7 @@ export const useSwap = (token: TokenType, amount: string) => {
       });
       if (!hash) throw new Error(`transaction error`);
       setHash(hash);
-      const { status } = await waitForTransactionReceipt(wagmiConfig, { hash });
-      if (status === 'success') setIsSuccess(true);
-      else if (status === 'reverted') setIsError(true);
+      setShouldPolling(true);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
@@ -66,10 +88,28 @@ export const useSwap = (token: TokenType, amount: string) => {
         connectorId: connector.id,
       });
       setIsError(true);
-    } finally {
-      setIsPending(false);
     }
   };
 
-  return { swap, isSuccess, isPending, error: isError, hash };
+  useEffect(() => {
+    if (receiptStatus === 'SUCCESS') {
+      setIsSuccess(true);
+      setIsPending(false);
+      setShouldPolling(false);
+    } else if (receiptStatus === 'FAILED') {
+      setIsError(true);
+      setIsPending(false);
+      setShouldPolling(false);
+    }
+  }, [receiptStatus]);
+
+  return {
+    swap,
+    isSuccess,
+    setIsSuccess,
+    isPending,
+    error: isError,
+    hash,
+    resetStatus,
+  };
 };

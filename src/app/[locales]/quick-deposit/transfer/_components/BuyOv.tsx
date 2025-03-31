@@ -34,7 +34,7 @@ export default function BuyOv({ next }: BuyOvProps) {
   const t = useTranslations('quickDeposit.buyOv');
   const router = useRouter();
   const [amount, setAmount] = useState<number>(0);
-  const debouncedPrice = useDebounce(amount, 500);
+  const { debouncedValue: debouncedPrice } = useDebounce(amount, 500);
 
   const { data: currentWallet } = useGetCurrentWallet();
   const { address, isConnected } = useAccount();
@@ -76,7 +76,7 @@ export default function BuyOv({ next }: BuyOvProps) {
         refetchInterval: 10000,
       },
       {
-        queryKey: ['balance', address, bsc.id],
+        queryKey: ['getBalance', address, bsc.id],
         queryFn: () =>
           fetchGetBalance({
             walletAddress: address as `0x${string}`,

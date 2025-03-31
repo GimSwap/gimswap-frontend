@@ -6,30 +6,30 @@ import { wagmiConfig } from '../utils/wagmi';
 import { useState } from 'react';
 import { ChainIdType } from '../types/ChainIdType';
 import { useGetCurrentWallet } from './useGetCurrentWallet';
-import { checkIsMobileDevice } from '../utils/checkIsMobileDevice';
+import { useHandleWalletConnectDeepLink } from './useHandleWalletConnectDeepLink';
 
 export const useApproveMax = () => {
   const [isPending, setIsPending] = useState(false);
   const { writeContractAsync } = useWriteContract();
   const { data: currentWallet } = useGetCurrentWallet();
+  const { handleWalletConnectDeepLink } = useHandleWalletConnectDeepLink();
 
   const approveMax = async (
     chainId: ChainIdType,
-    tokenAddress: `0x${string}`,
+    tokenAddress: string,
     spenderAddress: `0x${string}`,
   ) => {
     try {
       if (!currentWallet) throw new Error('No wallet found');
       setIsPending(true);
 
-      if (!currentWallet.supportInAppBrowser && checkIsMobileDevice())
-        window.open(currentWallet.deepLink);
+      handleWalletConnectDeepLink();
 
       const tx = await writeContractAsync({
         abi: ERC20Abi,
         functionName: 'approve',
         args: [spenderAddress, MAX_ALLOWANCE],
-        address: tokenAddress,
+        address: tokenAddress as `0x${string}`,
         chainId,
       });
       const receipt = await waitForTransactionReceipt(wagmiConfig, {

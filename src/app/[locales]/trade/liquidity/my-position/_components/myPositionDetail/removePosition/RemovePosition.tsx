@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { TokenType } from '@/src/lib/types/TokenType';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
 import { insertComma } from '@/src/lib/utils/insertComma';
-import Lottie from 'lottie-react';
 import bellLottie from '@/public/lottie/bell-26-purple.json';
 import Button from '@/src/components/Button';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
@@ -19,6 +18,9 @@ import { useAccount } from 'wagmi';
 import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
 import { ChainIdType } from '@/src/lib/types/ChainIdType';
 import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
+import dynamic from 'next/dynamic';
+
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 interface RemovePositionProps {
   prev: () => void;
@@ -241,11 +243,12 @@ export default function RemovePosition({
             </p>
           </div>
           <div className="flex flex-row justify-between pl-2">
-            <p className="c1 text-black-8">{TOKEN_MAP[
+            <p className="c1 text-black-8">
+              {TOKEN_MAP[
                 checkIsAvailableChain(chainId) ? chainId : defaultChain.id
               ].native.supportFarming
-              ? 'Fee & Harvest'
-              : 'Fee'}
+                ? 'Fee & Harvest'
+                : 'Fee'}
             </p>
             <p className="c1 font-medium">
               ₩ {insertComma(formatNumber(totalFee, 0))}

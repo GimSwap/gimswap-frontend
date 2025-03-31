@@ -79,7 +79,9 @@ export default function TokenName({
           </p>
         )}
         {token?.symbol !== 'KRWO' && (
-          <ChevronDownIcon className="w-4 h-[16px] stroke-purple-500 ml-[2px]" />
+          <ChevronDownIcon
+            className={`w-4 h-[16px] stroke-${token?.symbol ? 'black-8' : 'purple-500'} ml-[2px]`}
+          />
         )}
       </div>
       {token && (

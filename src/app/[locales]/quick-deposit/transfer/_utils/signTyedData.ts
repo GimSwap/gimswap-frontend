@@ -1,7 +1,5 @@
 import { OPEN_VOUCHER } from '@/src/lib/constants/token';
-import { WALLETS } from '@/src/lib/constants/wallets';
 import { ChainIdType } from '@/src/lib/types/ChainIdType';
-import { checkIsMobileDevice } from '@/src/lib/utils/checkIsMobileDevice';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
 import { signTypedData as wagmiSignTypedData } from '@wagmi/core';
 
@@ -24,14 +22,6 @@ export const signTypedData = async ({
   to,
   chainId,
 }: SignTypedDataProps) => {
-  const binanceWallet = WALLETS.find((wallet) =>
-    wallet.connectorId.includes('wallet.binance.com'),
-  );
-
-  if (binanceWallet?.deepLink && checkIsMobileDevice())
-    window.location.href = binanceWallet.deepLink;
-  else console.error('Binance wallet deep link not found');
-
   return await wagmiSignTypedData(wagmiConfig, {
     domain: {
       name: 'OpenVoucher',

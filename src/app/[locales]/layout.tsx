@@ -20,6 +20,7 @@ import { LiquidityStoreProvider } from '@/src/lib/stores/liquidityStore/Liquidit
 import Head from 'next/head';
 import Script from 'next/script';
 import MixpanelProvider from '@/src/components/provider/MixpanelProvider';
+import { StrictMode } from 'react';
 export const generateStaticParams = () => {
   return routing.locales.map((locale) => ({ locales: locale }));
 };
@@ -103,24 +104,26 @@ export default async function RootLayout({
         />
       </Head>
       <body>
-        <MixpanelProvider>
-          <NextIntlClientProvider messages={messages}>
-            <WagmiProvider initialState={wgamiInitialState}>
-              <QueryClientProvider>
-                <PopupStoreProvider>
-                  <TopbarStoreProvider>
-                    <LiquidityStoreProvider>
-                      <Navbar />
-                      {children}
-                      <Footer />
-                      <PopupList />
-                    </LiquidityStoreProvider>
-                  </TopbarStoreProvider>
-                </PopupStoreProvider>
-              </QueryClientProvider>
-            </WagmiProvider>
-          </NextIntlClientProvider>
-        </MixpanelProvider>
+        <StrictMode>
+          <MixpanelProvider>
+            <NextIntlClientProvider messages={messages}>
+              <WagmiProvider initialState={wgamiInitialState}>
+                <QueryClientProvider>
+                  <PopupStoreProvider>
+                    <TopbarStoreProvider>
+                      <LiquidityStoreProvider>
+                        <Navbar />
+                        {children}
+                        <Footer />
+                        <PopupList />
+                      </LiquidityStoreProvider>
+                    </TopbarStoreProvider>
+                  </PopupStoreProvider>
+                </QueryClientProvider>
+              </WagmiProvider>
+            </NextIntlClientProvider>
+          </MixpanelProvider>
+        </StrictMode>
       </body>
       <Script src="/script/XTrackingCode.js" strategy="lazyOnload" />
       <Script src="/script/mixpanel.js" strategy="lazyOnload"></Script>

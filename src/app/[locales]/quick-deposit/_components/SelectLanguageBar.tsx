@@ -18,17 +18,17 @@ export default function SelectLanguageBar() {
   }, []);
 
   return (
-    <section className="sticky top-[72px] px-6 py-3 flex flex-row justify-between bg-black-3 mt-[72px]">
-      <div className="flex flex-row gap-1 items-center">
-        <LanguageIcon className="w-4 h-4 stroke-black-7" />
+    <section className="mt-[72px] flex flex-row justify-between bg-black-3 px-6 py-3">
+      <div className="flex flex-row items-center gap-1">
+        <LanguageIcon className="h-4 w-4 stroke-black-7" />
         <p className="p1 font-medium text-black-8">{t('selectLanguage')}</p>
       </div>
       <div
-        className="flex flex-row gap-1 items-center cursor-pointer"
+        className="flex cursor-pointer flex-row items-center gap-1"
         onClick={() => openPopup(SelectLanguagePopup)}
       >
         <p className="p1 font-medium text-black-8">{t('language')}</p>
-        <ChevronDownIcon className="w-4 h-4 stroke-black-7" />
+        <ChevronDownIcon className="h-4 w-4 stroke-black-7" />
       </div>
     </section>
   );

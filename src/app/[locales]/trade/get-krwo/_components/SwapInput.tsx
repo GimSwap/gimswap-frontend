@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowDownIcon from '@/public/svg/arrow/arrow-down.svg';
 import { useGetFee } from '@/src/lib/hook/useGetFee';
 import SwapButtonAndPriceInfo from '@/src/app/[locales]/trade/get-krwo/_components/swapButtonAndPriceInfo/SwapButtonAndPriceInfo';
@@ -50,6 +50,10 @@ export default function SwapInput() {
       },
     ],
   });
+
+  useEffect(() => {
+    if (nativeBalance === '0') setIsServiceFeeActive(true);
+  }, [nativeBalance]);
 
   return (
     <>

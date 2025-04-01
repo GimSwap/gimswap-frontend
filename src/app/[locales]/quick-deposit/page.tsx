@@ -19,22 +19,20 @@ export default async function QuickDeposit() {
   const eventExpired = await fetchGetEventExpired();
 
   return (
-    <main className="mx-auto relative">
-      <SelectLanguageBar />
-      <div className="max-w-[560px] mx-auto relative">
-        <section className="mx-auto min-h-[calc(100dvh-116px)] max-h-[calc(100dvh-116px)] overflow-scroll pb-[116px] scrollbar-hide">
-          <Event notices={notices} eventExpired={eventExpired} />
-          <Intro />
-          <HowToUse />
-          <Warning />
-          <FAQ />
-          <section className="py-4 px-6 flex flex-col gap-1">
-            <h4 className="font-bold">{t('cs')}</h4>
-            <p className="p1">{OFFICIAL_EMAIL}</p>
-          </section>
+    <main className="relative mx-auto">
+      <section className="mx-auto max-h-[100dvh] overflow-scroll pb-[116px] scrollbar-hide">
+        <SelectLanguageBar />
+        <Event notices={notices} eventExpired={eventExpired} />
+        <Intro />
+        <HowToUse />
+        <Warning />
+        <FAQ />
+        <section className="flex flex-col gap-1 px-6 py-4">
+          <h4 className="font-bold">{t('cs')}</h4>
+          <p className="p1">{OFFICIAL_EMAIL}</p>
         </section>
-        <QuickDepositButton />
-      </div>
+      </section>
+      <QuickDepositButton />
     </main>
   );
 }

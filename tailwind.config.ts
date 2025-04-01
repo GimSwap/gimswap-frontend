@@ -65,7 +65,7 @@ const config: Config = {
       error: '#EB4E4E',
     },
     height: {
-      topbar: '72px',
+      topbar: '56px',
     },
     boxShadow: {
       customShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.08)',

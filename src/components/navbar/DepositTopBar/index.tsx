@@ -8,7 +8,7 @@ export default function DepositTopBar() {
     router.back();
   };
   return (
-    <nav className="fixed top-0 z-50 flex h-topbar w-full items-center justify-between px-4 transition-all duration-500">
+    <nav className="fixed top-0 z-50 flex h-topbar w-full items-center justify-between bg-black-1 px-4 transition-all duration-500">
       <ChevronLeftIcon
         className="h-4 w-4 cursor-pointer text-[#212121]"
         onClick={handleGoBack}

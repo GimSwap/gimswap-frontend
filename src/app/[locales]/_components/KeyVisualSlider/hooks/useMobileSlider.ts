@@ -8,7 +8,7 @@ import {
 import { debounce, updateAnimationStyles } from '../utils';
 
 const GAP_WIDTH = 16;
-
+const DRAG_THRESHOLD = 10;
 type SlideItem = {
   index: number;
   position: Position;
@@ -36,8 +36,7 @@ export function useMobileSlider({
 
   const [autoplay, setAutoplay] = useState(initialAutoplay);
   const autoplayTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const dragThreshold = 10;
+  const animationTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const sliderRef = useRef<HTMLDivElement>(null);
   const itemRef = useRef<HTMLDivElement>(null);
@@ -51,7 +50,7 @@ export function useMobileSlider({
   }, []);
 
   const calculateVisibleItems = useCallback(() => {
-    const visibleCount = 5;
+    const visibleCount = 4;
     const halfCount = Math.floor(visibleCount / 2);
 
     const items: SlideItem[] = [];
@@ -67,13 +66,32 @@ export function useMobileSlider({
     return items;
   }, [currentIndex, itemCount]);
 
+  const calculateNextVisibleItems = useCallback(
+    (nextIndex: number) => {
+      const visibleCount = 4;
+      const halfCount = Math.floor(visibleCount / 2);
+
+      const items: SlideItem[] = [];
+
+      for (let i = -halfCount; i <= halfCount; i++) {
+        const rawIndex = (nextIndex + i + itemCount) % itemCount;
+        const position = positionMap[i + halfCount] as Position;
+
+        items.push({ index: rawIndex, position });
+      }
+
+      return items;
+    },
+    [itemCount],
+  );
+
   useEffect(() => {
     calculateItemWidth();
     calculateVisibleItems();
 
     const handleResize = debounce(() => {
       calculateItemWidth();
-    }, 200);
+    }, 100);
 
     window.addEventListener('resize', handleResize);
 
@@ -90,16 +108,28 @@ export function useMobileSlider({
     (direction: 'left' | 'right', newIndex: number) => {
       if (isAnimating) return;
 
+      if (animationTimerRef.current) {
+        clearTimeout(animationTimerRef.current);
+        animationTimerRef.current = null;
+      }
+
       setIsAnimating(true);
       setSlideDirection(direction);
 
-      setTimeout(() => {
+      const nextItems = calculateNextVisibleItems(newIndex);
+
+      animationTimerRef.current = setTimeout(() => {
+        setVisibleItems(nextItems);
+
         setCurrentIndex(newIndex);
+
         setIsAnimating(false);
         setSlideDirection(null);
+
+        animationTimerRef.current = null;
       }, 500);
     },
-    [currentIndex, isAnimating, isDragging],
+    [isAnimating, calculateNextVisibleItems],
   );
 
   const handlePrev = useCallback(() => {
@@ -158,7 +188,7 @@ export function useMobileSlider({
 
       const dragDistance = clientX - dragStartX;
 
-      if (Math.abs(dragDistance) > dragThreshold) {
+      if (Math.abs(dragDistance) > DRAG_THRESHOLD) {
         if (dragDistance > 0) {
           handlePrev();
         } else {
@@ -204,6 +234,20 @@ export function useMobileSlider({
     handleNext,
     autoplayInterval,
   ]);
+
+  useEffect(() => {
+    return () => {
+      if (autoplayTimerRef.current) {
+        clearTimeout(autoplayTimerRef.current);
+        autoplayTimerRef.current = null;
+      }
+
+      if (animationTimerRef.current) {
+        clearTimeout(animationTimerRef.current);
+        animationTimerRef.current = null;
+      }
+    };
+  }, []);
 
   return {
     currentIndex,

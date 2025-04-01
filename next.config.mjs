@@ -28,7 +28,7 @@ const nextConfig = {
       },
     ],
   },
-  reactStrictMode: false,
+  reactStrictMode: true,
 };
 
 export default withNextIntl(nextConfig);

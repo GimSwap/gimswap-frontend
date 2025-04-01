@@ -12,13 +12,12 @@ import Button from '@/src/components/Button';
 import { formatNumber } from '@/src/lib/utils/formatNumber';
 import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import SwapRoutesPopup from './_components/SwapRoutesPopup';
+import { classifyToken, switchTokenOrder } from './_utils';
 import {
-  classifyToken,
-  getKRWOValue,
-  getReceiveTokenText,
-  switchTokenOrder,
-} from './_utils';
-import { useGetButtonState, useHandleSwap } from './_hooks';
+  useGetButtonState,
+  useHandleSwap,
+  useGetReceiveTokenText,
+} from './_hooks';
 import SwapLoadingPopup from '@/src/components/popups/SwapLoadingPopup';
 import SwapSuccessPopup from '@/src/components/popups/SwapSuccessPopup';
 import ReviewSwapPopup from '../get-krwo/add-ov/krwo-swap/_components/ReviewSwapPopup';
@@ -28,6 +27,7 @@ import { useDebounce } from '@/src/lib/hook/useDebounce';
 import { applyDecimals } from '@/src/lib/utils/calcTick';
 import { useGetBalanceAndRoute } from './_hooks/useGetBalanceAndRoute';
 import { useQueryClient } from '@tanstack/react-query';
+import { insertComma } from '@/src/lib/utils/insertComma';
 import { RECEIVE_TOKEN_DEFAULT } from './_constants/defaultState';
 import { safeCalc } from '@/src/lib/utils/safeCalc';
 
@@ -71,6 +71,15 @@ export default function Swap() {
     payToken,
     receiveToken,
     inputFromType,
+  });
+
+  const { receiveTokenText } = useGetReceiveTokenText({
+    KRWOToken,
+    routes,
+    oppositeToken,
+    isDebouncing,
+    isPending,
+    outputAmount: outputToken?.amount,
   });
 
   const { handleSwap } = useHandleSwap({
@@ -273,7 +282,7 @@ export default function Swap() {
             >
               <p className="p1 text-purple-500">
                 {routes?.saved !== undefined
-                  ? `~ ₩ ${routes?.saved} profit`
+                  ? `~ ₩ ${insertComma(routes?.saved.toString())} profit`
                   : '- profit'}
               </p>
               <ChevronDownIcon className="-rotate-90 stroke-purple-500 w-4 h-[16px]" />
@@ -281,21 +290,13 @@ export default function Swap() {
           </div>
           <div className="flex flex-row gap-2 justify-between">
             <p className="p1 text-black-8">Price</p>
-            <p className="p1 text-black-8">
-              {getReceiveTokenText({
-                KRWOToken,
-                receiveToken,
-                routes,
-                krwoValue: getKRWOValue({ KRWOToken, oppositeToken }),
-                oppositeToken,
-              })}
-            </p>
+            <p className="p1 text-black-8">{receiveTokenText}</p>
           </div>
           <div className="flex flex-row gap-2 justify-between">
             <p className="p1 text-black-8">Receive</p>
             <p className="p1 text-black-8">
               {receiveToken?.amount
-                ? `~ ${formatNumber(receiveToken.amount, 6)} ${
+                ? `~ ${insertComma(formatNumber(receiveToken.amount, 6))} ${
                     receiveToken.symbol
                   }`
                 : '-'}

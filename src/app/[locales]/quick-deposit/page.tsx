@@ -19,7 +19,7 @@ export default async function QuickDeposit() {
   const eventExpired = await fetchGetEventExpired();
 
   return (
-    <main className="relative mx-auto">
+    <main className="relative mx-auto max-w-[560px]">
       <section className="mx-auto max-h-[100dvh] overflow-scroll pb-[116px] scrollbar-hide">
         <SelectLanguageBar />
         <Event notices={notices} eventExpired={eventExpired} />

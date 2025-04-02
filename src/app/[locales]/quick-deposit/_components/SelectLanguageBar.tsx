@@ -18,7 +18,7 @@ export default function SelectLanguageBar() {
   }, []);
 
   return (
-    <section className="mt-[72px] flex flex-row justify-between bg-black-3 px-6 py-3">
+    <section className="mt-[56px] flex flex-row justify-between bg-black-3 px-6 py-3">
       <div className="flex flex-row items-center gap-1">
         <LanguageIcon className="h-4 w-4 stroke-black-7" />
         <p className="p1 font-medium text-black-8">{t('selectLanguage')}</p>

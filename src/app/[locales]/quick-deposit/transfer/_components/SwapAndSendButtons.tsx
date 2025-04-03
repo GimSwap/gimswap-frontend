@@ -25,6 +25,7 @@ import { applyDecimals } from '@/src/lib/utils/calcTick';
 import TransferRetryPopup from './TransferRetryPopup';
 import { FetchError } from '@/src/lib/utils/api/fetchClient';
 import { RETRY_TRANSFER } from '@/src/lib/constants/ErrorCode';
+import { useHandleWalletConnectDeepLink } from '@/src/lib/hook/useHandleWalletConnectDeepLink';
 
 interface SwapAndSendButtonsProps {
   OVAmount: string;
@@ -45,6 +46,7 @@ export default function SwapAndSendButtons({
   const { address } = useAccount();
   const { openPopup, closePopup } = usePopupStore((state) => state);
   const [txHash, setTxHash] = useState<`0x${string}` | null>(null);
+  const { handleWalletConnectDeepLink } = useHandleWalletConnectDeepLink();
 
   const { mutateAsync: transfer } = useMutation({
     mutationFn: (params: TransferRequestType) => fetchTransfer(params),
@@ -72,6 +74,8 @@ export default function SwapAndSendButtons({
       openPopup(TransferPendingPopup, {
         amount: usdtAmount,
       });
+
+      handleWalletConnectDeepLink();
 
       const signature = await signTypedData({
         address,

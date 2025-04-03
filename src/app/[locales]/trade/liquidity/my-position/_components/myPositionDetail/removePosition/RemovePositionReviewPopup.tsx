@@ -79,7 +79,7 @@ export default function RemovePositionReviewPopup({
   );
 
   const { data: state } = useQuery({
-    queryKey: ['getTxReceipt', address],
+    queryKey: ['getTxReceipt', address, tokenId],
     queryFn: () =>
       fetchGetTransferReceipt({ chainId: chainId!, txHash: txHash! }),
     enabled: !!shouldPolling && !!chainId && !!address,

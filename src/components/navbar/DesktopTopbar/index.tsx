@@ -59,8 +59,8 @@ export default function Topbar() {
           navbarStyle().backgroundColor
         }`}
       >
-        <div>
-          <Link href="/" className="relative w-fit">
+        <div className="relative flex">
+          <Link href="/" className="w-fit">
             <LogoIcon
               className={`${navbarStyle().logo} relative transition-all duration-500`}
             />

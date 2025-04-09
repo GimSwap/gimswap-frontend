@@ -18,15 +18,18 @@ export default function MobileSlider() {
   } = useMobileSlider({ itemCount: CTA_ITEMS.length });
 
   return (
-    <div className="relative w-[808px] overflow-hidden" role="region">
+    <div
+      className="relative mx-auto w-full max-w-full overflow-hidden"
+      role="region"
+    >
       <div className="flex w-full items-center justify-center gap-4 pt-4">
         <div
-          className="relative flex gap-4 overflow-visible"
+          className="relative flex w-full justify-center overflow-visible"
           aria-live="polite"
         >
           <div
             ref={sliderRef}
-            className={`flex gap-4 py-4 transition-all duration-300 ${
+            className={`flex justify-center gap-4 py-4 transition-all duration-300 ${
               isDragging ? 'cursor-grabbing' : 'cursor-grab'
             }`}
             style={{ minHeight: '150px' }}

@@ -34,7 +34,7 @@ export const CTA_ITEMS: CTAItem[] = [
 
 export const baseClassMap: Record<Position, string> = {
   current:
-    'translate-y-[16px] scale-100 transform transition-all duration-500 z-10 opacity-100',
+    'translate-y-[16px] scale-100 transform transition-all duration-500 z-10 opacity-100 mx-auto',
   prev: 'translate-y-[-16px] scale-90 transform opacity-50 transition-all duration-500 z-0',
   next: 'translate-y-[-16px] scale-90 transform opacity-50 transition-all duration-500 z-0',
   prevPrev:

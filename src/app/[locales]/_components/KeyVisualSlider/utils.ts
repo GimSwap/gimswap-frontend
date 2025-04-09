@@ -37,7 +37,8 @@ export function updateAnimationStyles(containerWidth: number) {
         transform: translateX(0) translateY(16px);
       }
       to {
-        transform: translateX(${containerWidth}px) translateY(-16px);
+        transform: translateX(${containerWidth}px) translateY(-16px) scale(0.9);
+        opacity: 0.5;
       }
     }
 

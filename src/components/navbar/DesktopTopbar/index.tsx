@@ -13,6 +13,16 @@ import { useGetCurrentWallet } from '@/src/lib/hook/useGetCurrentWallet';
 // import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 // import TranslationPopup from '@/src/app/[locales]/quick-deposit/_components/popups/TranslationPopup';
 
+function BetaBadge() {
+  return (
+    <div className="absolute right-[-24px] top-[-10px] flex items-center justify-center rounded-[50px] border border-purple-500 bg-purple-50 px-[6px] py-[3px]">
+      <p className="text-[8px] font-medium leading-[10px] text-purple-500">
+        Beta
+      </p>
+    </div>
+  );
+}
+
 export default function Topbar() {
   const { invert } = useTopbarStore((state) => state);
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
@@ -49,15 +59,16 @@ export default function Topbar() {
           navbarStyle().backgroundColor
         }`}
       >
-        <div className="flex-1">
-          <Link href="/">
+        <div>
+          <Link href="/" className="relative w-fit">
             <LogoIcon
-              className={`${navbarStyle().logo} transition-all duration-500`}
+              className={`${navbarStyle().logo} relative transition-all duration-500`}
             />
+            <BetaBadge />
           </Link>
         </div>
 
-        <div className="hidden flex-1 items-center justify-center lg:flex">
+        <div className="hidden items-center justify-center lg:flex">
           <MenuIcon
             className={`${navbarStyle().menu} transition-all duration-500 lg:hidden`}
             onClick={() => setShowSidebar((prev) => !prev)}
@@ -87,7 +98,7 @@ export default function Topbar() {
           )}
         </div>
 
-        <div className="flex flex-1 flex-row justify-end gap-2">
+        <div className="flex flex-row justify-end gap-2">
           <div className="h-8 w-fit">
             <WalletConnectButton size="small" />
           </div>

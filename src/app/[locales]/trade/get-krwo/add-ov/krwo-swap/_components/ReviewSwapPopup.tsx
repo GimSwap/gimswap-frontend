@@ -1,14 +1,14 @@
-import PopupTemplate from "@/src/components/PopupTemplate";
-import { insertComma } from "@/src/lib/utils/insertComma";
-import { useAccount } from "wagmi";
-import ArrowDownIcon from "@/public/svg/arrow/arrow-narrow-down.svg";
-import Button from "@/src/components/Button";
-import TokenIcon from "@/src/components/TokenIcon";
-import { useApproveMax } from "@/src/lib/hook/useApproveMax";
-import { GetSwapRouteResponseType } from "@/src/lib/types/api/swap/GetSwapRouteType";
-import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
-import { useState } from "react";
-import ButtonLoading from "@/src/components/ButtonLoading";
+import PopupTemplate from '@/src/components/PopupTemplate';
+import { insertComma } from '@/src/lib/utils/insertComma';
+import { useAccount } from 'wagmi';
+import ArrowDownIcon from '@/public/svg/arrow/arrow-narrow-down.svg';
+import Button from '@/src/components/Button';
+import TokenIcon from '@/src/components/TokenIcon';
+import { useApproveMax } from '@/src/lib/hook/useApproveMax';
+import { GetSwapRouteResponseType } from '@/src/lib/types/api/swap/GetSwapRouteType';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { useState } from 'react';
+import ButtonLoading from '@/src/components/ButtonLoading';
 
 interface ReviewTokenType {
   symbol: string;
@@ -60,7 +60,7 @@ export default function ReviewSwapPopup({
       routes.contractAddress,
     );
 
-    if (status.status === "success") {
+    if (status.status === 'success') {
       setIsApproved(true);
     }
   };

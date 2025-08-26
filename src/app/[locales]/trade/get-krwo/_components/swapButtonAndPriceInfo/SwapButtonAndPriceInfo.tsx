@@ -1,22 +1,21 @@
-import Button from "@/src/components/Button";
-import { usePopupStore } from "@/src/lib/stores/popupStore/PopupStoreProvider";
-import { TokenType } from "@/src/lib/types/TokenType";
-import { useAccount } from "wagmi";
-import SelectWalletPopup from "@/src/components/popups/SelectWalletPopup";
-import SelectChainPopup from "@/src/components/popups/SelectChainPopup";
-import { getServiceFeeStatus } from "@/src/app/[locales]/trade/get-krwo/add-ov/krwo-swap/_utils/getServiceFeeStatus";
-import { insertComma } from "@/src/lib/utils/insertComma";
-import { safeCalc } from "@/src/lib/utils/safeCalc";
-import ReviewSwapPopup from "@/src/app/[locales]/trade/get-krwo/add-ov/krwo-swap/_components/ReviewSwapPopup";
-import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
-import { applyDecimals } from "@/src/lib/utils/calcTick";
-import { KRWO, OPEN_VOUCHER } from "@/src/lib/constants/token";
-import ReceiveAndSwapToggleBox from "./ReceiveAndSwapToggleBox";
-import { useSwapHandler } from "../../add-ov/krwo-swap/_hooks/useSwapHandler";
-import SwapSuccessPopup from "@/src/components/popups/SwapSuccessPopup";
-import SwapLoadingPopup from "@/src/components/popups/SwapLoadingPopup";
-import SwapErrorPopup from "@/src/components/popups/SwapErrorPopup";
-import NoMoreAvailablePopup from "../../add-ov/krwo-swap/_components/NoMoreAvailablePopup";
+import Button from '@/src/components/Button';
+import { usePopupStore } from '@/src/lib/stores/popupStore/PopupStoreProvider';
+import { TokenType } from '@/src/lib/types/TokenType';
+import { useAccount } from 'wagmi';
+import SelectWalletPopup from '@/src/components/popups/SelectWalletPopup';
+import SelectChainPopup from '@/src/components/popups/SelectChainPopup';
+import { getServiceFeeStatus } from '@/src/app/[locales]/trade/get-krwo/add-ov/krwo-swap/_utils/getServiceFeeStatus';
+import { insertComma } from '@/src/lib/utils/insertComma';
+import { safeCalc } from '@/src/lib/utils/safeCalc';
+import ReviewSwapPopup from '@/src/app/[locales]/trade/get-krwo/add-ov/krwo-swap/_components/ReviewSwapPopup';
+import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
+import { applyDecimals } from '@/src/lib/utils/calcTick';
+import { KRWO, OPEN_VOUCHER } from '@/src/lib/constants/token';
+import ReceiveAndSwapToggleBox from './ReceiveAndSwapToggleBox';
+import { useSwapHandler } from '../../add-ov/krwo-swap/_hooks/useSwapHandler';
+import SwapSuccessPopup from '@/src/components/popups/SwapSuccessPopup';
+import SwapLoadingPopup from '@/src/components/popups/SwapLoadingPopup';
+import SwapErrorPopup from '@/src/components/popups/SwapErrorPopup';
 
 interface SwapButtonProps {
   tokens: {
@@ -85,7 +84,7 @@ export default function SwapButton({
 
   const decimalAppliedServiceFee = serviceFee
     ? applyDecimals(serviceFee, KRWO.decimal).toString()
-    : "0";
+    : '0';
 
   const serviceFeeStatus = getServiceFeeStatus({
     chainId,
@@ -94,11 +93,6 @@ export default function SwapButton({
   });
 
   const openReviewSwapPopup = () => {
-    if (tokens.receive.symbol !== OPEN_VOUCHER.symbol) {
-      openPopup(NoMoreAvailablePopup);
-      return;
-    }
-
     openPopup(ReviewSwapPopup, {
       tokens: {
         pay: {
@@ -137,32 +131,32 @@ export default function SwapButton({
     if (!isConnected)
       return {
         disabled: false,
-        text: "Connect Wallet",
+        text: 'Connect Wallet',
         onClick: () => openPopup(SelectWalletPopup),
       };
 
     if (!checkIsAvailableChain(chainId))
       return {
         disabled: false,
-        text: "Switch the Network",
+        text: 'Switch the Network',
         onClick: () => openPopup(SelectChainPopup),
       };
 
-    if (tokens.pay.amount === "0")
+    if (tokens.pay.amount === '0')
       return {
         disabled: true,
-        text: "Enter an amount",
+        text: 'Enter an amount',
       };
 
     if (!isEnoughBalance)
       return {
         disabled: true,
-        text: "Insufficient Balance",
+        text: 'Insufficient Balance',
       };
 
     return {
       disabled: false,
-      text: "Swap",
+      text: 'Swap',
       onClick: openReviewSwapPopup,
     };
   };
@@ -204,9 +198,9 @@ export default function SwapButton({
             <div className="flex flex-row justify-between">
               <p className="p1 text-black-8">Receive token</p>
               <p className="p1">
-                {tokens.receive.amount !== "0"
+                {tokens.receive.amount !== '0'
                   ? `${insertComma(tokens.receive.amount)} ${tokens.receive.symbol}`
-                  : "-"}
+                  : '-'}
               </p>
             </div>
             <div className="flex flex-row justify-between">

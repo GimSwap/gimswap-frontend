@@ -1,29 +1,32 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import MinusIcon from '@/public/svg/minus.svg';
-import { Link } from '@/src/i18n/routing';
-import KRFlagIcon from '@/public/svg/token/kr-flag.svg';
-import { OPEN_VOUCHER } from '@/src/lib/constants/token';
-import { safeCalc } from '@/src/lib/utils/safeCalc';
-import OpenVoucherBanner from '@/public/svg/openvoucher-banner.svg';
-import { insertComma } from '@/src/lib/utils/insertComma';
-import Button from '@/src/components/Button';
-import { useInputFocus } from './_hooks/useInputFocus';
-import { handleInputAmount } from './_utils/handleInputAmount';
-import { useGetBuyOvButtonState } from './_hooks/useGetBuyOvButtonState';
-import { useOpenPaymentPopup } from '@/src/lib/hook/useOpenPaymentPopup';
+import { useState } from "react";
+import MinusIcon from "@/public/svg/minus.svg";
+import { Link } from "@/src/i18n/routing";
+import KRFlagIcon from "@/public/svg/token/kr-flag.svg";
+import { OPEN_VOUCHER } from "@/src/lib/constants/token";
+import { safeCalc } from "@/src/lib/utils/safeCalc";
+import OpenVoucherBanner from "@/public/svg/openvoucher-banner.svg";
+import { insertComma } from "@/src/lib/utils/insertComma";
+import Button from "@/src/components/Button";
+import { useInputFocus } from "./_hooks/useInputFocus";
+import { handleInputAmount } from "./_utils/handleInputAmount";
+import { useGetBuyOvButtonState } from "./_hooks/useGetBuyOvButtonState";
+// import { useOpenPaymentPopup } from '@/src/lib/hook/useOpenPaymentPopup';
+import NoMoreAvailablePopup from "../krwo-swap/_components/NoMoreAvailablePopup";
+import { usePopupStore } from "@/src/lib/stores/popupStore/PopupStoreProvider";
 
 export default function BuyOv() {
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState("");
   const { isFocused, handleFocus, handleBlur, inputRef } = useInputFocus();
   const { buttonState } = useGetBuyOvButtonState();
-  const { openOVPaymentPopup } = useOpenPaymentPopup();
+  const { openPopup } = usePopupStore((state) => state);
+  // const { openOVPaymentPopup } = useOpenPaymentPopup();
 
   return (
     <section>
       <section
-        className={`flex flex-col gap-4 pt-4 border ${isFocused ? 'border-purple-500' : 'border-black-4'} rounded-lg`}
+        className={`flex flex-col gap-4 pt-4 border ${isFocused ? "border-purple-500" : "border-black-4"} rounded-lg`}
         onClick={handleFocus}
         onBlur={handleBlur}
       >
@@ -46,7 +49,7 @@ export default function BuyOv() {
             <h2 className="text-h2 font-bold text-black-6">
               {amount
                 ? insertComma(safeCalc.multiply(amount, 10000).toString())
-                : '0'}
+                : "0"}
             </h2>
           </section>
           <hr className="border-black-4" />
@@ -80,19 +83,22 @@ export default function BuyOv() {
         color="primary"
         className="mt-4"
         disabled={buttonState(amount).disabled}
-        onClick={buttonState(amount).onClick}
+        onClick={() => {
+          openPopup(NoMoreAvailablePopup);
+        }}
       >
         {buttonState(amount).text}
       </Button>
       <p
         className="pt-3 mb-3 text-black-8 text-center underline underline-offset-[2.5px] c1 cursor-pointer"
         onClick={async () => {
-          await openOVPaymentPopup({
-            amount: amount,
-            method: 'history',
-            redirectOnCancel: window.location.href,
-            redirectOnError: window.location.href,
-          });
+          openPopup(NoMoreAvailablePopup);
+          // await openOVPaymentPopup({
+          //   amount: amount,
+          //   method: 'history',
+          //   redirectOnCancel: window.location.href,
+          //   redirectOnError: window.location.href,
+          // });
         }}
       >
         View History

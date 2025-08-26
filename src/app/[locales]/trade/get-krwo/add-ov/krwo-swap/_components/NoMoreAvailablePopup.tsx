@@ -1,14 +1,6 @@
 import PopupTemplate from "@/src/components/PopupTemplate";
-import { insertComma } from "@/src/lib/utils/insertComma";
-import { useAccount } from "wagmi";
-import ArrowDownIcon from "@/public/svg/arrow/arrow-narrow-down.svg";
 import Button from "@/src/components/Button";
-import TokenIcon from "@/src/components/TokenIcon";
-import { useApproveMax } from "@/src/lib/hook/useApproveMax";
 import { GetSwapRouteResponseType } from "@/src/lib/types/api/swap/GetSwapRouteType";
-import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
-import { useState } from "react";
-import ButtonLoading from "@/src/components/ButtonLoading";
 
 interface ReviewTokenType {
   symbol: string;
@@ -31,49 +23,45 @@ interface ReviewSwapPopupProps {
   routes?: GetSwapRouteResponseType;
 }
 
-export default function ReviewSwapPopup({
+export default function NoMoreAvailablePopup({
   onClose,
   open,
-  tokens,
-  priceRatio,
-  isServiceFeeActive,
-  serviceFee,
-  swap,
-  needApprove,
-  routes,
+  // tokens,
+  // priceRatio,
+  // isServiceFeeActive,
+  // serviceFee,
+  // swap,
+  // needApprove,
+  // routes,
 }: ReviewSwapPopupProps) {
-  const { chainId } = useAccount();
-  const { approveMax, isPending: isApprovePending } = useApproveMax();
-
-  const [isApproved, setIsApproved] = useState(!needApprove);
-
-  const handleApproveMax = async () => {
-    if (
-      !checkIsAvailableChain(chainId) ||
-      !routes ||
-      !tokens.pay.contractAddress
-    )
-      return;
-    const status = await approveMax(
-      chainId,
-      tokens.pay.contractAddress,
-      routes.contractAddress,
-    );
-
-    if (status.status === "success") {
-      setIsApproved(true);
-    }
-  };
-
   return (
-    <PopupTemplate
-      onClose={onClose}
-      open={open}
-      useTemplate={false}
-      showCloseButton
-      closeButtonStyle="top-9"
-    >
-      <section className="flex flex-col gap-2 px-6">
+    <PopupTemplate onClose={onClose} open={open} icon="alert">
+      <section className="flex flex-col items-center justify-center text-center px-6 py-8">
+        <div className="">
+          <h2 className="font-bold  mb-3">Service Temporarily Suspended</h2>
+          <p className="p1 text-black-6 leading-relaxed mb-2">
+            KRWO swap service is currently temporarily suspended.
+          </p>
+          <p className="p1 text-black-6 leading-relaxed">
+            We will resume the service as soon as possible. Thank you for your
+            understanding.
+          </p>
+        </div>
+        <Button
+          size="xl"
+          color="primary"
+          className="w-full mt-5"
+          onClick={onClose}
+        >
+          Confirm
+        </Button>
+      </section>
+    </PopupTemplate>
+  );
+}
+
+{
+  /* <section className="flex flex-col gap-2 px-6">
         <h3 className="font-bold">Review Swap</h3>
         {needApprove && (
           <section className="flex flex-col">
@@ -166,7 +154,5 @@ export default function ReviewSwapPopup({
         >
           Swap
         </Button>
-      </section>
-    </PopupTemplate>
-  );
+      </section> */
 }

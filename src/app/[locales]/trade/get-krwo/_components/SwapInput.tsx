@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import ArrowDownIcon from '@/public/svg/arrow/arrow-down.svg';
-import { useGetFee } from '@/src/lib/hook/useGetFee';
-import SwapButtonAndPriceInfo from '@/src/app/[locales]/trade/get-krwo/_components/swapButtonAndPriceInfo/SwapButtonAndPriceInfo';
-import { useSwitchTokenOrder } from '../_hooks/useSwitchTokenOrder';
-import Token from '@/src/app/[locales]/trade/get-krwo/_components/Token';
-import TokenContainer from './TokenContainer';
-import GradientButton from './GradientButton';
-import { OPEN_VOUCHER } from '@/src/lib/constants/token';
-import PlusIcon from '@/public/svg/plus.svg';
-import { safeCalc } from '@/src/lib/utils/safeCalc';
-import { useQueries } from '@tanstack/react-query';
-import { useAccount } from 'wagmi';
-import { fetchGetBalance } from '@/src/lib/utils/api/fetchGetBalance';
-import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
-import { GetBalanceResponseType } from '@/src/lib/types/api/GetBalanceType';
-import { fetchGetServiceFee } from '@/src/lib/utils/api/swap/fetchGetServiceFee';
-import { GetServiceFeeResponseType } from '@/src/lib/types/api/swap/GetServiceFeeType';
+import { useEffect, useState } from "react";
+import ArrowDownIcon from "@/public/svg/arrow/arrow-down.svg";
+import { useGetFee } from "@/src/lib/hook/useGetFee";
+import SwapButtonAndPriceInfo from "@/src/app/[locales]/trade/get-krwo/_components/swapButtonAndPriceInfo/SwapButtonAndPriceInfo";
+import { useSwitchTokenOrder } from "../_hooks/useSwitchTokenOrder";
+import Token from "@/src/app/[locales]/trade/get-krwo/_components/Token";
+import TokenContainer from "./TokenContainer";
+import GradientButton from "./GradientButton";
+import { OPEN_VOUCHER } from "@/src/lib/constants/token";
+import PlusIcon from "@/public/svg/plus.svg";
+import { safeCalc } from "@/src/lib/utils/safeCalc";
+import { useQueries } from "@tanstack/react-query";
+import { useAccount } from "wagmi";
+import { fetchGetBalance } from "@/src/lib/utils/api/fetchGetBalance";
+import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
+import { GetBalanceResponseType } from "@/src/lib/types/api/GetBalanceType";
+import { fetchGetServiceFee } from "@/src/lib/utils/api/swap/fetchGetServiceFee";
+import { GetServiceFeeResponseType } from "@/src/lib/types/api/swap/GetServiceFeeType";
 
 export default function SwapInput() {
-  const [amount, setAmount] = useState<string>('0');
+  const [amount, setAmount] = useState<string>("0");
   const { selectedTokens, switchTokenOrder } = useSwitchTokenOrder();
   const [isEnoughBalance, setIsEnoughBalance] = useState<boolean>(true);
   const [rerenderTrigger, setRerenderTrigger] = useState<number>(0);
@@ -32,7 +32,7 @@ export default function SwapInput() {
   const [{ data: nativeBalance }, { data: serviceFee }] = useQueries({
     queries: [
       {
-        queryKey: ['getBalance', address, chainId],
+        queryKey: ["getBalance", address, chainId],
         queryFn: () =>
           fetchGetBalance({
             walletAddress: address!,
@@ -43,7 +43,7 @@ export default function SwapInput() {
         refetchInterval: 2000,
       },
       {
-        queryKey: ['getServiceFee', chainId],
+        queryKey: ["getServiceFee", chainId],
         queryFn: () => fetchGetServiceFee({ chainId: chainId! }),
         enabled: !!(chainId && checkIsAvailableChain(chainId)),
         select: (data: GetServiceFeeResponseType) => data.amount,
@@ -52,7 +52,7 @@ export default function SwapInput() {
   });
 
   useEffect(() => {
-    if (nativeBalance === '0') setIsServiceFeeActive(true);
+    if (nativeBalance === "0") setIsServiceFeeActive(true);
   }, [nativeBalance]);
 
   return (
@@ -97,6 +97,10 @@ export default function SwapInput() {
           />
         </TokenContainer>
       </section>
+      {selectedTokens.receive.symbol !== OPEN_VOUCHER.symbol &&
+        amount !== "0" && (
+          <p className="c1 text-error">Swap OV is not available</p>
+        )}
       <SwapButtonAndPriceInfo
         fee={fee}
         isEnoughBalance={isEnoughBalance}
@@ -118,7 +122,7 @@ export default function SwapInput() {
         setIsServiceFeeActive={setIsServiceFeeActive}
         onComplete={() => {
           setRerenderTrigger((prev) => prev + 1);
-          setAmount('0');
+          setAmount("0");
         }}
         nativeBalance={nativeBalance}
         serviceFee={serviceFee}

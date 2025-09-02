@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useIntersectionObserver } from '@/src/lib/hook/useIntersectionObserver';
-import { useTopbarStore } from '@/src/lib/stores/topbarStore/TopbarStoreProvider';
-import KeyVisualImage from '@/src/assets/image/KeyVisual.webp';
-import Image from 'next/image';
-import KeyVisualSlider from '@/src/app/[locales]/_components/KeyVisualSlider';
+import { useIntersectionObserver } from "@/src/lib/hook/useIntersectionObserver";
+import { useTopbarStore } from "@/src/lib/stores/topbarStore/TopbarStoreProvider";
+import KeyVisualImage from "@/src/assets/image/KeyVisual.webp";
+import Image from "next/image";
+import KeyVisualSlider from "@/src/app/[locales]/_components/KeyVisualSlider";
 
 export default function KeyVisual() {
   const { setTarget } = useIntersectionObserver({
-    rootMargin: '0px 0px 0px 0px',
+    rootMargin: "0px 0px 0px 0px",
     threshold: 0.8,
     onEnter: () => setInvert(false),
     onLeave: () => setInvert(true),
@@ -26,6 +26,7 @@ export default function KeyVisual() {
           alt="key-visual"
           className="h-[auto] w-[345px] max-w-[750px] -translate-y-6 lg:ml-[91px] lg:h-[90%] lg:w-[auto] lg:max-w-[38vw] lg:translate-x-20 lg:translate-y-0"
           priority
+          unoptimized
         />
       </div>
       <div className="bottom-[60px] flex w-full -translate-y-[30px] flex-col items-center justify-center gap-1 lg:w-[380px]">
@@ -33,7 +34,7 @@ export default function KeyVisual() {
           KRWO-based platform
         </p>
         <h1 className="h1 mb-4 text-center text-[24px] font-bold text-black-1 sm:whitespace-nowrap">
-          Stable Tokens{' '}
+          Stable Tokens{" "}
           <span className="block sm:inline">from Stable Assets</span>
         </h1>
         <KeyVisualSlider />

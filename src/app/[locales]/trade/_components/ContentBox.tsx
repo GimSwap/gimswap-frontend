@@ -1,4 +1,4 @@
-import TradeCategory from './TradeCategory';
+import TradeCategory from "./TradeCategory";
 
 interface ContentBoxProps {
   children: React.ReactNode;

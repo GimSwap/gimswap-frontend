@@ -1,12 +1,12 @@
-import { useAccount } from 'wagmi';
-import { randomBytes } from 'crypto';
-import { signTypedData } from '@/src/app/[locales]/quick-deposit/transfer/_utils/signTyedData';
-import { CONTRACT_ADDRESS_MAP } from '@/src/lib/constants/token';
-import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
-import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { fetchReceiveAndSwap } from '@/src/lib/utils/api/swap/fetchReceiveAndSwap';
-import { fetchGetTransferReceipt } from '@/src/lib/utils/api/fetchGetReceipt';
+import { useAccount } from "wagmi";
+import { randomBytes } from "crypto";
+import { signTypedData } from "../_utils/signTyedData";
+import { CONTRACT_ADDRESS_MAP } from "@/src/lib/constants/token";
+import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchReceiveAndSwap } from "@/src/lib/utils/api/swap/fetchReceiveAndSwap";
+import { fetchGetTransferReceipt } from "@/src/lib/utils/api/fetchGetReceipt";
 
 interface ReceiveAndSwapProps {
   decimalAppliedAmount: string;
@@ -32,7 +32,7 @@ export default function useReceiveAndSwap() {
   });
 
   const { data: receiveAndSwapReceipt } = useQuery({
-    queryKey: ['receiveAndSwapReceipt', txHash],
+    queryKey: ["receiveAndSwapReceipt", txHash],
     queryFn: () =>
       fetchGetTransferReceipt({ chainId: chainId!, txHash: txHash! }),
     enabled: !!chainId && shouldPolling,
@@ -47,7 +47,7 @@ export default function useReceiveAndSwap() {
       setIsPending(true);
       const validAfter = Math.floor(Date.now() / 1000) - 60;
       const validBefore = Math.floor(Date.now() / 1000) + 600;
-      const nonce = randomBytes(32).toString('hex');
+      const nonce = randomBytes(32).toString("hex");
 
       const signature = await signTypedData({
         address,
@@ -81,11 +81,11 @@ export default function useReceiveAndSwap() {
   useEffect(() => {
     if (!receiveAndSwapReceipt) return;
     switch (receiveAndSwapReceipt.status) {
-      case 'SUCCESS':
+      case "SUCCESS":
         setIsSuccess(true);
         setShouldPolling(false);
         break;
-      case 'FAILED':
+      case "FAILED":
         setIsError(true);
         setShouldPolling(false);
         break;

@@ -1,7 +1,7 @@
-import { KRWO } from '@/src/lib/constants/token';
-import { OPEN_VOUCHER } from '@/src/lib/constants/token';
-import { TokenType } from '@/src/lib/types/TokenType';
-import { useState } from 'react';
+import { KRWO } from "@/src/lib/constants/token";
+import { OPEN_VOUCHER } from "@/src/lib/constants/token";
+import { TokenType } from "@/src/lib/types/TokenType";
+import { useState } from "react";
 
 interface SelectedTokens {
   pay: TokenType;
@@ -10,8 +10,8 @@ interface SelectedTokens {
 
 export const useSwitchTokenOrder = () => {
   const [selectedTokens, setSelectedTokens] = useState<SelectedTokens>({
-    pay: OPEN_VOUCHER,
-    receive: KRWO,
+    pay: KRWO,
+    receive: OPEN_VOUCHER,
   });
 
   const switchTokenOrder = () => {

@@ -4,19 +4,18 @@ import { TokenType } from "@/src/lib/types/TokenType";
 import { useAccount } from "wagmi";
 import SelectWalletPopup from "@/src/components/popups/SelectWalletPopup";
 import SelectChainPopup from "@/src/components/popups/SelectChainPopup";
-import { getServiceFeeStatus } from "@/src/app/[locales]/trade/get-krwo/add-ov/krwo-swap/_utils/getServiceFeeStatus";
+import { getServiceFeeStatus } from "../../_utils/getServiceFeeStatus";
 import { insertComma } from "@/src/lib/utils/insertComma";
 import { safeCalc } from "@/src/lib/utils/safeCalc";
-import ReviewSwapPopup from "@/src/app/[locales]/trade/get-krwo/add-ov/krwo-swap/_components/ReviewSwapPopup";
+import ReviewSwapPopup from "@/src/app/[locales]/trade/get-krwo/_components/ReviewSwapPopup";
 import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
 import { applyDecimals } from "@/src/lib/utils/calcTick";
 import { KRWO, OPEN_VOUCHER } from "@/src/lib/constants/token";
 import ReceiveAndSwapToggleBox from "./ReceiveAndSwapToggleBox";
-import { useSwapHandler } from "../../add-ov/krwo-swap/_hooks/useSwapHandler";
+import { useSwapHandler } from "../../_hooks/useSwapHandler";
 import SwapSuccessPopup from "@/src/components/popups/SwapSuccessPopup";
 import SwapLoadingPopup from "@/src/components/popups/SwapLoadingPopup";
 import SwapErrorPopup from "@/src/components/popups/SwapErrorPopup";
-import NoMoreAvailablePopup from "../../add-ov/krwo-swap/_components/NoMoreAvailablePopup";
 
 interface SwapButtonProps {
   tokens: {
@@ -94,11 +93,6 @@ export default function SwapButton({
   });
 
   const openReviewSwapPopup = () => {
-    if (tokens.receive.symbol !== OPEN_VOUCHER.symbol) {
-      openPopup(NoMoreAvailablePopup);
-      return;
-    }
-
     openPopup(ReviewSwapPopup, {
       tokens: {
         pay: {

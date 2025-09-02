@@ -1,27 +1,23 @@
-'use client';
+"use client";
 
-import Accordion from '@/src/components/Accordion';
+import Accordion from "@/src/components/Accordion";
 import {
   CHAIN_ICONS,
   CHAIN_NAME_MAP,
   CONTRACT_ADDRESS_MAP,
   KRWO,
   SCANNER_MAP,
-} from '@/src/lib/constants/token';
-import { ChainIdType } from '@/src/lib/types/ChainIdType';
-import Link from 'next/link';
-import CopyButton from '@/public/svg/copy.svg';
-import { copyToClipboard } from '@/src/lib/utils/copyToClipboard';
+} from "@/src/lib/constants/token";
+import { ChainIdType } from "@/src/lib/types/ChainIdType";
+import Link from "next/link";
+import CopyButton from "@/public/svg/copy.svg";
+import { copyToClipboard } from "@/src/lib/utils/copyToClipboard";
 
 interface AmountPerChainProps {
-  locked: number;
   chainId: ChainIdType;
 }
 
-export default function AmountPerChain({
-  locked,
-  chainId,
-}: AmountPerChainProps) {
+export default function AmountPerChain({ chainId }: AmountPerChainProps) {
   const ChainIcon = CHAIN_ICONS[chainId];
   const KRWOIcon = KRWO.icon[chainId];
   const ScannerIcon = SCANNER_MAP[chainId].icon;
@@ -40,15 +36,11 @@ export default function AmountPerChain({
       <section className="flex flex-col gap-1">
         <div className="flex flex-row justify-between">
           <p className="p1 text-black-5">Locked Open Voucher</p>
-          <p className="c1 font-bold text-black-1">
-            {locked && `${(Number(locked) / 10000).toLocaleString()} OV`}
-          </p>
+          <p className="c1 font-bold text-black-1">-</p>
         </div>
         <div className="flex flex-row justify-between">
           <p className="p1 text-black-5">KRWO total supply</p>
-          <p className="c1 font-bold text-black-1">
-            {locked && `${locked.toLocaleString()} KRWO`}
-          </p>
+          <p className="c1 font-bold text-black-1">-</p>
         </div>
       </section>
       <section className="pt-1 flex flex-row justify-between">

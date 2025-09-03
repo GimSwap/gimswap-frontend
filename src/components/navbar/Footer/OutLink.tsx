@@ -1,18 +1,13 @@
-import { GIMSWAP_CERTIK_URL, GIMSWAP_DOCS_URL } from '@/src/lib/constants/url';
-import Link from 'next/link';
-import CertikIcon from '@/public/svg/social/certik.svg';
+import { GIMSWAP_CERTIK_URL } from "@/src/lib/constants/url";
+import Link from "next/link";
+import CertikIcon from "@/public/svg/social/certik.svg";
 
 const OUT_LINKS = [
   {
-    title: 'DOCS',
-    href: GIMSWAP_DOCS_URL,
-    className: 'border border-black-8 text-black-8 bg-black-1',
-  },
-  {
     Icon: CertikIcon,
-    title: 'Audit by CERTIK',
+    title: "Audit by CERTIK",
     href: GIMSWAP_CERTIK_URL,
-    className: 'text-black-1 bg-black-8',
+    className: "text-black-1 bg-black-8",
   },
 ];
 

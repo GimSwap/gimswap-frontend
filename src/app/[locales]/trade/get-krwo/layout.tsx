@@ -1,4 +1,4 @@
-import ContentBox from '../_components/ContentBox';
+import ContentBox from "../_components/ContentBox";
 
 export default function SwapLayout({
   children,

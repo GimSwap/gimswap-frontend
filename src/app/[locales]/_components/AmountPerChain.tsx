@@ -15,9 +15,13 @@ import { copyToClipboard } from "@/src/lib/utils/copyToClipboard";
 
 interface AmountPerChainProps {
   chainId: ChainIdType;
+  lockedAmount: number;
 }
 
-export default function AmountPerChain({ chainId }: AmountPerChainProps) {
+export default function AmountPerChain({
+  chainId,
+  lockedAmount,
+}: AmountPerChainProps) {
   const ChainIcon = CHAIN_ICONS[chainId];
   const KRWOIcon = KRWO.icon[chainId];
   const ScannerIcon = SCANNER_MAP[chainId].icon;
@@ -36,11 +40,15 @@ export default function AmountPerChain({ chainId }: AmountPerChainProps) {
       <section className="flex flex-col gap-1">
         <div className="flex flex-row justify-between">
           <p className="p1 text-black-5">Locked Open Voucher</p>
-          <p className="c1 font-bold text-black-1">-</p>
+          <p className="c1 font-bold text-black-1">
+            {lockedAmount ? `${lockedAmount.toLocaleString()} OV` : "-"}
+          </p>
         </div>
         <div className="flex flex-row justify-between">
           <p className="p1 text-black-5">KRWO total supply</p>
-          <p className="c1 font-bold text-black-1">-</p>
+          <p className="c1 font-bold text-black-1">
+            {lockedAmount ? `${lockedAmount.toLocaleString()} KRWO` : "-"}
+          </p>
         </div>
       </section>
       <section className="pt-1 flex flex-row justify-between">

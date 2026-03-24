@@ -1,26 +1,24 @@
-import { useEffect } from 'react';
-import { insertComma } from '@/src/lib/utils/insertComma';
-import { safeCalc } from '@/src/lib/utils/safeCalc';
-import { useAccount } from 'wagmi';
-import { useQuery } from '@tanstack/react-query';
-import { fetchGetBalance } from '@/src/lib/utils/api/fetchGetBalance';
-import { ChainIdType } from '@/src/lib/types/ChainIdType';
-import { checkIsAvailableChain } from '@/src/lib/utils/checkIsAvailableChain';
-import { TokenType } from '@/src/lib/types/TokenType';
-import { defaultChain, KRWO } from '@/src/lib/constants/token';
-import BalanceIcon from '@/public/svg/balance.svg';
-import Copy from '@/public/svg/copy.svg';
-import { copyToClipboard } from '@/src/lib/utils/copyToClipboard';
+import { useEffect } from "react";
+import { insertComma } from "@/src/lib/utils/insertComma";
+import { safeCalc } from "@/src/lib/utils/safeCalc";
+import { useAccount } from "wagmi";
+import { ChainIdType } from "@/src/lib/types/ChainIdType";
+import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
+import { TokenType } from "@/src/lib/types/TokenType";
+import { defaultChain, KRWO } from "@/src/lib/constants/token";
+import BalanceIcon from "@/public/svg/balance.svg";
+import Copy from "@/public/svg/copy.svg";
+import { copyToClipboard } from "@/src/lib/utils/copyToClipboard";
 import {
-  getBalanceWithDecimal,
   handleMax,
   isWritable,
   handleTokenInput,
-} from '@/src/app/[locales]/trade/get-krwo/_utils';
-import { applyDecimals } from '@/src/lib/utils/calcTick';
+} from "@/src/app/[locales]/trade/get-krwo/_utils";
+import { applyDecimals } from "@/src/lib/utils/calcTick";
+import { useGetBalance } from "@/src/lib/hook/useGetBalance";
 
 interface TokenProps {
-  type: 'pay' | 'receive';
+  type: "pay" | "receive";
   amount: string;
   setAmount: React.Dispatch<React.SetStateAction<string>>;
   token: TokenType;
@@ -38,37 +36,21 @@ export default function Token({
   serviceFee,
   isServiceFeeActive,
 }: TokenProps) {
-  const { address, chainId } = useAccount();
+  const { chainId } = useAccount();
 
-  const { data } = useQuery({
-    queryKey: ['getBalance', address, chainId],
-    queryFn: () =>
-      fetchGetBalance({
-        walletAddress: address!,
-        chainId: chainId as ChainIdType,
-      }),
-    enabled: !!(address && chainId),
-    select: (data) => data.balance,
-  });
-
-  const symbol = token.symbol.toLowerCase() as 'ov' | 'krwo';
-
-  const decimal = token.multiDecimal
-    ? token?.decimal[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]
-    : token?.decimal;
-
-  const balance = getBalanceWithDecimal({
-    balance: data?.[symbol],
-    decimal,
+  const selectedChainId = (chainId || defaultChain.id) as ChainIdType;
+  const { balance } = useGetBalance({
+    contractAddress: token.contractAddress[selectedChainId] as `0x${string}`,
+    decimal: token.decimal as number,
   });
 
   const Icon =
-    typeof token.icon === 'object'
+    typeof token.icon === "object"
       ? token.icon[checkIsAvailableChain(chainId) ? chainId : defaultChain.id]
       : token.icon;
 
   const getInputValue = () => {
-    if (amount === '0') return '0';
+    if (amount === "0") return "0";
 
     const amountWithDecimal = safeCalc.divide(amount, token.unit).toString();
 
@@ -76,11 +58,11 @@ export default function Token({
   };
 
   const getReceiveAmount = () => {
-    if (amount === '0') return '0';
+    if (amount === "0") return "0";
     if (
       isServiceFeeActive &&
-      type === 'receive' &&
-      token.symbol === 'KRWO' &&
+      type === "receive" &&
+      token.symbol === "KRWO" &&
       serviceFee
     ) {
       return safeCalc
@@ -91,7 +73,7 @@ export default function Token({
   };
   // TODO: Balance fetching will be done in the parent component and the isEnoughBalance state will be removed.
   useEffect(() => {
-    if (type === 'pay' && setIsEnoughBalance && balance)
+    if (type === "pay" && setIsEnoughBalance && balance)
       setIsEnoughBalance(
         safeCalc.isGreaterOrEqual(
           balance,
@@ -104,7 +86,7 @@ export default function Token({
     <section>
       <section className="flex justify-between pb-1 cursor-pointer">
         <p className="c1 font-medium">
-          {type === 'pay' ? 'You pay' : 'You receive'}
+          {type === "pay" ? "You pay" : "You receive"}
         </p>
         <div className="flex flex-row gap-1 items-center">
           <div className="py-[6px] px-2 bg-black-1 rounded-full shadow-[0px_0px_5px_0px_rgba(0,0,0,0.08)] flex gap-1 items-center">
@@ -148,18 +130,18 @@ export default function Token({
         )}
       </div>
       <div className="flex flex-row justify-between">
-        <p className={`c1 ${!isWritable(token) && 'text-black-6'}`}>
+        <p className={`c1 ${!isWritable(token) && "text-black-6"}`}>
           ₩ {insertComma(getReceiveAmount())}
         </p>
         <div className="flex flex-row items-center">
           <BalanceIcon className="w-4 h-4 mr-[2px]" />
           <p className="c0 text-black-8">
-            {` ${Number(balance).toLocaleString('ko-kr', {
+            {` ${Number(balance).toLocaleString("ko-kr", {
               minimumFractionDigits: 0,
               maximumFractionDigits: 5,
-            })}` || '0.0'}
+            })}` || "0.0"}
           </p>
-          {type === 'pay' && (
+          {type === "pay" && (
             <span
               className="c0 font-medium cursor-pointer text-purple-500 ml-1"
               onClick={() => handleMax({ balance, setAmount, token })}

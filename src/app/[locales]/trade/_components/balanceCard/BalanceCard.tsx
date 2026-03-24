@@ -1,44 +1,27 @@
 "use client";
 
 import WalletIcon from "@/public/svg/wallet.svg";
-import { KRWO } from "@/src/lib/constants/token";
-import { fetchGetBalance } from "@/src/lib/utils/api/fetchGetBalance";
-import { useQueries } from "@tanstack/react-query";
+import { CONTRACT_ADDRESS_MAP, KRWO } from "@/src/lib/constants/token";
 import { useAccount } from "wagmi";
-import { safeCalc } from "@/src/lib/utils/safeCalc";
 import { insertComma } from "@/src/lib/utils/insertComma";
-import { GetBalanceResponseType } from "@/src/lib/types/api/GetBalanceType";
 import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
 import ExclamationMarkIcon from "@/public/svg/exclamation.svg";
 import UnsupportedNetworkOrNeedConnect from "./UnsupportedNetworkOrNeedConnect";
+import { useGetBalance } from "@/src/lib/hook/useGetBalance";
+import { ChainIdType } from "@/src/lib/types/ChainIdType";
 
 export default function BalanceCard() {
-  const { address, chainId, isConnected } = useAccount();
+  const { chainId, isConnected } = useAccount();
 
-  const [{ data: balance }] = useQueries({
-    queries: [
-      {
-        queryKey: ["getBalance", address, chainId],
-        queryFn: () =>
-          fetchGetBalance({
-            walletAddress: address!,
-            chainId: chainId!,
-          }),
-        enabled: !!(address && checkIsAvailableChain(chainId)),
-        select: (data: GetBalanceResponseType) => data.balance,
-      },
-    ],
+  const { balance } = useGetBalance({
+    contractAddress: CONTRACT_ADDRESS_MAP.KRWO[chainId as ChainIdType],
+    decimal: KRWO.decimal,
   });
 
   const totalBalance = () => {
     if (!checkIsAvailableChain(chainId)) return "0";
-    if (!balance?.krwo) return "-";
-    return insertComma(
-      safeCalc
-        .divide(balance.krwo, 10 ** KRWO.decimal)
-        .floor()
-        .toString(),
-    );
+    if (!balance) return "-";
+    return insertComma(balance);
   };
 
   return (

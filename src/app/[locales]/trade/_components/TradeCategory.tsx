@@ -2,7 +2,7 @@
 
 import { Link, usePathname } from "@/src/i18n/routing";
 import { TRADE_CATEGORIES } from "@/src/lib/constants/category/TradeCategory";
-import BuyTooltip from "./tooltips/BuyTooltip";
+// import BuyTooltip from "./tooltips/BuyTooltip";
 
 export default function TradeCategory() {
   const pathname = usePathname();
@@ -10,7 +10,7 @@ export default function TradeCategory() {
 
   return (
     <section className="flex gap-3 relative">
-      <BuyTooltip />
+      {/* <BuyTooltip /> */}
       {TRADE_CATEGORIES.map(({ title, key, url }) => {
         const isSelected = selectedMethod === key;
         return (

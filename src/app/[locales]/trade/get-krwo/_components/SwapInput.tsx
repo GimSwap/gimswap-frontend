@@ -9,13 +9,9 @@ import Token from "@/src/app/[locales]/trade/get-krwo/_components/Token";
 import TokenContainer from "./TokenContainer";
 import { OPEN_VOUCHER } from "@/src/lib/constants/token";
 import { safeCalc } from "@/src/lib/utils/safeCalc";
-import { useQueries } from "@tanstack/react-query";
-import { useAccount } from "wagmi";
-import { fetchGetBalance } from "@/src/lib/utils/api/fetchGetBalance";
-import { checkIsAvailableChain } from "@/src/lib/utils/checkIsAvailableChain";
-import { GetBalanceResponseType } from "@/src/lib/types/api/GetBalanceType";
-import { fetchGetServiceFee } from "@/src/lib/utils/api/swap/fetchGetServiceFee";
-import { GetServiceFeeResponseType } from "@/src/lib/types/api/swap/GetServiceFeeType";
+import { useAccount, useBalance } from "wagmi";
+
+const serviceFee = 500000000;
 
 export default function SwapInput() {
   const [amount, setAmount] = useState<string>("0");
@@ -27,27 +23,15 @@ export default function SwapInput() {
   const { fee } = useGetFee(amount);
   const { address, chainId } = useAccount();
 
-  const [{ data: nativeBalance }, { data: serviceFee }] = useQueries({
-    queries: [
-      {
-        queryKey: ["getBalance", address, chainId],
-        queryFn: () =>
-          fetchGetBalance({
-            walletAddress: address!,
-            chainId: chainId!,
-          }),
-        enabled: !!(address && checkIsAvailableChain(chainId)),
-        select: (data: GetBalanceResponseType) => data.balance.native,
-        refetchInterval: 2000,
-      },
-      {
-        queryKey: ["getServiceFee", chainId],
-        queryFn: () => fetchGetServiceFee({ chainId: chainId! }),
-        enabled: !!(chainId && checkIsAvailableChain(chainId)),
-        select: (data: GetServiceFeeResponseType) => data.amount,
-      },
-    ],
+  const { data } = useBalance({
+    address: address,
+    chainId: chainId,
+    query: {
+      refetchInterval: 2000,
+    },
   });
+
+  const nativeBalance = data?.formatted;
 
   useEffect(() => {
     if (nativeBalance === "0") setIsServiceFeeActive(true);

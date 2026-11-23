@@ -11,6 +11,7 @@ import {
 } from 'viem';
 import { type Connector, ConnectorNotConnectedError } from '@wagmi/core';
 import { checkIsMobileBrowser } from '@/src/lib/utils/checkIsMobileBrowser';
+import { fetchSendLog } from '../api/fetchSendLog';
 
 type Provider = ReturnType<
   Transport<'custom', unknown, EIP1193RequestFn<WalletRpcSchema>>
@@ -30,7 +31,7 @@ export function kaikasConnector() {
       icon: 'https://www.gimswap.com/svg/wallet/kaia.svg',
 
       async setup() {
-        if (typeof window === 'undefined' || window.klaytn === undefined) {
+        if (typeof window !== 'undefined' && window.klaytn === undefined) {
           console.error('Kaia is not installed in this browser.');
         }
       },
@@ -174,10 +175,13 @@ export function kaikasConnector() {
                 throw new Error('User rejected switch after adding network.');
 
               return chain;
-            } catch (err) {
-              throw new Error(err as string);
+            } catch (error) {
+              throw new Error(error as string);
             }
           } else {
+            const errorMessage =
+              error instanceof Error ? error.message : 'Unknown error';
+            fetchSendLog({ name: 'switchChain', error: errorMessage });
             throw error;
           }
         }

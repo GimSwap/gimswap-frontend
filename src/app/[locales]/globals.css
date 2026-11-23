@@ -7,6 +7,11 @@ body {
   box-sizing: border-box;
   height: fit-content;
   position: relative;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 :root {
@@ -87,53 +92,80 @@ input:focus {
   border: none;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield; /* 파이어폭스 기본 초기화 */
 }
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
+input:disabled {
+  color: #bfbfbf;
+}
+
 .bg-glass {
-  background-image: url("../../assets/image/glass.webp");
+  background-image: url('../../assets/image/glass.webp');
   background-size: contain;
   background-repeat: no-repeat;
   background-position-x: center;
   background-position-y: bottom;
+  opacity: 0.8;
 }
 
 @media (min-width: 1024px) {
   .bg-glass {
-    background-image: url("../../assets/image/glass.webp"),
-      url("../../assets/image/glass-flipped.webp");
-    background-size: 600px auto, 600px auto;
-    background-position: calc(50% - 300px) bottom, calc(50% + 300px) bottom;
+    background-image:
+      url('../../assets/image/glass.webp'),
+      url('../../assets/image/glass-flipped.webp');
+    background-size:
+      600px auto,
+      600px auto;
+    background-position:
+      calc(50% - 300px) bottom,
+      calc(50% + 300px) bottom;
     background-repeat: no-repeat;
   }
 }
 
-@keyframes slideIn {
-  from {
-    transform: translate3d(0, 100%, 0);
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(0, 100%, 0);
-  }
-}
-
 @media (max-width: 1024px) {
+  @keyframes slideIn {
+    from {
+      transform: translate3d(0, 100%, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 100%, 0);
+    }
+  }
+
+  @keyframes innerPopupSlideIn {
+    from {
+      transform: translate3d(0, 100%, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes innerPopupSlideOut {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 100%, 0);
+    }
+  }
   .slideIn {
     animation: slideIn 0.3s forwards ease-out;
     transform: translate3d(0, 0, 0);
@@ -142,6 +174,67 @@ input[type="number"]::-webkit-inner-spin-button {
 
   .slideOut {
     animation: slideOut 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+
+  .innerPopupSlideIn {
+    animation: innerPopupSlideIn 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+
+  .innerPopupSlideOut {
+    animation: innerPopupSlideOut 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+}
+
+@media (min-width: 1024px) {
+  @keyframes slideOut {
+    from {
+      opacity: 1;
+      display: block;
+    }
+    to {
+      opacity: 0;
+      display: none;
+    }
+  }
+  @keyframes innerPopupSlideIn {
+    from {
+      transform: translate3d(-50%, 0, 0);
+      opacity: 0;
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes innerPopupSlideOut {
+    from {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+      opacity: 0;
+    }
+  }
+  .slideOut {
+    animation: slideOut 0.1s forwards;
+  }
+
+  .innerPopupSlideIn {
+    animation: innerPopupSlideIn 0.3s forwards;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, opacity;
+  }
+
+  .innerPopupSlideOut {
+    animation: innerPopupSlideOut 0.3s forwards;
     transform: translate3d(0, 0, 0);
     will-change: transform, opacity;
   }
@@ -154,25 +247,144 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .docs-gradient::before {
-  content: "";
+  content: '';
   width: 100%;
   aspect-ratio: 1/1;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: conic-gradient(#DDD1FF 60deg, #926CFF, #DDD1FF);
+  background: conic-gradient(#ddd1ff 60deg, #926cff, #ddd1ff);
   animation: docsAnimate 2s ease-in-out infinite;
 }
 
 @keyframes docsAnimate {
   0% {
-    transform: translate(-50%, -50%) scale(1) rotate(0turn)
+    transform: translate(-50%, -50%) scale(1) rotate(0turn);
   }
   50% {
-    transform: translate(-50%, -50%) scale(1) rotate(0.5turn)
+    transform: translate(-50%, -50%) scale(1) rotate(0.5turn);
   }
   100% {
-    transform: translate(-50%, -50%) scale(1) rotate(1turn)
+    transform: translate(-50%, -50%) scale(1) rotate(1turn);
   }
+}
+
+.speech-bubble-tail-top::after {
+  content: '';
+  position: absolute;
+  border-top: 0;
+  border-left: 5.5px solid transparent;
+  border-right: 5.5px solid transparent;
+  border-bottom: 7.5px solid rgba(0, 0, 0, 0.5);
+  top: 0.2px;
+  transform: translateY(-100%);
+}
+
+.speech-bubble-tail-bottom::after {
+  content: '';
+  position: absolute;
+  border-top: 7.5px solid rgba(0, 0, 0, 0.5);
+  border-left: 5.5px solid transparent;
+  border-right: 5.5px solid transparent;
+  border-bottom: 0px;
+  bottom: 1px;
+  transform: translateY(113%);
+}
+
+@keyframes slideFromLeft {
+  from {
+    transform: translateX(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .slideFromLeft {
+    animation: slideFromLeft 0.2s forwards;
+  }
+}
+
+.custom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  outline: none;
+  transition: opacity 0.2s;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #926cff;
+    opacity: 1 !important;
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    cursor: pointer;
+  }
+
+  &::-webkit-slider-thumb:before {
+    content: '123123';
+    position: absolute;
+    top: 12px;
+    left: 0;
+    background: #926cff;
+  }
+}
+
+.slideUp {
+  animation: slideUp 0.4s forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate3d(-50%, 100%, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseGradient {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-gradient {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(146, 108, 255, 0.7) 30%,
+    rgba(146, 108, 255, 0) 100%
+  );
+
+  display: inline-block;
+  animation: pulseGradient 1s infinite;
+
+  -webkit-mask: radial-gradient(
+    circle,
+    transparent 35%,
+    rgba(205, 187, 255, 0.5) 50%
+  );
+  mask: radial-gradient(circle, transparent 35%, rgba(205, 187, 255, 0.5) 50%);
 }

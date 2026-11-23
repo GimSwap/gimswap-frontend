@@ -1,12 +1,5 @@
-export type AbiMethodType = "transferVoucherAndCall" | "transferAndCall";
+import { createToken } from '../utils/factory/token';
 
-export interface TokenType {
-  name: string;
-  unit: number;
-  contractAddress: string;
-  icon: React.ElementType;
-  imageUrl: string;
-  symbol: string;
-  method: AbiMethodType;
-  decimal: number;
-}
+export type AbiMethodType = 'transferVoucherAndCall' | 'transferAndCall';
+
+export type TokenType = ReturnType<typeof createToken>;

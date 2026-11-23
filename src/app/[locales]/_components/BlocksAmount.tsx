@@ -1,44 +1,67 @@
-'use client';
+"use client";
 
-import ExchangeIcon from '@/public/svg/exchange.svg';
-import { insertComma } from '@/src/lib/utils/insertComma';
-import { KRWO, OPEN_VOUCHER } from '@/src/lib/constants/token';
-import Image from 'next/image';
-import { useGetTotalSupply } from '@/src/lib/hook/useGetTotalSupply';
+import { useReadContracts } from "wagmi";
+import ExchangeIcon from "@/public/svg/exchange.svg";
+import { CONTRACT_ADDRESS_MAP } from "@/src/lib/constants/token";
+import { chains } from "@/src/lib/utils/wagmi";
+import AmountPerChain from "./AmountPerChain";
+import ERC20Abi from "@/src/lib/utils/abis/ERC20Abi.json";
+import type { Abi } from "viem";
 
 export default function BlocksAmount() {
-  const { totalSupply } = useGetTotalSupply();
+  const { data } = useReadContracts({
+    contracts: chains.map((chain) => ({
+      abi: ERC20Abi as Abi,
+      address: CONTRACT_ADDRESS_MAP.OV[chain.id] as `0x${string}`,
+      functionName: "balanceOf" as const,
+      args: [CONTRACT_ADDRESS_MAP.GIMSWAP[chain.id] as `0x${string}`],
+      chainId: chain.id,
+    })),
+  });
+
+  const lockedAmounts =
+    data?.map((result) => {
+      if (result.status === "success") {
+        return Number(result.result) / 1e6;
+      }
+      return 0;
+    }) ?? [];
+
+  const totalLockedAmount = lockedAmounts.reduce(
+    (acc, amount) => acc + amount,
+    0,
+  );
 
   return (
-    <section className="py-10 px-4 bg-black-13 flex flex-col items-center w-full">
-      <div className="relative flex flex-col lg:flex-row gap-2 max-w-[1008px] w-full">
-        <div className="rounded-2xl border border-purple-200 p-6 flex flex-col gap-1 bg-[rgba(255,255,255,0.1)] flex-1 lg:items-center">
-          <p className="p1 text-black-1">Locked Open Voucher</p>
-          <h3 className="font-bold text-black-1 min-h-7">
-            {totalSupply &&
-              `${(Number(totalSupply) / 10000).toLocaleString()} OV`}
+    <section className="flex w-full flex-col items-center bg-black-13 px-4 py-10">
+      <div className="relative flex w-full max-w-[1008px] flex-col gap-2 lg:flex-row">
+        <div className="flex flex-1 flex-col gap-1 rounded-2xl border border-purple-200 bg-[rgba(255,255,255,0.1)] p-6 lg:items-center">
+          <p className="p1 text-black-1">Total Locked Open Voucher</p>
+          <h3 className="min-h-7 font-bold text-black-1">
+            {totalLockedAmount
+              ? `${totalLockedAmount.toLocaleString()} OV`
+              : "-"}
           </h3>
         </div>
-        <div className="rounded-2xl border border-purple-200 p-6 flex flex-col gap-1 bg-[rgba(255,255,255,0.1)] flex-1 lg:items-center">
+        <div className="flex flex-1 flex-col gap-1 rounded-2xl border border-purple-200 bg-[rgba(255,255,255,0.1)] p-6 lg:items-center">
           <p className="p1 text-black-1">KRWO total supply</p>
-          <h3 className="font-bold text-black-1 min-h-7">
-            {totalSupply && `${insertComma(totalSupply)} KRWO`}
+          <h3 className="min-h-7 font-bold text-black-1">
+            {totalLockedAmount
+              ? `${totalLockedAmount.toLocaleString()} KRWO`
+              : "-"}
           </h3>
         </div>
         <ExchangeIcon className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
       </div>
-      <div className="my-4 py-4 px-6 bg-[rgba(255,255,255,0.1)] rounded-2xl flex justify-center max-w-[1008px] w-full">
-        <Image
-          src={OPEN_VOUCHER.imageUrl}
-          width={20}
-          height={20}
-          alt="openvoucher"
-        />
-        <h5 className="text-black-1 ml-1">1 OV</h5>
-        <h5 className="mx-2 text-black-1">=</h5>
-        <Image src={KRWO.imageUrl} width={20} height={20} alt="KRWO" />
-        <h5 className="text-black-1 ml-1">10,000 KRWO</h5>
-      </div>
+      <section className="mt-4 flex w-full max-w-[1008px] flex-col gap-2 lg:flex-row">
+        {chains.map((chain, index) => (
+          <AmountPerChain
+            key={index}
+            chainId={chain.id}
+            lockedAmount={lockedAmounts[index] ?? 0}
+          />
+        ))}
+      </section>
     </section>
   );
 }

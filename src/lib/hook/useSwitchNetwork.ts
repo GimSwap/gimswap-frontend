@@ -1,24 +1,32 @@
-import { useSwitchChain } from "wagmi";
-import { kaia, kairos } from "wagmi/chains";
+import { useSwitchChain } from 'wagmi';
+import { chains } from '../utils/wagmi';
+import { usePopupStore } from '../stores/popupStore/PopupStoreProvider';
 
 export default function useSwitchNetwork() {
   const { switchChain } = useSwitchChain();
-  const network =
-    process.env.NEXT_PUBLIC_ENV_MODE !== "production" ? kairos : kaia;
-  const handleSwitch = async () => {
+  const { closeAllPopup } = usePopupStore((state) => state);
+
+  const handleSwitch = async (targetChainId: number) => {
+    const targetChain = chains.find((chain) => chain.id === targetChainId);
+    if (!targetChain) {
+      console.error('No target chain found');
+      return;
+    }
+    if (!targetChain.blockExplorers) console.error('No block explorers found');
     switchChain({
-      chainId: network.id,
+      chainId: targetChain.id,
       addEthereumChainParameter: {
         nativeCurrency: {
-          name: "KAIA",
-          symbol: "KAIA",
-          decimals: 18,
+          name: targetChain.name,
+          symbol: targetChain.nativeCurrency.symbol,
+          decimals: targetChain.nativeCurrency.decimals,
         },
-        chainName: network.name,
-        rpcUrls: network.rpcUrls.default.http,
-        blockExplorerUrls: [network.blockExplorers.default.url],
+        chainName: targetChain.name,
+        rpcUrls: targetChain.rpcUrls.default.http,
+        blockExplorerUrls: [targetChain.blockExplorers!.default.url!],
       },
     });
+    closeAllPopup();
   };
   return { switchChain: handleSwitch };
 }

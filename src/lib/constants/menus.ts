@@ -1,27 +1,31 @@
+import KrwoIcon from "@/public/svg/bitcoin-03.svg";
+
 export const MENUS = [
   {
     title: "Home",
+    mobileTitle: "Home",
     url: "/",
     externalLink: false,
   },
   {
-    title: "Swap",
-    url: "/trade/swap",
+    title: "Swap KRWO",
+    mobileTitle: "Swap KRWO",
+    url: "/trade/get-krwo",
     externalLink: false,
   },
-  {
-    title: "Buy OV",
-    url: "/trade/buy",
-    externalLink: false,
-  },
-  {
-    title: "Liquidity",
-    url: "/trade/liquidity",
-    externalLink: false,
-  },
-  {
-    title: "Docs",
-    url: "https://docs.gimswap.com/",
-    externalLink: true,
-  },
-];
+] as const;
+
+export const MENU_ICONS = {
+  "Swap KRWO": KrwoIcon,
+} as const;
+
+export type MenuType = (typeof MENUS)[number];
+export type MenuTitleType = MenuType["title"];
+export type MobileTitleType = MenuType["mobileTitle"];
+
+export const MENU_WITH_ICONS = MENUS.filter(
+  (menu) => menu.title !== "Home",
+).map((menu) => ({
+  ...menu,
+  icon: MENU_ICONS[menu.title],
+}));

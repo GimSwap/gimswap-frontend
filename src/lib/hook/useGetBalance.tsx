@@ -7,7 +7,10 @@ interface GetBalanceProps {
   decimal: number;
 }
 
-export const getBalance = ({ contractAddress, decimal }: GetBalanceProps) => {
+export const useGetBalance = ({
+  contractAddress,
+  decimal,
+}: GetBalanceProps) => {
   const { address } = useAccount();
 
   const { data: balance, isPending } = useReadContract({
@@ -17,7 +20,7 @@ export const getBalance = ({ contractAddress, decimal }: GetBalanceProps) => {
     args: [address],
   });
 
-  if (isPending || !balance) return { balance: 0, isPending };
+  if (isPending || !balance) return { balance: "0", isPending };
 
   const formattedDecimal = safeCalc.pow(10, decimal).toString();
   const formattedBalance = safeCalc

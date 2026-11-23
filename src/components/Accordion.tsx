@@ -1,30 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ChevronUpIcon from '@/public/svg/chevron/up.svg';
 
 interface AccordionProps {
-  title: string;
+  title: string | React.ReactNode;
   children: React.ReactNode;
   opened?: boolean;
+  className?: string;
+  titleClassName?: string;
+  chevronClassName?: string;
 }
 
-export default function Accordion({ title, children, opened }: AccordionProps) {
+export default function Accordion({
+  title,
+  children,
+  opened,
+  className,
+  titleClassName,
+  chevronClassName = 'stroke-black-6',
+}: AccordionProps) {
   const [open, setOpen] = useState<boolean>(!!opened);
   return (
     <section
-      className="pt-1 transition-all duration-200 ease-in-out overflow-hidden"
-      onClick={() => setOpen((prev) => !prev)}
+      className={`pt-1 transition-max-height duration-100 ease-in-out overflow-hidden ${className}`}
     >
-      <div className="flex items-center justify-between mb-2 cursor-pointer">
-        <p className="font-medium">{title}</p>
+      <div
+        className={`flex items-center justify-between mb-2 cursor-pointer p1 font-medium ${titleClassName}`}
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        {title}
         <ChevronUpIcon
-          className={`${open ? 'rotate-0' : 'rotate-180'} min-w-5`}
+          className={`${open ? 'rotate-180' : 'rotate-90'} ${chevronClassName} min-w-5`}
         />
       </div>
       <div
-        style={{ maxHeight: open ? '500px' : '0px' }}
-        className="transition-max-height duration-200 ease-in-out"
+        style={{
+          maxHeight: open ? '2500px' : '0px',
+          opacity: open ? '1' : '0',
+        }}
+        className="transition-max-height duration-100 ease-in-out"
       >
         {children}
       </div>

@@ -1,5 +1,7 @@
 import BackgroundGlasses from './_components/BackgroundGlasses';
-import NavbarColorChanger from './swap/_components/NavbarColorChanger';
+import BalanceCard from './_components/balanceCard/BalanceCard';
+import InnerPopups from './_components/InnerPopups';
+import NavbarColorChanger from '@/src/app/[locales]/trade/get-krwo/_components/NavbarColorChanger';
 
 export default function TradeLayout({
   children,
@@ -7,10 +9,20 @@ export default function TradeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="px-4 bg-black-2">
+    <>
       <NavbarColorChanger />
-      {children}
-      <BackgroundGlasses />
-    </section>
+      <div className="pb-[360px] bg-black-2 relative pt-[88px] px-4">
+        <div className="flex flex-row justify-center gap-4">
+          <div className="flex flex-col w-full max-w-[480px] transition-all z-40 relative">
+            <div>
+              <BalanceCard />
+            </div>
+            {children}
+          </div>
+          <InnerPopups />
+        </div>
+        <BackgroundGlasses />
+      </div>
+    </>
   );
 }

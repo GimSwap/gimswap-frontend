@@ -1,5 +1,5 @@
-import Button from "../Button";
-import PopupTemplate from "../PopupTemplate";
+import Button from '../Button';
+import PopupTemplate from '../PopupTemplate';
 
 interface SwapErrorPopupProps {
   open: boolean;
@@ -14,11 +14,9 @@ export default function SwapErrorPopup({ open, onClose }: SwapErrorPopupProps) {
         <h5 className="font-medium text-black-8 text-center mb-5">
           The swap failed because a service error occurred. Please try again.
         </h5>
-        <Button
-          title="Confirm"
-          className="text-black-1 bg-purple-500 my-5"
-          onClick={onClose}
-        />
+        <Button className="my-5" color="primary" size="xl" onClick={onClose}>
+          Confirm
+        </Button>
       </section>
     </PopupTemplate>
   );

@@ -1,17 +1,23 @@
 import { createWalletClient } from 'viem';
 import { custom, useAccount, useSignMessage } from 'wagmi';
 import { checkIsMobileBrowser } from '../utils/checkIsMobileBrowser';
+import { fetchSendLog } from '../utils/api/fetchSendLog';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
+import { useHandleWalletConnectDeepLink } from './useHandleWalletConnectDeepLink';
 
 export default function useSign() {
   const { connector } = useAccount();
   const { signMessageAsync } = useSignMessage();
+  const { handleWalletConnectDeepLink } = useHandleWalletConnectDeepLink();
 
   const sign = async (
     account: `0x${string}`,
     message: string,
   ): Promise<string | undefined> => {
     if (!connector) return;
-    const provider = await connector.getProvider();
+    const provider = (await connector.getProvider()) as InstanceType<
+      typeof EthereumProvider
+    >;
     const walletClient = createWalletClient({
       transport: custom(provider as any),
     });
@@ -29,10 +35,13 @@ export default function useSign() {
           });
         }
       } else {
+        handleWalletConnectDeepLink();
         return signMessageAsync({ message });
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      fetchSendLog({ name: 'sign', error: errorMessage });
     }
   };
 

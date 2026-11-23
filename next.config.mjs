@@ -15,7 +15,20 @@ const nextConfig = {
     };
     return config;
   },
-  reactStrictMode: false,
+  images: {
+    formats: ['image/webp'], // JPG 변환 방지
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'objectstorage.kr-central-2.kakaocloud.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.kakaoiedge.com', // Kakao CDN 추가
+      },
+    ],
+  },
+  reactStrictMode: true,
 };
 
 export default withNextIntl(nextConfig);

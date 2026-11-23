@@ -1,24 +1,33 @@
-'use client';
+"use client";
 
-import { Link } from '@/src/navigation';
-import { usePathname } from '@/src/navigation';
-const CATEGORIES = ['Swap', 'Buy', 'Liquidity'];
+import { Link, usePathname } from "@/src/i18n/routing";
+import { TRADE_CATEGORIES } from "@/src/lib/constants/category/TradeCategory";
+// import BuyTooltip from "./tooltips/BuyTooltip";
 
 export default function TradeCategory() {
   const pathname = usePathname();
-  const selectedMethod = pathname.split('/')[2];
+  const selectedMethod = pathname.split("/")[2];
+
   return (
-    <section className="flex gap-4">
-      {CATEGORIES.map((category) => {
-        const isSelected = selectedMethod === category.toLowerCase();
+    <section className="flex gap-3 relative">
+      {/* <BuyTooltip /> */}
+      {TRADE_CATEGORIES.map(({ title, key, url }) => {
+        const isSelected = selectedMethod === key;
         return (
-          <Link key={category} href={`/trade/${category.toLowerCase()}`}>
-            <h3
-              className={`${isSelected ? 'text-black-12' : 'text-black-6'} font-bold`}
+          <div className="flex flex-row gap-[2px]" key={key}>
+            <Link
+              href={url}
+              className={`flex flex-col pb-2 ${
+                isSelected ? "border-b-2 border-black-12" : ""
+              }`}
             >
-              {category}
-            </h3>
-          </Link>
+              <h5
+                className={`${isSelected ? "text-black-12" : "text-black-6"} font-bold`}
+              >
+                {title}
+              </h5>
+            </Link>
+          </div>
         );
       })}
     </section>

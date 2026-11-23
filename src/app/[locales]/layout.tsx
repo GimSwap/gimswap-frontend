@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import Topbar from '../../components/navbar/Topbar';
+import Navbar from '@/src/components/navbar/Topbar';
 import Footer from '../../components/navbar/Footer/Footer';
 import { TopbarStoreProvider } from '@/src/lib/stores/topbarStore/TopbarStoreProvider';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import { AppKit } from '@/src/lib/utils/web3modal';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import { PopupStoreProvider } from '@/src/lib/stores/popupStore/PopupStoreProvider';
 import PopupList from '@/src/components/popups/PopupList';
@@ -15,6 +14,16 @@ import QueryClientProvider from '@/src/components/provider/TanstackQueryProvider
 import { cookieToInitialState } from 'wagmi';
 import { headers } from 'next/headers';
 import { wagmiConfig } from '@/src/lib/utils/wagmi';
+import { notFound } from 'next/navigation';
+import { routing } from '@/src/i18n/routing';
+import { LiquidityStoreProvider } from '@/src/lib/stores/liquidityStore/LiquidityStoreProvider';
+import Head from 'next/head';
+import Script from 'next/script';
+import MixpanelProvider from '@/src/components/provider/MixpanelProvider';
+import { StrictMode } from 'react';
+export const generateStaticParams = () => {
+  return routing.locales.map((locale) => ({ locales: locale }));
+};
 
 export const metadata: Metadata = {
   title: 'GIM SWAP | KRWO',
@@ -61,14 +70,21 @@ const pretendard = localFont({
 
 export default async function RootLayout({
   children,
-  params: { locale },
+  params: { locales },
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params: { locales: string };
 }) {
+  const header = await headers();
+  const isDev = process.env.NEXT_PUBLIC_ENV_MODE !== 'production';
+  if (!routing.locales.includes(locales as any)) {
+    notFound();
+  }
+
+  setRequestLocale(locales);
   const wgamiInitialState = cookieToInitialState(
     wagmiConfig,
-    headers().get('cookie'),
+    header.get('cookie'),
   );
 
   const messages = await getMessages();
@@ -76,28 +92,41 @@ export default async function RootLayout({
   const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
   if (!GA_ID) throw new Error("There's no GA id");
   if (!GTM_ID) throw new Error("There's no GTM id");
+
   return (
-    <html lang={locale} className={pretendard.variable}>
+    <html lang={locales} className={pretendard.variable}>
       <GoogleAnalytics gaId={GA_ID} />
       <GoogleTagManager gtmId="GTM-NV635GKQ" />
+      <Head>
+        <meta
+          name="robots"
+          content={isDev ? 'noindex,nofollow' : 'index,follow'}
+        />
+      </Head>
       <body>
-        <NextIntlClientProvider messages={messages}>
-          <WagmiProvider initialState={wgamiInitialState}>
-            <QueryClientProvider>
-              <AppKit>
-                <PopupStoreProvider>
-                  <TopbarStoreProvider>
-                    <Topbar />
-                    {children}
-                    <Footer />
-                    <PopupList />
-                  </TopbarStoreProvider>
-                </PopupStoreProvider>
-              </AppKit>
-            </QueryClientProvider>
-          </WagmiProvider>
-        </NextIntlClientProvider>
+        <StrictMode>
+          <MixpanelProvider>
+            <NextIntlClientProvider messages={messages}>
+              <WagmiProvider initialState={wgamiInitialState}>
+                <QueryClientProvider>
+                  <PopupStoreProvider>
+                    <TopbarStoreProvider>
+                      <LiquidityStoreProvider>
+                        <Navbar />
+                        {children}
+                        <Footer />
+                        <PopupList />
+                      </LiquidityStoreProvider>
+                    </TopbarStoreProvider>
+                  </PopupStoreProvider>
+                </QueryClientProvider>
+              </WagmiProvider>
+            </NextIntlClientProvider>
+          </MixpanelProvider>
+        </StrictMode>
       </body>
+      <Script src="/script/XTrackingCode.js" strategy="lazyOnload" />
+      <Script src="/script/mixpanel.js" strategy="lazyOnload"></Script>
     </html>
   );
 }

@@ -1,49 +1,67 @@
-import swapAbi from "@/src/lib/utils/abis/swapAbi.json";
-import { TokenType } from "../types/TokenType";
-import { makeSwapArgument } from "../utils/makeSwapArgument";
-import { safeCalc } from "../utils/safeCalc";
-import { CONTRACT_ADDRESS } from "../constants/contractAddress";
-import { useState } from "react";
-import { createPublicClient, createWalletClient, custom } from "viem";
-import { kaia, kairos } from "wagmi/chains";
-import { http, useAccount } from "wagmi";
-import { WALLETS } from "@/src/lib/constants/wallets";
+import swapAbi from '@/src/lib/utils/abis/swapAbi.json';
+import { TokenType } from '../types/TokenType';
+import { makeSwapArgument } from '../utils/makeSwapArgument';
+import { safeCalc } from '../utils/safeCalc';
+import { useEffect, useState } from 'react';
+import { useAccount, useWriteContract } from 'wagmi';
+import { fetchSendLog } from '../utils/api/fetchSendLog';
+import { ChainIdType } from '../types/ChainIdType';
+import { checkIsAvailableChain } from '../utils/checkIsAvailableChain';
+import { CONTRACT_ADDRESS_MAP, defaultChain } from '../constants/token';
+import { useQuery } from '@tanstack/react-query';
+import { fetchGetTransferReceipt } from '../utils/api/fetchGetReceipt';
 
-export const useSwap = (token: TokenType, amount: string) => {
+interface SwapProps {
+  token: TokenType;
+  amount: string;
+}
+
+export const useSwap = () => {
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [hash, setHash] = useState<`0x${string}` | null>(null);
+  const [shouldPolling, setShouldPolling] = useState(false);
+  const { writeContractAsync } = useWriteContract();
 
-  const { address, connector } = useAccount();
+  const { address, connector, chainId } = useAccount();
 
-  const to = CONTRACT_ADDRESS.GimSwap;
-  const amountToString = safeCalc.divide(amount, token.unit).toFixed();
-  const value = safeCalc.multiply(
-    amountToString,
-    safeCalc.pow(10, token.decimal).toFixed(),
-  );
+  const resetStatus = () => {
+    setIsPending(false);
+    setIsError(false);
+    setIsSuccess(false);
+    setHash(null);
+  };
 
-  const callee = CONTRACT_ADDRESS.GimSwap;
-
-  const network =
-    process.env.NEXT_PUBLIC_ENV_MODE !== "production" ? kairos : kaia;
-  const publicClient = createPublicClient({
-    chain: network,
-    transport: http(),
+  const { data: receiptStatus } = useQuery({
+    queryKey: ['getTransferReceipt', hash, chainId],
+    queryFn: () =>
+      fetchGetTransferReceipt({ txHash: hash!, chainId: chainId! }),
+    enabled: !!shouldPolling && !!chainId && !!address,
+    refetchInterval: 1000,
+    select: (data) => data.status,
   });
 
-  const swap = async () => {
-    if (!connector || !address) return;
-    const currentWalletInfo = WALLETS.find(({ id }) => connector.id === id);
+  const swap = async ({ token, amount }: SwapProps) => {
+    if (!connector || !address || !chainId || !checkIsAvailableChain(chainId))
+      return;
+
+    const amountToString = safeCalc.divide(amount, token.unit).toFixed();
+    const decimal = token.multiDecimal
+      ? token?.decimal[
+          checkIsAvailableChain(chainId) ? chainId : defaultChain.id
+        ]
+      : token.decimal;
+
+    const value = safeCalc.multiply(
+      amountToString,
+      safeCalc.pow(10, decimal).toFixed(),
+    );
+    const to = CONTRACT_ADDRESS_MAP.GIMSWAP[chainId];
+    const callee = CONTRACT_ADDRESS_MAP.GIMSWAP[chainId];
 
     try {
-      const walletClient = createWalletClient({
-        chain: network,
-        transport: custom(await currentWalletInfo?.transport),
-      });
       setIsPending(true);
-
       const args = makeSwapArgument(
         token.method,
         to,
@@ -51,27 +69,47 @@ export const useSwap = (token: TokenType, amount: string) => {
         callee,
       );
 
-      const hash = await walletClient.writeContract({
-        address: token.contractAddress as `0x${string}`,
+      const hash = await writeContractAsync({
+        address: token.contractAddress[chainId as ChainIdType] as `0x${string}`,
         abi: swapAbi,
         functionName: token.method,
         account: address as `0x${string}`,
         args,
       });
-
       if (!hash) throw new Error(`transaction error`);
       setHash(hash);
-      const { status } = await publicClient.waitForTransactionReceipt({ hash });
-      if (status === "success") setIsSuccess(true);
-      else if (status === "reverted") setIsError(true);
+      setShouldPolling(true);
     } catch (error) {
-      console.log(error, "error");
-      console.error(error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      fetchSendLog({
+        name: 'swap',
+        error: errorMessage,
+        connectorId: connector.id,
+      });
       setIsError(true);
-    } finally {
-      setIsPending(false);
     }
   };
 
-  return { swap, isSuccess, isPending, error: isError, hash };
+  useEffect(() => {
+    if (receiptStatus === 'SUCCESS') {
+      setIsSuccess(true);
+      setIsPending(false);
+      setShouldPolling(false);
+    } else if (receiptStatus === 'FAILED') {
+      setIsError(true);
+      setIsPending(false);
+      setShouldPolling(false);
+    }
+  }, [receiptStatus]);
+
+  return {
+    swap,
+    isSuccess,
+    setIsSuccess,
+    isPending,
+    error: isError,
+    hash,
+    resetStatus,
+  };
 };
